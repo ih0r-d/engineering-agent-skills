@@ -1,12 +1,17 @@
 name: Validate skills
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
-permissions:
-  contents: read
+permissions: { }
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   validate:
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:
@@ -30,5 +35,56 @@ jobs:
       - name: Check shell wrapper syntax
         run: |
           for script in scripts/*.sh; do
-            bash -n "$script" || exit
+            bash -n "$script"
           done
+          sh -n evals/fixtures/shell/print-path.sh
+
+  static-checks:
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          version: '0.13.9'
+          require-checksums: true
+          enable-cache: false
+      - name: Parse repository YAML and Skill frontmatter
+        run: uv run --no-build --no-python-downloads scripts/ci/validate_yaml.py
+      - name: Check shell wrappers
+        run: shellcheck scripts/*.sh
+      - name: Install checksum-verified analyzers
+        working-directory: ${{ runner.temp }}
+        run: |
+          mkdir quality-bin
+          fetch_tool() {
+            local name="$1" url="$2" digest="$3"
+            curl --fail --silent --show-error --location --retry 2 --max-time 30 \
+              --output "$name.tar.gz" "$url"
+            printf '%s  %s\n' "$digest" "$name.tar.gz" | sha256sum --check --strict
+            mkdir "$name"
+            tar -xzf "$name.tar.gz" -C "$name"
+            find "$name" -type f -name "$name" -exec install -m 0755 {} "quality-bin/$name" \;
+            test -x "quality-bin/$name"
+          }
+          fetch_tool actionlint \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz \
+            8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          fetch_tool zizmor \
+            https://github.com/zizmorcore/zizmor/releases/download/v1.32.0/zizmor-x86_64-unknown-linux-gnu.tar.gz \
+            bb110cc765eca9cd7efb2e284a956be5974c60027b0970f16397d86208a9957b
+          fetch_tool lychee \
+            https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-gnu.tar.gz \
+            1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+      - name: Check GitHub Actions workflow definitions
+        run: '"$RUNNER_TEMP/quality-bin/actionlint"'
+      - name: Audit GitHub Actions and Dependabot security
+        run: '"$RUNNER_TEMP/quality-bin/zizmor" --offline --collect all .'
+      - name: Check local Markdown links and anchors
+        run: |
+          "$RUNNER_TEMP/quality-bin/lychee" --offline --include-fragments --no-progress \
+            './*.md' './skills/**/*.md' './evals/**/*.md'

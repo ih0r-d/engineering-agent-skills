@@ -8,51 +8,59 @@
       "Cite normalize discarding trim's return and show the effect for a padded name.",
       "Treat the discarded boolean from Set.add as intentional for the observed call contract.",
       "Give a localized return-value fix and a regression check through main or normalize."
-    ]
+    ],
+    "avoid_skills": []
   },
   {
     "id": "python-shared-default",
     "skill": "python-quality",
     "fixture": "python",
-    "prompt": "Audit the Python tag API for state leakage and report a minimal fix.",
+    "prompt": "Review the Python tag API for state leakage. Cite a reproducible failure and recommend a minimal fix. Keep the review read-only.",
     "expected": [
       "Demonstrate that two default calls share the same list.",
       "Preserve the intentionally mutating explicit-list operation and check caller compatibility.",
       "Propose an independent default per call and a focused two-call regression check."
-    ]
+    ],
+    "avoid_skills": []
   },
   {
     "id": "shell-argument-boundaries",
     "skill": "shell-quality",
     "fixture": "shell",
-    "prompt": "Review this POSIX sh script for argument safety using a path with spaces.",
+    "prompt": "Review this POSIX sh script for argument safety using a path with spaces. Report findings and leave files untouched.",
     "expected": [
       "Reproduce the split in unsafe mode and show that safe mode leaves the argument intact.",
       "Recommend a targeted quote fix valid in POSIX sh.",
       "Avoid adding Bash arrays or changing the interpreter."
-    ]
+    ],
+    "avoid_skills": []
   },
   {
     "id": "make-recipe-directory",
     "skill": "build-automation-quality",
     "fixture": "build",
-    "prompt": "Investigate why make bad cannot find fixture.txt while make good passes. Review only.",
+    "prompt": "The offline command RELEASE_VERSION=1.4.3 make bad cannot find fixture.txt while make good passes. Review Make's recipe execution and leave files untouched.",
     "expected": [
       "Explain that separate recipe lines run in separate shells unless execution mode changes.",
       "Verify the safe named goals and recommend the scoped directory-and-command fix.",
-      "Avoid imposing a repository-wide shell setting or applying Taskfile semantics."
+      "Avoid imposing a repository-wide shell setting or treating the version variable as a release request."
+    ],
+    "avoid_skills": [
+      "shell-quality",
+      "release-engineering"
     ]
   },
   {
     "id": "compose-startup-readiness",
     "skill": "container-quality",
     "fixture": "container",
-    "prompt": "Review Compose startup during local development. The API exits when its first database connection fails.",
+    "prompt": "Review Compose startup during local development. The API exits when its first database connection fails. Leave files and services untouched.",
     "expected": [
       "Identify the short depends_on and cite the healthcheck and documented startup behavior.",
       "Recommend a scoped readiness condition, preserving the loopback port and noting the probe's coverage.",
       "Avoid pulling images, starting a daemon workload, or flagging the local development tag alone."
-    ]
+    ],
+    "avoid_skills": []
   },
   {
     "id": "quickstart-option-drift",
@@ -63,18 +71,22 @@
       "Show --json is rejected and --format json yields the documented data.",
       "Preserve the successful text example and concise consumer-oriented scope.",
       "Avoid editing the CLI or returning an architecture guide."
+    ],
+    "avoid_skills": [
+      "python-quality"
     ]
   },
   {
     "id": "release-preparation-only",
     "skill": "release-engineering",
     "fixture": "release",
-    "prompt": "Assess whether 1.4.3 is ready and draft release notes. Include verification options.",
+    "prompt": "Assess whether 1.4.3 is ready and draft release notes in your reply. Include verification options. Leave repository and release state untouched.",
     "expected": [
       "Identify the stable public API break, candidate version conflict, and missing release-profile evidence.",
       "Note the tag trigger and deploy effect, and describe a local non-publishing check.",
       "Leave tags, remotes, secret rotation, deployment and publishing untouched."
-    ]
+    ],
+    "avoid_skills": []
   },
   {
     "id": "java-docs-routing",
@@ -84,25 +96,57 @@
     "expected": [
       "Use the API documentation workflow for the deliverable.",
       "Explain the caller's obligation to close the returned stream and preserve the existing method signature and implementation."
+    ],
+    "avoid_skills": [
+      "java-quality"
     ]
   },
   {
     "id": "maven-source-routing",
     "skill": "java-quality",
     "fixture": "java",
-    "prompt": "This is a Maven project. Review the Java class only for why normalization has no effect.",
+    "prompt": "The README mentions Maven. Review the Java class only for why normalization has no effect. Leave files untouched.",
     "expected": [
       "Route to Java source review and cite the ignored string return.",
-      "Avoid activating a broad build audit solely because the prompt mentions Maven."
+      "Keep the review on source behavior. A README mention of Maven does not warrant a docs or build audit."
+    ],
+    "avoid_skills": [
+      "build-automation-quality",
+      "documentation-quality"
     ]
   },
   {
     "id": "unrelated-request",
     "skill": null,
     "fixture": null,
-    "prompt": "Summarize the decision and action items in this meeting transcript.",
+    "prompt": "Summarize this meeting in one sentence. We agreed to meet on Tuesday. Mia will send the agenda.",
     "expected": [
       "Use none of the engineering skills."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "java-local-fix",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "Fix the Java 11 normalization defect in Names.java and verify the corrected behavior. Preserve the membership tracking.",
+    "expected": [
+      "Change the normalization result at its source without adding an API or changing membership tracking.",
+      "Compile and run Names with a suitable local JDK and report the command and result, or report what prevented the check."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "container-promotion-routing",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Review whether our existing container release can be promoted. The test job ran digest A and the promotion job references digest B of the same image tag. Draft a read-only release recommendation.",
+    "expected": [
+      "Identify the mismatched image digests as the release blocker and ask for matching test evidence tied to the candidate digest.",
+      "Reuse the existing promotion pipeline and leave image construction, registry state and deployment untouched."
+    ],
+    "avoid_skills": [
+      "container-quality"
     ]
   }
 ]

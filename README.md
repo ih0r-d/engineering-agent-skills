@@ -85,7 +85,7 @@ python3 -B -m unittest discover -s tests -v
 for script in scripts/*.sh; do bash -n "$script" || exit; done
 ```
 
-The local suite requires no credentials, package downloads or model calls. The included GitHub Actions workflow targets Linux and macOS. [Evaluation fixtures and agent protocol](evals/README.md), [Contributing](CONTRIBUTING.md), [Initial audit](AUDIT.md)
+The local suite requires no credentials, package downloads or model calls. GitHub Actions runs it on Linux and macOS. A separate job in the same workflow parses YAML, runs ShellCheck and actionlint, audits workflow security with offline zizmor, and checks local Markdown links and anchors with Lychee. The analyzers download once per run and their checks use local files. [Static checks and tool versions](CONTRIBUTING.md#verify-changes), [Evaluation fixtures and agent protocol](evals/README.md), [Initial audit](AUDIT.md)
 
 Offline checks verify the installed layout and links. Check discovery with explicit invocation in the target client, then use a fresh prompt without the Skill name to check automatic activation. Client version, workspace trust and settings can affect discovery.
 

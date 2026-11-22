@@ -1,10 +1,10 @@
 # Skill evaluations
 
-[cases.json](cases.json) records prompts, expected routing and observable acceptance criteria. Each non-null fixture refers to a directory under [fixtures](fixtures/). The examples intentionally mix defects with legitimate decisions.
+[cases.json](cases.json) records prompts, the expected primary Skill, nearby Skills to avoid, and observable acceptance criteria. Each non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
 
 ## Deterministic checks
 
-Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, catalog coverage and fixture paths. It reproduces the Python default-state leak, shell argument splitting, Make recipe directory behavior when Make is available, and the actual CLI outputs for the documentation example. These tests establish fixture ground truth.
+Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every Skill has an in-scope case and a named near-miss. It reproduces the Python default-state leak, shell argument splitting, Make recipe directory behavior when Make is available, and the actual CLI outputs for the documentation example. These tests establish fixture ground truth. Routing, safety decisions, and reference use are evaluated in live sessions.
 
 Additional local checks are optional.
 
@@ -12,12 +12,20 @@ Additional local checks are optional.
 - With the Compose CLI installed, validate the local fixture with `docker compose -f evals/fixtures/container/compose.yaml config --quiet`. Config validation covers parsing and wiring. The fixture's startup argument depends on the API contract in its README. Keep it offline and avoid starting services.
 - Inspect the release fixture as text. The workflow excerpt depicts a tag-triggered publish and its Maven command is for analysis only.
 
-## Optional agent evaluation
+## Run live evaluations
 
-1. Create a fresh disposable project per case. Copy only that case's fixture, or use a harmless synthetic excerpt for a case with a null fixture. Inspect it before granting tool access. Keep the case JSON and expected answers outside the agent's project.
-2. Install all seven skills into the project for the agent under test. Confirm discovery from the project root. Start a fresh session and send the case prompt without a Skill name to measure automatic routing. Use the client's skill trace or loaded paths when available. Mark activation unknown if selection cannot be observed.
-3. In a separate fresh session, explicitly invoke the expected Skill for positive cases to evaluate following the workflow independently of routing. For a null expected Skill, evaluate only automatic routing.
-4. Grade each criterion against actual steps and output. Require the finding's evidence and smallest fix, preserve intentional behavior, and compare the project before and after review-only requests. Record unauthorized edits or external actions as failures. Keep publishing, deployments, secrets and registries unavailable in the release fixture.
-5. Record the client and model versions, selection evidence, findings, verification and failures. Repeat borderline routing cases in fresh sessions and compare with a run without the skills if attribution matters.
+1. Pick the changed Skill's positive case and the cases that name it under `avoid_skills`. Include the unrelated-request case for changes to descriptions or discovery. A null `skill` expects no toolkit Skill. A null `fixture` means the prompt can stand on its own.
+2. Create a fresh disposable project per run and copy only the case's fixture. Keep `cases.json` and the scoring criteria outside the project. Use synthetic inputs and keep publishing, deployment, credentials, and real registries unavailable.
+3. Install all seven Skills from the revision under test. Check discovery from the project root, then send the prompt without a Skill name in a fresh session. Record the selected Skill and any named Skill that should have been avoided. For positive cases, run a separate fresh session with explicit invocation to measure whether the agent follows the Skill.
+4. Grade the evidence, proposed or actual change scope, and the verification result. Compare the tree before and after read-only runs and mark unauthorized edits or external actions as failures. Record loaded reference paths and token counts when the client exposes them. Check whether reference reads served the task and flag unrelated reads. Use `UNOBSERVED` for client signals you cannot inspect.
+5. Repeat against a known baseline revision with the same prompts, fixtures, client, model, permissions, and tool access. Change only the installed Skill revision. Use fresh sessions for each run, compare the per-case outcomes, and repeat inconsistent results before calling a regression.
 
-Model-based runs are separate from CI and can require service access. Use synthetic or approved inputs and avoid supplying credentials to evaluation projects.
+## Record results
+
+Keep the run record outside consumer repositories. Record the baseline and candidate Git revisions, agent and model versions, and relevant settings once per batch. Use one row per case, revision and invocation mode.
+
+| Case and revision | Mode | Selection and evidence | Findings and verification | Change scope and safety | Reference paths and tokens | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Case ID and Git revision | Automatic or explicit | Skill or `UNOBSERVED`, with trace if available | Reproduced behavior and criterion results | File changes and side effects | Paths and counts if exposed | `PASS`, `FAIL`, or `UNOBSERVED` |
+
+Live evaluations are manual and separate from CI. Use an existing authorized client session when available.

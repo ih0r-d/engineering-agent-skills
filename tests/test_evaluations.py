@@ -25,20 +25,30 @@ def run_fixture(fixture: str, *command: str) -> subprocess.CompletedProcess[str]
 class EvaluationTests(unittest.TestCase):
     def test_routing_cases_cover_catalog_and_resolve_fixtures(self) -> None:
         cases = json.loads((EVALS / "cases.json").read_text(encoding="utf-8"))
+        catalog = set(skills.available_skills())
         names = {case["skill"] for case in cases}
-        self.assertEqual(set(skills.available_skills()) | {None}, names)
+        self.assertEqual(catalog | {None}, names)
         identifiers = [case["id"] for case in cases]
         self.assertEqual(len(set(identifiers)), len(cases))
+        near_miss_skills = set()
         for case in cases:
             with self.subTest(case=case["id"]):
                 self.assertTrue(case["prompt"].strip())
                 self.assertTrue(case["expected"])
                 self.assertTrue(all(check.strip() for check in case["expected"]))
+                avoided = case["avoid_skills"]
+                self.assertIsInstance(avoided, list)
+                self.assertEqual(len(set(avoided)), len(avoided))
+                self.assertTrue(set(avoided) <= catalog)
+                self.assertNotIn(case["skill"], avoided)
+                if case["skill"] is not None:
+                    near_miss_skills.update(avoided)
                 if case["fixture"] is not None:
                     fixture = FIXTURES / case["fixture"]
                     self.assertEqual(FIXTURES, fixture.resolve().parent)
                     self.assertTrue(fixture.is_dir())
                     self.assertTrue(any(fixture.iterdir()))
+        self.assertEqual(catalog, near_miss_skills)
 
     def test_python_default_shares_state_and_explicit_mutation_is_scoped(self) -> None:
         program = """

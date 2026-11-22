@@ -1,2 +1,3 @@
 .idea/
 *.iml
+tests/__pycache__/
