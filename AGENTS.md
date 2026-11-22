@@ -1,13 +1,16 @@
-# Repository instructions
+# Maintaining Engineering Agent Skills
 
-This repository contains portable, offline-first engineering skills for AI coding agents.
+These instructions govern maintenance of this toolkit, including when it is checked out as a submodule. Installed Skills follow the consuming project's instructions. `skills/` contains the shared Codex and Claude Code definitions, `scripts/` contains the installer and validator, and `tests/` and `evals/` cover deterministic checks and agent behavior.
 
-- Use English for Skill files, source code, comments, documentation, and commit messages.
-- Follow the Agent Skills format: one concise `SKILL.md` per skill, with optional references and scripts.
-- Keep skill descriptions focused on the actual trigger; do not add universal or always-on instructions.
-- Keep project-specific policies out of general skills. The consuming repository's instructions take precedence.
-- Never change consuming projects, dependencies, build files, tags, or remote state without explicit authorization.
-- Be evidence-based; treat tool findings as signals to verify, not mandatory refactoring instructions.
-- Prefer small, reversible local operations, standard-library tools, no network calls, and short reports.
-- Before editing installer behavior, run `python3 scripts/skills.py validate` and `python3 -m unittest discover -s tests -v`.
-- Protect unrelated user changes. Never auto-commit or push.
+## Develop Skills
+
+- Write Skills, code, comments, documentation and commit messages in English.
+- Follow the [Agent Skills specification](https://agentskills.io/specification). Use one `skills/<name>/SKILL.md` with a matching lowercase hyphenated name and a description keyed to the actual task. This catalog's validator expects single-line `name` and `description` strings, plain or double-quoted with JSON escaping.
+- Keep the entrypoint operational and concise. Link substantial domain guidance directly under `references/` and say when to read it. Use self-contained scripts for repeatable checks where they materially help. Keep consumer policy with the consumer.
+- State review, edit and verification boundaries. Start with the relevant changes, verify tool signals against behavior, and prefer the smallest supported change. Load only relevant references, reuse checks when inputs are unchanged, and summarize useful evidence.
+
+## Maintain installation and verification
+
+- Keep the installer offline and standard-library-only. Require an explicit Skill selection, preserve both agents' project and user paths, and keep relative directory links, copy mode, dry runs and ownership checks working. Preserve consumer instructions, build files and unrelated paths. Use disposable targets and synthetic data for integration checks.
+- Run `python3 scripts/skills.py validate` and `python3 -B -m unittest discover -s tests -v` before changing installer behavior and after relevant changes. Add focused regression coverage for changed behavior. Use positive and misleading cases when Skill routing changes, and keep model evaluations separate from offline tests. [Evaluation protocol](evals/README.md)
+- Inspect Git status before editing and review the final diff and check results. Preserve unrelated work. Require explicit authorization for consumer project changes, dependency or build changes, staging, commits, tags, pushes and other remote actions.
