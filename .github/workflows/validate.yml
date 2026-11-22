@@ -29,12 +29,12 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Validate catalog
-        run: python3 scripts/skills.py validate
+        run: python3 .scripts/skills.py validate
       - name: Run offline tests
         run: python3 -B -m unittest discover -s tests -v
       - name: Check shell wrapper syntax
         run: |
-          for script in scripts/*.sh; do
+          for script in .scripts/*.sh; do
             bash -n "$script"
           done
           sh -n evals/fixtures/shell/print-path.sh
@@ -55,10 +55,10 @@ jobs:
           enable-cache: false
 
       - name: Parse repository YAML and Skill frontmatter
-        run: uv run --no-build --no-python-downloads scripts/ci/validate_yaml.py
+        run: uv run --no-build --no-python-downloads .scripts/validate_yaml.py
 
       - name: Check shell wrappers
-        run: shellcheck scripts/*.sh
+        run: shellcheck .scripts/*.sh
 
       - name: Install checksum-verified analyzers
         working-directory: ${{ runner.temp }}

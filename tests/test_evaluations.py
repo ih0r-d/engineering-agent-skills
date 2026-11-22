@@ -11,8 +11,10 @@ import sys
 import unittest
 from pathlib import Path
 
-from scripts import skills
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / ".scripts"))
 
+import skills
 EVALS = Path(__file__).resolve().parents[1] / "evals"
 FIXTURES = EVALS / "fixtures"
 

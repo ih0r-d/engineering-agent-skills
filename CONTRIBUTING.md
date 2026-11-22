@@ -18,8 +18,8 @@ Run the offline suite from the root. Add a focused test for changed behavior, ex
 With the CI tools installed, run the same static checks locally.
 
 ```sh
-uv run --no-build --no-python-downloads scripts/ci/validate_yaml.py
-shellcheck scripts/*.sh
+uv run --no-build --no-python-downloads .scripts/validate_yaml.py
+shellcheck .scripts/*.sh
 actionlint
 zizmor --offline --collect=all .
 lychee --offline --include-fragments --no-progress './*.md' './skills/**/*.md' './evals/**/*.md'

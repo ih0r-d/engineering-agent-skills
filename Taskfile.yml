@@ -1,0 +1,49 @@
+
+version: '3'
+
+tasks:
+  default:
+    desc: List available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  validate:
+    desc: Validate Agent Skills and YAML metadata
+    cmds:
+      - python3 .scripts/skills.py validate
+      - uv run --no-build --no-python-downloads .scripts/validate_yaml.py
+
+  test:
+    desc: Run all offline tests
+    cmds:
+      - python3 -B -m unittest discover -s tests -v
+
+  eval:check:
+    desc: Validate evaluation scenarios and fixtures
+    cmds:
+      - python3 -B -m unittest discover -s tests -p 'test_evaluations.py' -v
+
+  quality:
+    desc: Run static analysis and security checks
+    cmds:
+      - shellcheck .scripts/*.sh
+      - actionlint
+      - zizmor --offline --collect=all .
+
+  docs:check:
+    desc: Check local Markdown links and anchors
+    cmds:
+      - >-
+        lychee --offline --include-fragments --no-progress
+        './*.md'
+        './skills/**/*.md'
+        './evals/**/*.md'
+
+  ci:
+    desc: Run all required quality gates
+    cmds:
+      - task: validate
+      - task: test
+      - task: quality
+      - task: docs:check

@@ -14,10 +14,12 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts import skills
-
 ROOT = Path(__file__).resolve().parents[1]
-COMMAND = [sys.executable, str(ROOT / "scripts/skills.py")]
+sys.path.insert(0, str(ROOT / ".scripts"))
+
+import skills
+
+COMMAND = [sys.executable, str(ROOT / ".scripts/skills.py")]
 
 
 def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
@@ -42,16 +44,22 @@ class InstallerTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("bash"), "Bash is required for the shell wrappers")
     def test_wrappers_resolve_their_checkout_with_cdpath_set(self) -> None:
         lookup = self.project.parent / "cdpath"
-        (lookup / "scripts").mkdir(parents=True)
+        (lookup / ".scripts").mkdir(parents=True)
         for script, args, status in (
             ("validate.sh", (), "PASS:"),
             ("install.sh", self.args(), "INSTALLED"),
             ("uninstall.sh", self.args(), "REMOVED"),
         ):
             with self.subTest(script=script):
-                result = subprocess.run(["bash", f"scripts/{script}", *args], cwd=ROOT,
-                                        env={**os.environ, "CDPATH": str(lookup)},
-                                        capture_output=True, text=True, check=False, timeout=10)
+                result = subprocess.run(
+                    ["bash", f".scripts/{script}", *args],
+                    cwd=ROOT,
+                    env={**os.environ, "CDPATH": str(lookup)},
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=10,
+                )
                 self.assertEqual(0, result.returncode, result.stderr)
                 self.assertIn(status, result.stdout)
         self.assertFalse(os.path.lexists(self.target))
@@ -239,12 +247,20 @@ class InstallerTests(unittest.TestCase):
         skill_path = checkout_path / "skills/java-quality"
         targets = (".agents/skills/java-quality", ".claude/skills/java-quality")
         shutil.copytree(ROOT / "skills/java-quality", checkout / "skills/java-quality")
-        (checkout / "scripts").mkdir()
-        shutil.copy2(ROOT / "scripts/skills.py", checkout / "scripts")
-        command = [sys.executable, str(checkout / "scripts/skills.py")]
+        installer = checkout / ".scripts/skills.py"
+        installer.parent.mkdir()
+        shutil.copy2(ROOT / ".scripts/skills.py", installer)
+        command = [sys.executable, str(installer)]
         options = ["--agent", "all", "--skill", "java-quality"]
-        installed = subprocess.run(command + ["install", *options], cwd=self.project,
-                                   capture_output=True, text=True, check=True, timeout=10)
+        installed = subprocess.run(
+            command + ["install", *options],
+            cwd=self.project,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(0, installed.returncode, installed.stderr)
         self.assertIn("INSTALLED", installed.stdout)
         for target in targets:
             self.assertEqual(Path("../..") / skill_path, (self.project / target).readlink())
@@ -257,8 +273,13 @@ class InstallerTests(unittest.TestCase):
         for target in targets:
             self.assertTrue((moved / target).is_symlink())
             self.assertFalse((moved / target).exists())
-        subprocess.run([sys.executable, str(moved / checkout_path / "scripts/skills.py"), "uninstall",
-                        *options], cwd=moved, capture_output=True, check=True, timeout=10)
+        subprocess.run(
+            [sys.executable, str(moved / checkout_path / ".scripts/skills.py"), "uninstall", *options],
+            cwd=moved,
+            capture_output=True,
+            check=True,
+            timeout=10,
+        )
         for target in targets:
             self.assertFalse(os.path.lexists(moved / target))
 

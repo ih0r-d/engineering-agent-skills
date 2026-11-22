@@ -1,0 +1,5 @@
+failfast: true
+concurrency: 4
+temp-dir: .cache/task
+remote:
+  offline: true
