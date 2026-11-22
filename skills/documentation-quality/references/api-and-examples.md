@@ -1,8 +1,7 @@
-# API documentation and examples
+# API contracts and executable examples
 
-- Document parameters, exceptions, ownership, nullability, side effects, lifecycle, thread safety and constraints when non-obvious.
-- Avoid JavaDoc or docstring filler that merely repeats identifiers.
-- Check sample imports, dependencies, runtime versions, command flags and actual output against tested code.
-- Keep examples minimal but realistic, including common failure modes where useful.
-- Document externally observable behavior, not speculative implementation guarantees.
-- Prefer executable or compile-checked snippets when the repository offers a sample test harness.
+- Document caller-visible constraints such as accepted values, units, defaults, nullability, returned data, exceptions, ownership, blocking, concurrency and side effects where material. Confirm the contract with code, call sites, tests and published compatibility policy. Avoid promising undocumented ordering, eager/lazy timing or resource disposal without evidence.
+- For JavaDoc, verify links, inherited semantics, checked and relevant unchecked exceptions, and generic parameter tags where useful. Use the repository's doc generation or doclint with its supported JDK and classpath. Explain ownership of returned streams or borrowed resources when callers depend on it.
+- For Python docstrings, follow project conventions and keep signatures, type hints, defaults and exception descriptions consistent. Explain constraints and observable effects that annotations leave unclear. Confirm the generated API reference and import path if used by consumers.
+- Keep examples minimal enough to verify but complete enough to copy. Check imports, pinned or minimum versions, setup and working directory, and cleanup of fixture state. Prefer the existing doctest, snippet compiler or sample test. Test client code against the installed package if checkout-only paths can mask a defect.
+- Report example failures with the exact command or snippet, environment, outcome and source of truth. A docstring that says an invalid argument raises `ValueError` while the public function returns a sentinel is material drift. Omitting a redundant prose repeat of an unambiguous signature can be a good editorial choice.

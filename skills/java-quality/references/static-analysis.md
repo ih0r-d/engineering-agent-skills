@@ -1,11 +1,15 @@
-# Static analysis and IDE inspection review
+# Java analyzers and local execution
 
-Load when analyzing compiler, IDE, Maven/Gradle, or local analyzer output.
+Use the project's JDK and pinned CI commands first. Record selected modules, source sets, generated-source policy and tool version. Before running a wrapper offline, confirm its distribution is cached. Maven `-o` and Gradle `--offline` affect dependency resolution, and build hooks can still perform I/O. Run trusted tasks with the necessary local inputs, or report the check blocked.
 
-- Prioritize correctness: ignored return values, incorrect nullability, impossible branches, dead code, incomplete cleanup, missing close, concurrency hazards, swallowed interrupts, and accidental API misuse.
-- Treat duplicate-code reports as starting points: determine whether fragments represent shared business logic or intentionally separate concerns. Avoid premature abstraction solely to silence CPD.
-- Check suspicious variable assignments (`Value value = null`, overwritten locals), unnecessary allocations, unused private declarations, unreachable branches, and needless mutable static fields. Confirm semantics with call sites.
-- Verify reports with actual configuration and versions. Error Prone typically requires integration with the Java compiler; ArchUnit requires compiled classes and project-specific architecture rules; PMD/CPD may be run by Maven goals or standalone tooling.
-- Prefer existing project tooling and local CLI commands; do not change pom.xml, build.gradle, CI, or quality profiles just to run a one-off audit without approval.
-- Run quick, scoped checks before expensive full scans; keep raw logs locally, summarize actionable findings with evidence and the smallest fix.
-- Respect intentional suppression when justified, but never add new suppressions blindly.
+| Tool | Appropriate use and prerequisites |
+| --- | --- |
+| Error Prone | Run the configured build that invokes the javac plugin. A standalone invocation still needs javac integration, a compatible compiler JDK, Error Prone dependencies, required module flags, and the real classpath and compiler options. Match the installed version and target release. A plain javac run provides compiler evidence only. |
+| PMD and CPD | An installed PMD 7 CLI can scan source using `pmd check -d src/main/java -R path/to/ruleset.xml` and `pmd cpd --language java --minimum-tokens 100 --dir src/main/java`. Use project-selected scope, rules and token threshold, and add the auxiliary classpath when type resolution needs it. PMD 6 uses different CLI syntax. For a configured Maven project, `./mvnw -o pmd:check` and `./mvnw -o pmd:cpd-check` are candidates if plugin version, dependencies and execution inputs are already available. A fully qualified pinned cached goal can avoid plugin-prefix resolution. |
+| SpotBugs | Analyze current compiled bytecode (classes or JARs) with the dependency classpath, compatible SpotBugs version and project filters. Prefer configured Maven or Gradle tasks. For an installed CLI, `spotbugs -textui -auxclasspath "$classpath" target/classes` is a starting point. Review missing-class warnings before relying on coverage. |
+| Checkstyle | Use the configured rules and suppression/property inputs for the relevant JDK syntax. An installed CLI bundle can run `java -jar checkstyle-all.jar -c path/to/checkstyle.xml src/main/java` with the required properties. Style-only output is a project gate where configured. Keep it separate from correctness findings. |
+| ArchUnit | Run the repository's architecture tests or its configured integration on compiled classes. Import scope, generated/test classes and missing dependencies affect results. Compare a violation to the actual architectural rule and verify the module wiring. There is no generic architectural verdict from an unconfigured scan. |
+
+For a one-off audit, reuse installed tools and trusted rules, or inspect code and run focused tests. Avoid editing consumer build files or weakening suppressions to obtain results. Preserve diagnostic codes and separate findings from resolution failures and pre-existing baseline issues.
+
+Tool documentation. [Error Prone](https://errorprone.info/docs/installation), [PMD CLI](https://docs.pmd-code.org/latest/pmd_userdocs_installation.html), [Maven PMD Plugin](https://maven.apache.org/plugins/maven-pmd-plugin/), [SpotBugs](https://spotbugs.readthedocs.io/en/stable/running.html), [Checkstyle](https://checkstyle.org/cmdline.html), [ArchUnit](https://www.archunit.org/userguide/html/000_Index.html)

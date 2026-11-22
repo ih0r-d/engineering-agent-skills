@@ -1,4 +1,4 @@
 interface:
   display_name: "Java Quality"
-  short_description: "Evidence-based Java code review and focused cleanup"
-  default_prompt: "Use $java-quality to review the current Java changes for confirmed maintainability, naming, API and generated-source issues. Report findings with exact locations. Do not modify files unless requested."
+  short_description: "Java correctness, compatibility, and analyzer triage"
+  default_prompt: "Use $java-quality to review the current Java changes for correctness and compatibility and report findings with file locations and verification."

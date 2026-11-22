@@ -1,8 +1,10 @@
-# Python-specific review rubric
+# Python runtime and API review
 
-- Correctness: mutable defaults, accidental shared state, iteration/mutation hazards, exception context, resource cleanup, asyncio cancellation, and timezone semantics where relevant.
-- Types: explicit public contracts, Optional and narrowing correctness, type-checker compatibility, and alignment between annotations and runtime behavior.
-- API: stable signatures, meaningful names, compatibility, deterministic imports, side effects and error contracts.
-- Maintainability: cohesion, readable control flow, minimal duplication, useful data boundaries, no speculative abstractions.
-- Testing: meaningful pytest cases with negative paths, monkeypatching limited to actual boundaries, no hidden external network dependencies.
-- Tools: use project Ruff, Pyright/mypy, pytest and packaging checks; avoid imposing blanket rules or changing formatter configuration without permission.
+- Trace each changed public function through real callers. Check positional and keyword compatibility, return shapes, lazy versus eager behavior and exception types. An annotation change can affect runtime frameworks that resolve hints. Preserve import paths exposed through package modules and `__all__`, including deliberate re-exports flagged as unused.
+- Check mutable defaults, class attributes, dataclass defaults and shared caches against intended lifetime. A shared cache can be intentional if its invalidation and synchronization are owned. A per-request list shared across calls is a different contract. Call twice with independent inputs and mutate the first result to detect aliasing.
+- Read both sides of resource boundaries. Use existing context managers for owned files, subprocesses, pools and async clients. Test cleanup when work raises. Keep caller-owned handles usable according to the contract. For lazy generators, check early exit and closure with the actual iterator consumer.
+- Follow the narrowest expected exception through recovery and chaining. Use `raise NewError(...) from exc` where callers benefit from the cause. Avoid broad catches around operations beyond the intended failure. Check whether cleanup masks the primary exception and that a failed operation cannot report success.
+- For `asyncio`, check where cancellation enters, who awaits spawned tasks, whether cleanup completes, and whether blocking I/O runs on the event loop. Use deterministic synchronization such as events in tests. For threads, inspect compound operations and external resource access independently of interpreter implementation details.
+- Trace nullable values and type narrowing across actual branches. `cast()` and `assert` provide different guarantees, and assertions can be disabled. At untrusted boundaries validate at runtime when the contract requires it. Prefer existing domain types and a real narrowing check over broad `Any` or protocols introduced to satisfy one call site.
+- Check eager imports for network calls, environment parsing, process startup and circular initialization. Verify documented entrypoints in a subprocess with safe fixtures. A guarded CLI entrypoint and a package import serve different consumers. Avoid adding new import-time behavior as part of a cleanup.
+- Treat style diagnostics according to existing project configuration. Escalate a readability issue when it hides a real invariant or failure path. Confirm warnings against the supported Python versions before changing syntax or types.

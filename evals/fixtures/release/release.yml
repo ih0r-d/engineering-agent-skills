@@ -1,0 +1,11 @@
+name: Publish Maven artifacts
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./mvnw -B -Prelease deploy

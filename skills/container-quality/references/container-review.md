@@ -1,8 +1,10 @@
-# Container review reference
+# Dockerfile and image builds
 
-- Image provenance, unnecessary packages, layer/cache efficiency, reproducible versions and multi-stage builds when useful.
-- User/group permissions, writable directories, signal propagation, process lifecycle, health checks and correct shutdown.
-- Secrets: no credentials in layers, environment dumps, build args or repository files; prefer supported secret mechanisms.
-- Compose: dependency conditions, networks, named volumes, resource limits, environment defaults, and correct `config` validation.
-- Avoid exposing ports unnecessarily or assuming privileged execution; respect service-specific platform requirements.
-- Prefer minimal edits over fashion-driven rewrites. Distinguish development and production needs.
+- Resolve each `COPY` and `ADD` against the real build context, including named contexts and the effective Dockerfile-specific ignore file. Credentials, Git history, build outputs and unrelated fixtures should stay out of the context when unused. Verify legitimate inputs still reach the builder. A narrow context helps when its path matches both CI and local builds.
+- Track the base image per stage, platform manifests, dependency lockfiles, package versions and external downloads. An immutable digest gives repeatable base selection when paired with a deliberate update process. A development tag can be intentional. A pinned base alone leaves mutable package sources or unverified downloads unresolved.
+- Follow secret values from CI or the developer machine to the consuming process. Docker build args, ENV, copies and log output can expose them in images, history, provenance or caches. Prefer BuildKit secret or SSH mounts for build-time access, and check that the consuming command never persists the value. Deleting a copied secret in a later image layer leaves the earlier layer intact.
+- Use multi-stage builds when the final runtime can omit compilers, dev dependencies or intermediate assets. Inspect artifacts, shared libraries, CA certificates, time zones and architecture on the target platform before trimming. Check image contents and compare final-image sizes under the same platform and inputs before claiming an improvement.
+- Keep package index refresh and installation in the same cache-sensitive step when the package manager requires it. Preserve the lock or integrity check and order dependency descriptors before high-churn inputs where useful. Record when cache mounts are performance-only and verify that builds also work with an empty cache.
+- Prefer configured Dockerfile lint or supported Docker build checks. Builder checks can initialize a builder, resolve syntax frontends or access image metadata. Inspect these prerequisites and use cached or isolated resources where permitted. An offline source review can establish a bad context path or secret flow without running a build.
+
+References. [Build context](https://docs.docker.com/build/building/context/), [Build secrets](https://docs.docker.com/build/building/secrets/), [Build best practices](https://docs.docker.com/build/building/best-practices/)

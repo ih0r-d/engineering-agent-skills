@@ -1,0 +1,108 @@
+[
+  {
+    "id": "java-ignored-return",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "Review the Java class for correctness on Java 11. Keep the review read-only.",
+    "expected": [
+      "Cite normalize discarding trim's return and show the effect for a padded name.",
+      "Treat the discarded boolean from Set.add as intentional for the observed call contract.",
+      "Give a localized return-value fix and a regression check through main or normalize."
+    ]
+  },
+  {
+    "id": "python-shared-default",
+    "skill": "python-quality",
+    "fixture": "python",
+    "prompt": "Audit the Python tag API for state leakage and report a minimal fix.",
+    "expected": [
+      "Demonstrate that two default calls share the same list.",
+      "Preserve the intentionally mutating explicit-list operation and check caller compatibility.",
+      "Propose an independent default per call and a focused two-call regression check."
+    ]
+  },
+  {
+    "id": "shell-argument-boundaries",
+    "skill": "shell-quality",
+    "fixture": "shell",
+    "prompt": "Review this POSIX sh script for argument safety using a path with spaces.",
+    "expected": [
+      "Reproduce the split in unsafe mode and show that safe mode leaves the argument intact.",
+      "Recommend a targeted quote fix valid in POSIX sh.",
+      "Avoid adding Bash arrays or changing the interpreter."
+    ]
+  },
+  {
+    "id": "make-recipe-directory",
+    "skill": "build-automation-quality",
+    "fixture": "build",
+    "prompt": "Investigate why make bad cannot find fixture.txt while make good passes. Review only.",
+    "expected": [
+      "Explain that separate recipe lines run in separate shells unless execution mode changes.",
+      "Verify the safe named goals and recommend the scoped directory-and-command fix.",
+      "Avoid imposing a repository-wide shell setting or applying Taskfile semantics."
+    ]
+  },
+  {
+    "id": "compose-startup-readiness",
+    "skill": "container-quality",
+    "fixture": "container",
+    "prompt": "Review Compose startup during local development. The API exits when its first database connection fails.",
+    "expected": [
+      "Identify the short depends_on and cite the healthcheck and documented startup behavior.",
+      "Recommend a scoped readiness condition, preserving the loopback port and noting the probe's coverage.",
+      "Avoid pulling images, starting a daemon workload, or flagging the local development tag alone."
+    ]
+  },
+  {
+    "id": "quickstart-option-drift",
+    "skill": "documentation-quality",
+    "fixture": "docs",
+    "prompt": "Verify the quick start against the actual CLI. Review only and report the smallest correction.",
+    "expected": [
+      "Show --json is rejected and --format json yields the documented data.",
+      "Preserve the successful text example and concise consumer-oriented scope.",
+      "Avoid editing the CLI or returning an architecture guide."
+    ]
+  },
+  {
+    "id": "release-preparation-only",
+    "skill": "release-engineering",
+    "fixture": "release",
+    "prompt": "Assess whether 1.4.3 is ready and draft release notes. Include verification options.",
+    "expected": [
+      "Identify the stable public API break, candidate version conflict, and missing release-profile evidence.",
+      "Note the tag trigger and deploy effect, and describe a local non-publishing check.",
+      "Leave tags, remotes, secret rotation, deployment and publishing untouched."
+    ]
+  },
+  {
+    "id": "java-docs-routing",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Revise the JavaDoc for this method to state whether the caller owns the returned stream. Leave code unchanged. /** Returns file lines. */ public Stream<String> lines(Path path) throws IOException { return Files.lines(path); }",
+    "expected": [
+      "Use the API documentation workflow for the deliverable.",
+      "Explain the caller's obligation to close the returned stream and preserve the existing method signature and implementation."
+    ]
+  },
+  {
+    "id": "maven-source-routing",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "This is a Maven project. Review the Java class only for why normalization has no effect.",
+    "expected": [
+      "Route to Java source review and cite the ignored string return.",
+      "Avoid activating a broad build audit solely because the prompt mentions Maven."
+    ]
+  },
+  {
+    "id": "unrelated-request",
+    "skill": null,
+    "fixture": null,
+    "prompt": "Summarize the decision and action items in this meeting transcript.",
+    "expected": [
+      "Use none of the engineering skills."
+    ]
+  }
+]

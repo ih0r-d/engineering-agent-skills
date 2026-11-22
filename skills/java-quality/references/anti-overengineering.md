@@ -1,10 +1,5 @@
-# Minimal-change and anti-overengineering policy
+# Choosing a minimal Java fix
 
-- Preserve existing architecture, ownership boundaries, behavior, and external contracts.
-- Prefer one necessary correction over a new service, factory, framework, interface, or abstraction.
-- Do not split cohesive methods solely to meet arbitrary line counts.
-- Do not replace clear loops with streams, patterns, builders, or records unless they demonstrably improve comprehension.
-- Reuse existing domain concepts and tested interfaces before inventing new names or extension points.
-- Avoid changes to unrelated files, generated output, public APIs, or build configuration without specific reason.
-- Add the smallest focused regression test that proves the defect is fixed, including negative/edge cases.
-- Keep review and fixes separate. Don't edit during read-only review.
+- Compare the reason two fragments change together. If two invoice paths calculate the same legally mandated rounding rule and have drifted, capture that rule in one existing domain location and add parity coverage. If two independent input boundaries each reject blank strings, keep explicit checks unless their ownership and future changes genuinely coincide. CPD detects similar tokens and cannot establish shared policy.
+- Preserve useful cohesion. A sequential parser with a clear outcome can remain a single method. Extract when the resulting boundary names an independently testable rule, establishes resource ownership or removes demonstrated duplication. Avoid a public helper for one package-private caller.
+- Prefer the smallest effective fix for unused assignments, misleading names and excessive visibility. Preserve required initialization effects, reflective usages and public consumers. Ask what new tests gain from a proposed interface, factory or wrapper before introducing it.

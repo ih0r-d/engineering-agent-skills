@@ -1,8 +1,14 @@
-# Shell review reference
+# Shell behavior and portability
 
-- Quote expansions and paths where required; use arrays in Bash for argument lists, not unsafe string concatenation.
-- Review word splitting, globbing, pipelines, exit status propagation, subshell behavior, traps, signal handling, and cleanup.
-- `set -euo pipefail` is context-dependent: understand conditional commands, unset variables and legitimate non-zero statuses before applying it.
-- Check portable syntax for the declared interpreter. Do not introduce `mapfile`, associative arrays or GNU-only flags into macOS Bash 3.2 scripts without justification.
-- Use `mktemp` safely, verify prerequisites, provide informative errors, and keep irreversible operations behind explicit opt-in.
-- Use `shellcheck` for substantive defects, `shfmt` for formatting when project config permits, and execution tests in isolated directories for installers.
+## Interpreter and arguments
+
+- Inspect the actual launcher. `sh script.sh` selects sh regardless of the shebang, and `source` uses the caller's shell. In POSIX sh use positional arguments with `set --` and `"$@"`. Use Bash arrays only within the advertised Bash baseline. Check macOS system Bash 3.2 if supported before using associative arrays or `mapfile`.
+- Quote expansions where the shell splits or globs them, including filenames and command substitutions used as arguments. Preserve deliberately applied globbing, such as `"$dir"/*.txt`, and handle no matches explicitly. Pass arguments as separate words and avoid building command lines by concatenation or `eval`. Check whitespace, wildcard characters, leading dashes and empty arguments. Use an option terminator where supported or anchor paths using absolute names or `./`.
+- Confirm platform utilities as well as syntax. GNU and BSD behavior differs for `sed -i`, `stat`, `readlink -f` and other flags. Follow the supported platforms and prefer existing portable invocations over ad hoc detection layers.
+
+## Status, cleanup and filesystem effects
+
+- Follow the status of the actual operation across `if`, `&&`, `||`, pipelines, substitutions, and shell functions. A pipeline normally reports its last command's status. Enable Bash `pipefail` where it fits, and handle expected early consumer exit, such as `head` ending a pipeline. Do not assume every sh supports it. Check how the caller treats expected nonzero statuses such as a failed match versus an I/O error.
+- Test error handling in its calling context. `errexit` has conditional exceptions and shell-specific behavior in substitutions. In Bash, `local value=$(command)` reports the declaration's status. Separate declaration from assignment and handle the command outcome at the failing operation. `set -u` is useful when unset variables are mistakes. Handle valid unset or empty values according to the interface.
+- Check that destructive paths are nonempty, resolve to the expected scope, exclude root or shared data, and stay safe around symlinks. Quote operands. Quoting alone leaves `"$dir/"*` pointed at root when `dir` is empty. Ensure a failed `cd` aborts work before invoking relative cleanup. Work in a generated fixture when verifying these paths.
+- Create temporary storage with a supported `mktemp` form and check creation before registering cleanup. Register a trap early and arrange for it to read the actual owned path. Trace normal exit, failure and signals. Preserve the meaningful status when cleanup runs and avoid printing credentials with xtrace or from environment dumps.

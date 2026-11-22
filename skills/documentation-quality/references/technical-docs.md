@@ -1,8 +1,7 @@
-# Technical and maintainer documentation
+# Architecture and contributor documentation
 
-- Describe architecture at meaningful boundaries: modules, contracts, data flow, ownership, lifecycle, concurrency, failures, and observability when relevant.
-- Explain why non-obvious design decisions exist, alternatives and tradeoffs. Don't paraphrase every class or method.
-- Keep design docs aligned with actual implementation and current CI/build constraints.
-- Separate stable invariants from exploratory ideas; distinguish existing behavior from future plans.
-- Prefer focused diagrams, ADRs and links to exact reference implementations when that reduces ambiguity.
-- Keep contributor paths reproducible, with clear testing and module build instructions.
+- Map the system at meaningful boundaries. Identify components and dependencies, data and control flow, ownership, lifecycle and failure behavior. Explain when a boundary matters to an operator or maintainer. Verify diagrams against actual paths and include a legend only where symbols need one.
+- Record decisions with their context, rejected options and consequences where relevant. Verify invariants through implementation and architecture tests. Date or scope plans and proposed behavior so readers can distinguish them from the current design.
+- Spell out how maintainers build, test and debug changes from a clean environment. Check wrapper versions, command working directories, module selection, required credentials or test services and what CI actually runs. Keep development setup separate from a user's installed-package journey.
+- For drift review, map changed inputs, dependency edges and initialization or failure behavior to affected docs. If a worker now acknowledges messages after persisting instead of before, update the architecture guarantee and any recovery guidance. A class moving between files need not change a high-level diagram if the ownership boundary remains intact.
+- Link to stable contracts and useful source locations. Prefer a focused ownership, lifecycle or data-flow diagram to diagrams that mirror each class. Use existing docs infrastructure and update the canonical source of a contract first.

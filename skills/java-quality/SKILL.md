@@ -1,26 +1,16 @@
 ---
 name: java-quality
-description: Evidence-based Java code reviews and focused fixes for correctness, maintainability, public APIs, generated code, and build/tool quality. Use when asked to audit or improve Java code.
+description: Review Java source or generated Java for correctness, API compatibility, resource ownership, concurrency, or framework behavior. Use for Java code audits, targeted fixes, and triage of compiler or Java analyzer findings.
 ---
 
 # Java Quality
 
-Review Java code for correctness, contributor experience, and maintainability across commercial, personal, and open-source repositories. Enforce useful invariants without mechanical overengineering.
+Default to a read-only review. In fix mode, address the requested defects with the smallest compatible change and a focused regression test where it would establish behavior. In verification mode, run the applicable existing checks without editing sources or configuration. Follow repository rules for build files and dependencies.
 
-## Workflow
+1. Establish the diff or requested component, then trace changed declarations to their callers, tests and generated inputs. Expand to the repository only for a full audit. Read the Maven or Gradle configuration and CI to identify the compiler JDK, target release, source sets, annotation processors and test boundaries.
+2. Reproduce the relevant failure on a supported JDK or establish it from the language and caller contracts. Inspect state ownership, exceptional paths, nullability, compatibility and lifecycle behavior before assessing style.
+3. Read [language and API review](references/quality-rubric.md) for source behavior, JavaDoc and public contracts, [module and framework boundaries](references/boundaries.md) for generated code, proxies or class loading, and [static analysis](references/static-analysis.md) when choosing checks or investigating diagnostics. Use [minimal-change examples](references/anti-overengineering.md) when a duplication or cleanup finding has competing fixes.
+4. Prefer the configured module test, compiler or compatibility check. Inspect wrappers, profiles and goals before running them. Keep complete non-sensitive logs outside the checkout and reuse results for identical inputs, tool versions and configuration.
+5. Report severity with file and line, reachable failure, affected callers, smallest compatible correction and how it was or can be verified. Label uncertain risks and skipped checks. Group diagnostics with the same cause.
 
-1. Determine scope (diff, component, or repository), requested mode (review versus fix), applicable JDK, and project rules. Inspect Git status first; preserve other work.
-2. Investigate code, call sites, tests, generated output, concurrency, resource ownership, public API, and actual consumer behavior. Prefer confirmed issues over style guesses.
-3. Read [quality-rubric.md](references/quality-rubric.md) for applicable checks; read [static-analysis.md](references/static-analysis.md) only when quality tools or IDE-style warnings are relevant.
-4. Review findings as `P0/P1/P2 | path:line | evidence | impact | smallest safe fix | verification`. Distinguish verified problems from possible risks.
-5. For requested fixes only, follow [review-workflow.md](references/review-workflow.md) and [anti-overengineering.md](references/anti-overengineering.md). Make localized changes and focused regression tests.
-6. Re-run existing formatter, compiler, tests, static analyzers, and API compatibility checks where available; don't weaken existing gates.
-7. Report PASS/FAIL/BLOCKED/NOT RUN honestly. Never auto-commit, push, or change build dependencies without permission.
-
-## Constraints
-
-- Don't assume Maven, Gradle, Spring, a particular JDK, or a tool installation. Discover the project's actual configuration.
-- Existing tools may include SpotBugs, SonarQube, Checkstyle, Error Prone, PMD/CPD, or ArchUnit. Use them if configured or locally runnable; don't promise an analyzer is universal without its requirements.
-- For generated code, fix its generator and compile generated consumers when relevant.
-- Preserve source/binary/behavioral compatibility unless a breaking change is explicitly requested.
-- Don't introduce arbitrary method-length quotas, speculative abstractions, blanket suppressions, or large cosmetic refactors.
+Preserve source, binary and behavioral compatibility, including generated APIs and reflective consumers, unless the requested change permits a break. Use language features supported by the target release. Keep build-graph and task wiring reviews with the build automation workflow.
