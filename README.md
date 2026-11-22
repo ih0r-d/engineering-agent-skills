@@ -1,100 +1,255 @@
 # Engineering Agent Skills
 
-Seven portable Agent Skills for focused engineering reviews, requested fixes and verification in Codex and Claude Code. Each Skill starts with a short workflow and links to the references relevant to the task. The installer requires Python 3.10+ and uses the standard library. The optional shell wrappers require Bash.
+**Reusable engineering workflows for AI coding agents. Review with evidence, make minimal changes, and verify results.**
 
-| Skill | Use it for |
+[![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
+[![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
+[![Skills](https://img.shields.io/badge/skills-7-2563eb)](#skill-catalog)
+[![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
+[![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
+[![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
+
+[**Skills**](#skill-catalog) · [**Install from GitHub**](#install-from-github) · [**Offline installation**](#offline-installation) · [**Git submodule**](#git-submodule-integration) · [**Validation**](#validation-and-evaluations) · [**Contributing**](CONTRIBUTING.md)
+
+> 🇺🇦 **Слава Україні! Героям слава!**
+>
+> Stand with Ukraine.
+
+## Overview
+
+Engineering Agent Skills is a portable collection of [Agent Skills](https://agentskills.io/specification) for **Codex** and **Claude Code**. It provides focused workflows for reviewing code, diagnosing defects, preparing safe fixes, and validating engineering changes.
+
+Designed for personal, commercial, and open-source projects, the toolkit follows the consuming repository's conventions rather than imposing a framework or build configuration.
+
+**Core principles:**
+
+- **Evidence-based findings:** describe the affected code, observed impact, and how to reproduce or verify a problem.
+- **Review first:** review requests are read-only; changes require explicit authorization.
+- **Minimal fixes:** preserve public contracts, behavior, and existing architecture unless a change is justified.
+- **Selective context:** short `SKILL.md` entrypoints load topic-specific references only when needed.
+- **Portable tooling:** reuse available project analyzers; do not force dependencies or build-file changes.
+- **Installation choice:** install directly from GitHub or from a local checkout without network access.
+
+## Skill Catalog
+
+| Skill | Engineering focus |
 | --- | --- |
-| [`java-quality`](skills/java-quality/SKILL.md) | Java contracts, concurrency, generated sources, modules, proxies and analyzer triage |
-| [`python-quality`](skills/python-quality/SKILL.md) | Python runtime and typing, package boundaries and local checks |
-| [`shell-quality`](skills/shell-quality/SKILL.md) | POSIX sh and Bash argument safety, status, cleanup and portability |
-| [`build-automation-quality`](skills/build-automation-quality/SKILL.md) | Maven, Gradle, Make and Task dependency graphs and reproducibility |
-| [`container-quality`](skills/container-quality/SKILL.md) | Dockerfile, build context, image and Compose lifecycle review |
-| [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, quick starts, maintainer docs, API documentation and drift |
-| [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, version and notes preparation, artifact verification and rollout checks |
+| [`java-quality`](skills/java-quality/SKILL.md) | Java API compatibility, concurrency, resource lifecycle, generated code, classloaders, proxies, and static-analysis findings |
+| [`python-quality`](skills/python-quality/SKILL.md) | Python typing, import behavior, packaging, exceptions, lifecycle, concurrency, and tests |
+| [`shell-quality`](skills/shell-quality/SKILL.md) | POSIX `sh` and Bash correctness, quoting, exit codes, cleanup, and portability |
+| [`build-automation-quality`](skills/build-automation-quality/SKILL.md) | Maven, Gradle, Makefile, and Taskfile correctness, dependency graphs, and reproducibility |
+| [`container-quality`](skills/container-quality/SKILL.md) | Dockerfile and Compose builds, secrets, image and container lifecycle, and runtime behavior |
+| [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
+| [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
 
-## Quick start
+Skills are independently installable. Detailed guidance lives in each Skill's `references/` directory and is loaded only when relevant.
 
-From the toolkit checkout, replace `/path/to/project` with an existing project directory.
+## Installation
 
-```sh
-python3 scripts/skills.py list
-python3 scripts/skills.py install --agent codex --target /path/to/project --skill java-quality --dry-run
-python3 scripts/skills.py install --agent codex --target /path/to/project --skill java-quality
-```
+Choose the method that fits your project:
 
-The preview prints `DRY RUN install`. Installation prints `INSTALLED`, and an identical repeat prints `SKIP`. Use `--agent claude` for Claude Code or `--agent all` for both. Repeat `--skill`, pass a comma-separated list, or use `--all` for the current catalog.
-
-Open the target project in your agent. Ask for a focused review, for example “Review the changed Java code for concurrency regressions. Report evidence and verification. Leave files untouched.” To select the Skill explicitly, use `$java-quality` in Codex or `/java-quality` in Claude Code. Start a fresh session if a newly installed Skill is missing from the picker. Check symlink targets and agent visibility settings if discovery still fails.
-
-| Agent | Project scope | User scope |
+| Method | Best for | Requirements |
 | --- | --- | --- |
-| Codex | `.agents/skills/` | `~/.agents/skills/` |
-| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
+| **[GitHub / `npx skills`](#install-from-github)** | Quick installation without a manual clone; project or user scope | Node.js 22.20+, network access |
+| **[Local / offline](#offline-installation)** | Private or restricted environments; controlled installation from an existing checkout | Python 3.10+, local toolkit directory |
+| **[Git submodule](#git-submodule-integration)** | Pinning a known toolkit revision inside a Git repository | Git, Python 3.10+, initialized submodule |
 
-Both agents document discovery of whole-directory symlinks in these locations. [Codex Skills](https://learn.chatgpt.com/docs/build-skills), [Claude Code Skills](https://code.claude.com/docs/en/skills#choose-where-skills-load), [Agent Skills specification](https://agentskills.io/specification)
+### Install from GitHub
 
-Both installs use the same Skill folders. The installer requires `--skill` or `--all` and leaves the target's `AGENTS.md`, `CLAUDE.md` and Git index untouched. Start the agent from the consuming project to work under its instructions.
+Use the [Skills CLI](https://github.com/vercel-labs/skills) to install selected Skills directly from this repository. **No manual `git clone` or Git submodule is required.** Run commands from the consuming project's directory.
 
-For user scope, omit `--target`. For project scope, it defaults to the current directory.
+List available Skills:
 
-```sh
-python3 scripts/skills.py install --agent all --scope user --skill documentation-quality --mode copy
+```bash
+npx skills add ih0r-d/engineering-agent-skills --list
 ```
 
-## Install from a local Git submodule
+Install `java-quality` for Codex:
 
-Run from the consuming Git project's root. Set `skills_checkout` to a trusted **local Git checkout**. Git uses its committed revision for the submodule.
-
-```sh
-skills_checkout=/absolute/path/to/engineering-agent-skills
-git -c protocol.file.allow=always submodule add -- "$skills_checkout" .tooling/engineering-agent-skills
-./.tooling/engineering-agent-skills/scripts/install.sh --agent all --skill java-quality,documentation-quality
+```bash
+npx skills add ih0r-d/engineering-agent-skills \
+  --skill java-quality \
+  --agent codex
 ```
 
-Git's `submodule add` stages the gitlink and `.gitmodules` in the host repository. Initialize an existing submodule before running the installer. Git may contact the configured remote when initializing a submodule from a remote URL. For a trusted local file URL, use `git -c protocol.file.allow=always submodule update --init -- .tooling/engineering-agent-skills`.
+Install Java and documentation Skills for both agents:
 
-The resulting links resolve within the project and survive relocation of the project and its initialized submodule together.
+```bash
+npx skills add ih0r-d/engineering-agent-skills \
+  --skill java-quality \
+  --skill documentation-quality \
+  --agent codex \
+  --agent claude-code
+```
+
+Install a Skill for your user account, across projects:
+
+```bash
+npx skills add ih0r-d/engineering-agent-skills \
+  --skill documentation-quality \
+  --agent codex \
+  --global
+```
+
+The CLI may prompt for confirmation or installation mode. It retrieves Skills over the network and manages its own installation metadata. These commands work once the repository's `skills/` directory has been pushed to GitHub.
+
+For reproducible installations, the CLI supports a repository tag or full commit SHA as a source revision. See the [Skills CLI installation reference](https://github.com/vercel-labs/skills/blob/main/docs/commands.md#skills-add).
+
+### Offline installation
+
+The built-in installer uses **Python 3.10+ and the standard library only**. It performs no network requests. A local toolkit checkout must already exist (for example, a previously downloaded archive, a Git checkout, or an initialized submodule).
+
+From the toolkit directory, preview a project installation:
+
+```bash
+python3 scripts/skills.py list
+python3 scripts/skills.py install \
+  --agent codex \
+  --target /path/to/project \
+  --skill java-quality \
+  --dry-run
+```
+
+Install after reviewing the preview:
+
+```bash
+python3 scripts/skills.py install \
+  --agent codex \
+  --target /path/to/project \
+  --skill java-quality
+```
+
+For both agents and multiple Skills:
+
+```bash
+python3 scripts/skills.py install \
+  --agent all \
+  --target /path/to/project \
+  --skill java-quality,documentation-quality
+```
+
+Use `--scope user` for user-level installation, `--mode copy` when symlinks are unsuitable, or `--all` to select the entire catalog. `--dry-run` previews changes without applying them.
+
+The local installer manages only entries it installed. It does not change consumer build files, `AGENTS.md`, `CLAUDE.md`, or the Git index.
+
+### Git submodule integration
+
+A submodule lets a consuming repository pin the toolkit to a specific revision. From the **consumer repository root**:
+
+```bash
+git submodule add \
+  https://github.com/ih0r-d/engineering-agent-skills.git \
+  .tooling/engineering-agent-skills
+
+./.tooling/engineering-agent-skills/scripts/install.sh \
+  --agent all \
+  --skill java-quality,documentation-quality \
+  --dry-run
+
+./.tooling/engineering-agent-skills/scripts/install.sh \
+  --agent all \
+  --skill java-quality,documentation-quality
+```
+
+The built-in installer creates relative symlinks by default:
 
 ```text
 .agents/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/java-quality
 .claude/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/java-quality
 ```
 
-## Update or remove
+The links remain valid when the project and initialized submodule move together. After a fresh clone, initialize the submodule before using the installed Skills:
 
-```sh
-python3 scripts/skills.py uninstall --agent codex --target /path/to/project --skill java-quality --dry-run
-python3 scripts/skills.py uninstall --agent codex --target /path/to/project --skill java-quality
+```bash
+git submodule update --init --recursive
 ```
 
-- Symlink mode is the default and reads from the selected checkout. Keep that checkout accessible and uninstall before moving it independently. Exact relative links to its skill paths identify toolkit installations, including dangling links at the expected location.
-- Copy mode works where symlink creation is unavailable. To refresh or switch modes, remove the managed entry and install again. For a manual installation, copy the entire Skill directory and manage it yourself.
-- An installed copy carries a local fingerprint of its paths, contents and executable bits. Edited copies, malformed or missing markers, unrelated destination entries and symlinked agent parent directories are refused. Preserve local edits before manually moving such an entry aside. Legacy copies can be removed automatically when they still match the originating checkout.
-- The installer checks the whole selection for known conflicts first. In case of an unexpected filesystem failure, completed entries remain and the command reports the failure. Resolve it and rerun the same selection. If an interrupted copy remains without its marker, inspect and move it aside before retrying.
-- Install and uninstall operate on the selected local skill directories. They perform no network access, build execution, project configuration edits or Git operations. Run them from a trusted checkout against a target you control.
+Adding or updating a submodule changes the consuming repository's Git metadata. The installer itself performs no Git operations.
 
-## Repository instructions
+## Supported Agents
 
-The toolkit's maintenance rules live in [AGENTS.md](AGENTS.md). Codex reads it directly. Claude Code v2.1.277 and later can read it directly when its instruction settings allow. The one-line [CLAUDE.md](CLAUDE.md) imports it for older clients and sessions that load `CLAUDE.md` in preference to `AGENTS.md`. These files scope their guidance to toolkit maintenance. [Codex project instructions](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code project instructions](https://code.claude.com/docs/en/memory#agentsmd)
+| Agent | Project scope | User scope | Explicit invocation |
+| --- | --- | --- | --- |
+| **Codex** | `.agents/skills/` | `~/.agents/skills/` | `$java-quality` |
+| **Claude Code** | `.claude/skills/` | `~/.claude/skills/` | `/java-quality` |
 
-## Validation
+After installation, open the consuming project in your agent and request a focused review:
 
-```sh
+> Review the changed Java code for concurrency and public API regressions. Provide evidence and verification steps. Do not modify files.
+
+Invoke a Skill explicitly when needed. If a new Skill is not discovered, start a fresh agent session and check the installed links and client settings. **Passing offline validation does not guarantee automatic activation in a live session.**
+
+The toolkit's root `AGENTS.md` and `CLAUDE.md` govern **toolkit maintenance only**; the installers do not copy them into consuming repositories.
+
+## Updating and Uninstalling
+
+Use the tool that originally installed the Skill. **Do not mix the Skills CLI's installation management with the built-in Python installer's ownership checks.**
+
+**GitHub / Skills CLI:**
+
+```bash
+npx skills check
+npx skills update java-quality
+npx skills remove java-quality
+```
+
+**Local / built-in installer:**
+
+```bash
+python3 scripts/skills.py uninstall \
+  --agent codex \
+  --target /path/to/project \
+  --skill java-quality \
+  --dry-run
+
+python3 scripts/skills.py uninstall \
+  --agent codex \
+  --target /path/to/project \
+  --skill java-quality
+```
+
+- **Local symlink mode:** installed Skills follow the selected checkout; updating the pinned submodule revision updates their content.
+- **Local copy mode:** uninstall the managed copy and reinstall to refresh it.
+- **Safety:** the local installer refuses unrelated destinations and protects modified installed copies from automatic deletion. It rejects symlinked agent parent directories that could redirect writes outside the target.
+
+## Validation and Evaluations
+
+Run deterministic checks from the toolkit root:
+
+```bash
 python3 scripts/skills.py validate
 python3 -B -m unittest discover -s tests -v
 for script in scripts/*.sh; do bash -n "$script" || exit; done
 ```
 
-The local suite requires no credentials, package downloads or model calls. GitHub Actions runs it on Linux and macOS. A separate job in the same workflow parses YAML, runs ShellCheck and actionlint, audits workflow security with offline zizmor, and checks local Markdown links and anchors with Lychee. The analyzers download once per run and their checks use local files. [Static checks and tool versions](CONTRIBUTING.md#verify-changes), [Evaluation fixtures and agent protocol](evals/README.md), [Initial audit](AUDIT.md)
+GitHub Actions additionally runs Linux/macOS validation and static checks for shell scripts, YAML/frontmatter, workflow correctness and security, and local Markdown links.
 
-Offline checks verify the installed layout and links. Check discovery with explicit invocation in the target client, then use a fresh prompt without the Skill name to check automatic activation. Client version, workspace trust and settings can affect discovery.
+| Verification | Covers | AI model required? |
+| --- | --- | --- |
+| **Offline tests** | Skill structure, installer safety, symlinks, fixtures, and links | No |
+| **Live evaluations** | Skill discovery, routing, finding accuracy, false positives, and agent behavior | Yes |
 
-The Java Skill was adapted from `java-oss-quality`. License selection for public distribution is pending.
+See [evaluation guidance](evals/README.md) and [contribution standards](CONTRIBUTING.md). CI passing does not prove a Skill's live review quality.
+
+## Repository Layout
 
 ```text
 skills/              Seven standalone Skills and their topic references
-scripts/             Python CLI and Bash wrappers
-tests/               Deterministic installer, catalog and fixture tests
-evals/               Routing cases, fixtures and optional agent evaluation
-.github/workflows/   Linux and macOS validation
+scripts/             Python installer, optional Bash wrappers, CI utilities
+tests/               Deterministic installer, catalog, and regression tests
+evals/               Routing scenarios, fixtures, and live evaluation guidance
+.github/workflows/   Linux/macOS validation and static checks
+AGENTS.md            Repository instructions for toolkit maintenance
+CLAUDE.md            Claude Code compatibility for toolkit maintenance
+CONTRIBUTING.md      Skill authoring, review, and validation standards
 ```
+
+## Contributing
+
+Contributions should improve real engineering outcomes, not just add longer checklists. Keep Skill activation boundaries clear, add representative evidence or evaluation scenarios, and preserve compatibility with the [Agent Skills specification](https://agentskills.io/specification).
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and required checks.
+
+## License
+
+A license for reuse and redistribution has not yet been selected. Public access to this repository does not, by itself, grant permission to reuse or redistribute its contents.
