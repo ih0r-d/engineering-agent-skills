@@ -60,7 +60,7 @@ def select_skills(args: argparse.Namespace, targets: list[Path]) -> list[str]:
         raise SkillError("Provide at least one skill name with --skill.")
     for name in names:
         if valid_name(name) and (name in available or (
-            args.command == "uninstall" and any(os.path.lexists(target / name) for target in targets)
+                args.command == "uninstall" and any(os.path.lexists(target / name) for target in targets)
         )):
             continue
         raise SkillError(f"Unknown skill {name!r}. Available: {', '.join(available)}")

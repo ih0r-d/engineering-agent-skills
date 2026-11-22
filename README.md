@@ -102,8 +102,8 @@ The built-in installer uses **Python 3.10+ and the standard library only**. It p
 From the toolkit directory, preview a project installation:
 
 ```bash
-python3 scripts/skills.py list
-python3 scripts/skills.py install \
+python3 .scripts/skills.py list
+python3 .scripts/skills.py install \
   --agent codex \
   --target /path/to/project \
   --skill java-quality \
@@ -113,7 +113,7 @@ python3 scripts/skills.py install \
 Install after reviewing the preview:
 
 ```bash
-python3 scripts/skills.py install \
+python3 .scripts/skills.py install \
   --agent codex \
   --target /path/to/project \
   --skill java-quality
@@ -122,7 +122,7 @@ python3 scripts/skills.py install \
 For both agents and multiple Skills:
 
 ```bash
-python3 scripts/skills.py install \
+python3 .scripts/skills.py install \
   --agent all \
   --target /path/to/project \
   --skill java-quality,documentation-quality
@@ -141,12 +141,12 @@ git submodule add \
   https://github.com/ih0r-d/engineering-agent-skills.git \
   .tooling/engineering-agent-skills
 
-./.tooling/engineering-agent-skills/scripts/install.sh \
+./.tooling/engineering-agent-skills/.scripts/install.sh \
   --agent all \
   --skill java-quality,documentation-quality \
   --dry-run
 
-./.tooling/engineering-agent-skills/scripts/install.sh \
+./.tooling/engineering-agent-skills/.scripts/install.sh \
   --agent all \
   --skill java-quality,documentation-quality
 ```
@@ -196,13 +196,13 @@ npx skills remove java-quality
 **Local / built-in installer:**
 
 ```bash
-python3 scripts/skills.py uninstall \
+python3 .scripts/skills.py uninstall \
   --agent codex \
   --target /path/to/project \
   --skill java-quality \
   --dry-run
 
-python3 scripts/skills.py uninstall \
+python3 .scripts/skills.py uninstall \
   --agent codex \
   --target /path/to/project \
   --skill java-quality
@@ -217,12 +217,12 @@ python3 scripts/skills.py uninstall \
 Run deterministic checks from the toolkit root:
 
 ```bash
-python3 scripts/skills.py validate
+python3 .scripts/skills.py validate
 python3 -B -m unittest discover -s tests -v
-for script in scripts/*.sh; do bash -n "$script" || exit; done
+for script in .scripts/*.sh; do bash -n "$script" || exit; done
 ```
 
-GitHub Actions additionally runs Linux/macOS validation and static checks for shell scripts, YAML/frontmatter, workflow correctness and security, and local Markdown links.
+With Task, uv, ShellCheck, actionlint, zizmor, and lychee installed, run `task ci` from the toolkit root for validation, offline tests, static analysis, and local Markdown link checks. GitHub Actions validates the toolkit on Linux and macOS.
 
 | Verification | Covers | AI model required? |
 | --- | --- | --- |
@@ -235,7 +235,8 @@ See [evaluation guidance](evals/README.md) and [contribution standards](CONTRIBU
 
 ```text
 skills/              Seven standalone Skills and their topic references
-scripts/             Python installer, optional Bash wrappers, CI utilities
+.scripts/            Python installer, optional Bash wrappers, CI utilities
+Taskfile.yml         Local CI tasks
 tests/               Deterministic installer, catalog, and regression tests
 evals/               Routing scenarios, fixtures, and live evaluation guidance
 .github/workflows/   Linux/macOS validation and static checks
