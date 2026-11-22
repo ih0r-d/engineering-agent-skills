@@ -53,10 +53,13 @@ jobs:
           version: '0.13.9'
           require-checksums: true
           enable-cache: false
+
       - name: Parse repository YAML and Skill frontmatter
         run: uv run --no-build --no-python-downloads scripts/ci/validate_yaml.py
+
       - name: Check shell wrappers
         run: shellcheck scripts/*.sh
+
       - name: Install checksum-verified analyzers
         working-directory: ${{ runner.temp }}
         run: |
@@ -82,8 +85,10 @@ jobs:
             1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
       - name: Check GitHub Actions workflow definitions
         run: '"$RUNNER_TEMP/quality-bin/actionlint"'
+
       - name: Audit GitHub Actions and Dependabot security
-        run: '"$RUNNER_TEMP/quality-bin/zizmor" --offline --collect all .'
+        run: '"$RUNNER_TEMP/quality-bin/zizmor" --offline --collect=all .'
+
       - name: Check local Markdown links and anchors
         run: |
           "$RUNNER_TEMP/quality-bin/lychee" --offline --include-fragments --no-progress \

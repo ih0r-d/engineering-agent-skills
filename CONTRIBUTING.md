@@ -21,7 +21,7 @@ With the CI tools installed, run the same static checks locally.
 uv run --no-build --no-python-downloads scripts/ci/validate_yaml.py
 shellcheck scripts/*.sh
 actionlint
-zizmor --offline --collect all .
+zizmor --offline --collect=all .
 lychee --offline --include-fragments --no-progress './*.md' './skills/**/*.md' './evals/**/*.md'
 ```
 
