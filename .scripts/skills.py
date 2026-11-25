@@ -15,6 +15,7 @@ from pathlib import Path
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 SKILLS = REPOSITORY / "skills"
+CATALOG = REPOSITORY / "catalog.json"
 MARKER = ".engineering-agent-skills.json"
 AGENT_DIRECTORIES = {"codex": Path(".agents/skills"), "claude": Path(".claude/skills")}
 SKILL_NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
@@ -45,6 +46,44 @@ def valid_name(name: str) -> bool:
 def available_skills() -> list[str]:
     return [path.name for path in skill_directories()
             if valid_name(path.name) and not is_redirect(path) and (path / "SKILL.md").is_file()]
+
+
+def validate_catalog(path: Path, skill_ids: set[str]) -> list[str]:
+    """Check logical category membership against the discovered skill IDs."""
+    try:
+        catalog = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        return [f"catalog.json: {error}"]
+
+    if (not isinstance(catalog, dict) or set(catalog) != {"categories"}
+            or not isinstance(catalog["categories"], list) or not catalog["categories"]):
+        return ["catalog.json: expected a nonempty categories list"]
+
+    issues = []
+    categories: set[str] = set()
+    listed: set[str] = set()
+    for index, category in enumerate(catalog["categories"], start=1):
+        if (not isinstance(category, dict) or set(category) != {"id", "name", "skills"}
+                or not isinstance(category["id"], str) or not valid_name(category["id"])
+                or not isinstance(category["name"], str) or not category["name"].strip()
+                or not isinstance(category["skills"], list)):
+            issues.append(f"catalog.json: invalid category at position {index}")
+            continue
+        category_id = category["id"]
+        if category_id in categories:
+            issues.append(f"catalog.json: duplicate category ID {category_id!r}")
+        categories.add(category_id)
+        for skill_id in category["skills"]:
+            if not isinstance(skill_id, str) or not valid_name(skill_id):
+                issues.append(f"catalog.json: invalid skill ID {skill_id!r} in {category_id!r}")
+                continue
+            if skill_id in listed:
+                issues.append(f"catalog.json: duplicate skill {skill_id!r}")
+            listed.add(skill_id)
+
+    issues.extend(f"catalog.json: unknown skill {name!r}" for name in sorted(listed - skill_ids))
+    issues.extend(f"catalog.json: missing skill {name!r}" for name in sorted(skill_ids - listed))
+    return issues
 
 
 def select_skills(args: argparse.Namespace, targets: list[Path]) -> list[str]:
@@ -280,7 +319,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("list", help="List available skills")
-    commands.add_parser("validate", help="Validate skill metadata and local reference links")
+    commands.add_parser("validate", help="Validate skills, local reference links, and catalog membership")
     for command in ("install", "uninstall"):
         sub = commands.add_parser(command, help=f"{command.title()} selected skills")
         sub.add_argument("--agent", choices=[*AGENT_DIRECTORIES, "all"], required=True)
@@ -303,6 +342,7 @@ def main() -> int:
         elif args.command == "validate":
             directories = skill_directories()
             issues = [issue for directory in directories for issue in validate_skill(directory)]
+            issues.extend(validate_catalog(CATALOG, {directory.name for directory in directories}))
             if not directories:
                 issues.append("No skill directories found")
             if issues:

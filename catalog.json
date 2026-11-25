@@ -1,0 +1,39 @@
+{
+  "categories": [
+    {
+      "id": "software-engineering",
+      "name": "Software Engineering",
+      "skills": ["java-quality", "python-quality", "shell-quality"]
+    },
+    {
+      "id": "software-architecture",
+      "name": "Software Architecture",
+      "skills": []
+    },
+    {
+      "id": "bug-fixing-and-reliability",
+      "name": "Bug Fixing and Reliability",
+      "skills": []
+    },
+    {
+      "id": "testing-and-quality-assurance",
+      "name": "Testing and Quality Assurance",
+      "skills": []
+    },
+    {
+      "id": "software-delivery",
+      "name": "Software Delivery",
+      "skills": ["build-automation-quality", "container-quality", "release-engineering"]
+    },
+    {
+      "id": "engineering-productivity",
+      "name": "Engineering Productivity",
+      "skills": ["documentation-quality"]
+    },
+    {
+      "id": "ai-engineering",
+      "name": "AI Engineering",
+      "skills": []
+    }
+  ]
+}
