@@ -29,15 +29,11 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Validate catalog
-        run: python3 .scripts/skills.py validate
+        run: python3 -B .scripts/skills.py validate
       - name: Run offline tests
         run: python3 -B -m unittest discover -s tests -v
       - name: Check shell wrapper syntax
-        run: |
-          for script in .scripts/*.sh; do
-            bash -n "$script"
-          done
-          sh -n evals/fixtures/shell/print-path.sh
+        run: bash .scripts/check.sh syntax
 
   static-checks:
     permissions:
@@ -48,17 +44,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           version: '0.13.9'
           require-checksums: true
           enable-cache: false
 
-      - name: Parse repository YAML and Skill frontmatter
-        run: uv run --no-build --no-python-downloads .scripts/validate_yaml.py
-
-      - name: Check shell wrappers
-        run: shellcheck .scripts/*.sh
+      - name: Validate the Agent Skills specification and repository YAML
+        run: bash .scripts/check.sh spec
 
       - name: Install checksum-verified analyzers
         working-directory: ${{ runner.temp }}
@@ -83,13 +79,8 @@ jobs:
           fetch_tool lychee \
             https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-gnu.tar.gz \
             1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
-      - name: Check GitHub Actions workflow definitions
-        run: '"$RUNNER_TEMP/quality-bin/actionlint"'
-
-      - name: Audit GitHub Actions and Dependabot security
-        run: '"$RUNNER_TEMP/quality-bin/zizmor" --offline --collect=all .'
+      - name: Check shell wrappers and GitHub Actions
+        run: PATH="$RUNNER_TEMP/quality-bin:$PATH" bash .scripts/check.sh quality
 
       - name: Check local Markdown links and anchors
-        run: |
-          "$RUNNER_TEMP/quality-bin/lychee" --offline --include-fragments --no-progress \
-            './*.md' './skills/**/*.md' './evals/**/*.md'
+        run: PATH="$RUNNER_TEMP/quality-bin:$PATH" bash .scripts/check.sh docs
