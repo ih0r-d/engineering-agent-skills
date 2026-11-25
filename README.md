@@ -42,7 +42,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
 | [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
 
-Skills are independently installable. Detailed guidance lives in each Skill's `references/` directory and is loaded only when relevant.
+Skills are independently installable. Detailed guidance lives in each skill's `references/` directory and is loaded only when relevant. [Engineering categories](docs/architecture.md#categories)
 
 ## Installation
 
@@ -91,7 +91,7 @@ npx skills add ih0r-d/engineering-agent-skills \
   --global
 ```
 
-The CLI may prompt for confirmation or installation mode. It retrieves Skills over the network and manages its own installation metadata. These commands work once the repository's `skills/` directory has been pushed to GitHub.
+The CLI may prompt for confirmation or installation mode. It retrieves skills over the network and manages its own installation metadata.
 
 For reproducible installations, the CLI supports a repository tag or full commit SHA as a source revision. See the [Skills CLI installation reference](https://github.com/vercel-labs/skills/blob/main/docs/commands.md#skills-add).
 
@@ -131,6 +131,8 @@ python3 .scripts/skills.py install \
 Use `--scope user` for user-level installation, `--mode copy` when symlinks are unsuitable, or `--all` to select the entire catalog. `--dry-run` previews changes without applying them.
 
 The local installer manages only entries it installed. It does not change consumer build files, `AGENTS.md`, `CLAUDE.md`, or the Git index.
+
+The `.scripts/` paths are the maintained entrypoints. Historical paths under `scripts/` continue to work. [Installer compatibility](docs/compatibility.md)
 
 ### Git submodule integration
 
@@ -177,7 +179,7 @@ After installation, open the consuming project in your agent and request a focus
 
 > Review the changed Java code for concurrency and public API regressions. Provide evidence and verification steps. Do not modify files.
 
-Invoke a Skill explicitly when needed. If a new Skill is not discovered, start a fresh agent session and check the installed links and client settings. **Passing offline validation does not guarantee automatic activation in a live session.**
+Invoke a skill explicitly when needed. If a new skill is missing, start a fresh agent session and check the installed links and client settings. The installer layouts are covered by deterministic tests. The [compatibility guide](docs/compatibility.md) records the documented client behavior and the scope of verification.
 
 The toolkit's root `AGENTS.md` and `CLAUDE.md` govern **toolkit maintenance only**; the installers do not copy them into consuming repositories.
 
@@ -212,38 +214,30 @@ python3 .scripts/skills.py uninstall \
 - **Local copy mode:** uninstall the managed copy and reinstall to refresh it.
 - **Safety:** the local installer refuses unrelated destinations and protects modified installed copies from automatic deletion. It rejects symlinked agent parent directories that could redirect writes outside the target.
 
+If a batch stops partway through, inspect the reported paths and preview the same selection before retrying. [Partial-operation recovery](docs/compatibility.md#recovering-from-a-partial-operation)
+
 ## Validation and Evaluations
 
-Run deterministic checks from the toolkit root:
+Run the dependency-free checks from the toolkit root.
 
 ```bash
-python3 .scripts/skills.py validate
+python3 -B .scripts/skills.py validate
 python3 -B -m unittest discover -s tests -v
-for script in .scripts/*.sh; do bash -n "$script" || exit; done
+bash .scripts/check.sh syntax
 ```
 
-With Task, uv, ShellCheck, actionlint, zizmor, and lychee installed, run `task ci` from the toolkit root for validation, offline tests, static analysis, and local Markdown link checks. GitHub Actions validates the toolkit on Linux and macOS.
+Run `task ci` for the complete maintainer suite, including the mandatory Agent Skills specification gate, regression tests, static checks, and Markdown links. The maintainer gate requires Python 3.11+ and uses a locked version of the official reference validator. GitHub Actions exercises the offline installer on Linux and macOS. [Maintainer prerequisites and commands](CONTRIBUTING.md#verify-changes)
 
 | Verification | Covers | AI model required? |
 | --- | --- | --- |
 | **Offline tests** | Skill structure, installer safety, symlinks, fixtures, and links | No |
 | **Live evaluations** | Skill discovery, routing, finding accuracy, false positives, and agent behavior | Yes |
 
-See [evaluation guidance](evals/README.md) and [contribution standards](CONTRIBUTING.md). CI passing does not prove a Skill's live review quality.
+The live evaluation procedure measures review behavior in the client. [Evaluation guidance](evals/README.md)
 
 ## Repository Layout
 
-```text
-skills/              Seven standalone Skills and their topic references
-.scripts/            Python installer, optional Bash wrappers, CI utilities
-Taskfile.yml         Local CI tasks
-tests/               Deterministic installer, catalog, and regression tests
-evals/               Routing scenarios, fixtures, and live evaluation guidance
-.github/workflows/   Linux/macOS validation and static checks
-AGENTS.md            Repository instructions for toolkit maintenance
-CLAUDE.md            Claude Code compatibility for toolkit maintenance
-CONTRIBUTING.md      Skill authoring, review, and validation standards
-```
+`skills/<skill-id>/SKILL.md` is the canonical entrypoint. `catalog.json` groups the skills by engineering category. Implementation, validation, and compatibility entrypoints are described in the [architecture guide](docs/architecture.md).
 
 ## Contributing
 
@@ -253,4 +247,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and required checks.
 
 ## License
 
-A license for reuse and redistribution has not yet been selected. Public access to this repository does not, by itself, grant permission to reuse or redistribute its contents.
+A repository-owner licensing decision is required before future redistribution. A license has yet to be selected.
