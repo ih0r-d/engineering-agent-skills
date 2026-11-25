@@ -10,17 +10,19 @@ import os
 import re
 import shutil
 import sys
+import unicodedata
 from collections.abc import Iterator
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+from urllib.parse import unquote, urlsplit
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 SKILLS = REPOSITORY / "skills"
 CATALOG = REPOSITORY / "catalog.json"
 MARKER = ".engineering-agent-skills.json"
 AGENT_DIRECTORIES = {"codex": Path(".agents/skills"), "claude": Path(".claude/skills")}
-SKILL_NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
-REFERENCE_LINK = re.compile(r"\]\((references/[^)#\s]+)(?:#[^)]*)?\)")
-FIELDS = {"name", "description"}
+INLINE_LINK = re.compile(r"\]\((?:<([^<>\n]+)>|((?:\\[()]|\([^()\n]*\)|[^\s()])+))(?=[\s)])")
+CODE_FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+CODE_SPAN = re.compile(r"(?<!`)(`+)(?!`).*?(?<!`)\1(?!`)")
 
 
 class SkillError(Exception):
@@ -40,7 +42,10 @@ def skill_directories() -> list[Path]:
 
 
 def valid_name(name: str) -> bool:
-    return len(name) <= 64 and SKILL_NAME.fullmatch(name) is not None
+    name = unicodedata.normalize("NFKC", name)
+    return (0 < len(name) <= 64 and name == name.lower()
+            and not name.startswith("-") and not name.endswith("-") and "--" not in name
+            and all(character.isalnum() or character == "-" for character in name))
 
 
 def available_skills() -> list[str]:
@@ -263,35 +268,58 @@ def apply_selection(args: argparse.Namespace) -> None:
             print(f"REMOVED {source.name}: {destination}")
 
 
-def frontmatter(content: str) -> tuple[dict[str, str], str]:
-    """Read this catalog's flat, single-line YAML string fields."""
-    header, separator, body = content[4:].partition("\n---\n")
-    if not content.startswith("---\n") or not separator or not body.strip():
-        raise SkillError("Expected YAML frontmatter followed by instructions")
-    fields = {}
-    for line in header.splitlines():
-        key, separator, value = line.partition(": ")
-        value = value.strip()
-        if not separator or key not in FIELDS or key in fields:
-            raise SkillError(f"Unexpected or repeated frontmatter field: {line}")
-        if value.startswith('"'):
-            try:
-                value = json.loads(value)
-            except ValueError as error:
-                raise SkillError(f"Invalid quoted string for {key}") from error
-        elif (not re.match(r"[a-zA-Z]|[0-9]+-[a-z]", value)
-              or re.search(r":(?:\s|$)|\s#", value)
-              or value.lower() in {"true", "false", "null", "yes", "no", "on", "off", "y", "n"}):
-            raise SkillError(f"Expected a plain or double-quoted string for {key}")
-        if not value.strip() or not value.isprintable():
-            raise SkillError(f"Expected a nonempty single-line string for {key}")
-        fields[key] = value
-    if fields.keys() != FIELDS:
-        raise SkillError("Expected name and description fields")
-    return fields, body
+def split_manifest(content: str) -> tuple[str, str]:
+    """Separate the YAML from the instructions without interpreting YAML."""
+    lines = content.removeprefix("\ufeff").split("\n")
+    if lines[0].rstrip(" \t") == "---":
+        for index, line in enumerate(lines[1:], start=1):
+            if line.rstrip(" \t") == "---":
+                header = "\n".join(lines[1:index])
+                body = "\n".join(lines[index + 1:])
+                if header.strip() and body.strip():
+                    return header, body
+                break
+    raise SkillError("Expected YAML frontmatter followed by instructions")
+
+
+def inline_destinations(body: str) -> Iterator[str]:
+    """Find ordinary inline links outside code examples. Lychee checks Markdown links in CI."""
+    fence = ""
+    for line in body.splitlines():
+        match = CODE_FENCE.match(line)
+        if match:
+            marker, rest = match.groups()
+            if not fence:
+                fence = marker
+            elif marker.startswith(fence) and not rest.strip():
+                fence = ""
+        elif not fence and not line.startswith(("    ", "\t")):
+            for angled, inline in INLINE_LINK.findall(CODE_SPAN.sub("", line)):
+                yield angled or re.sub(r"\\([()])", r"\1", inline)
+
+
+def resource_issues(directory: Path, body: str) -> list[str]:
+    root = directory.resolve()
+    issues = set()
+    for link in inline_destinations(body):
+        url = urlsplit(link)
+        path = unquote(url.path)
+        if url.scheme == "file" or (PureWindowsPath(link).drive and not url.netloc):
+            issues.add(f"Expected a portable relative resource path: {link}")
+        elif not url.scheme and not url.netloc and path:
+            if path.startswith("/") or "\\" in path or PureWindowsPath(path).drive:
+                issues.add(f"Expected a portable relative resource path: {link}")
+                continue
+            resource = root / path
+            if not resource.resolve().is_relative_to(root):
+                issues.add(f"Resource path leaves the skill: {link}")
+            elif not resource.exists():
+                issues.add(f"Missing resource: {link}")
+    return sorted(issues)
 
 
 def validate_skill(directory: Path) -> list[str]:
+    """Check the skill tree before installation. Maintainer tooling checks the YAML schema."""
     name = directory.name
     manifest = directory / "SKILL.md"
     try:
@@ -299,19 +327,11 @@ def validate_skill(directory: Path) -> list[str]:
             raise SkillError("Invalid skill directory name (expected 1-64 lowercase letters, digits or hyphens)")
         if is_redirect(directory) or manifest.is_symlink() or not manifest.is_file():
             raise SkillError("Expected a real skill directory with a regular SKILL.md")
-        fields, body = frontmatter(manifest.read_text(encoding="utf-8"))
-        if fields["name"] != name:
-            raise SkillError("Frontmatter name must match the directory")
-        if len(fields["description"]) > 1024:
-            raise SkillError("Description exceeds 1024 characters")
-        actual = {path.relative_to(directory).as_posix() for path in tree_entries(directory)
-                  if path.is_file() and path.is_relative_to(directory / "references")}
-        linked = set(REFERENCE_LINK.findall(body))
-        issues = [f"{name}: Missing or noncanonical reference: {path}" for path in sorted(linked - actual)]
-        issues.extend(f"{name}: Unlinked reference: {path}" for path in sorted(actual - linked)
-                      if path.endswith(".md"))
-        return issues
-    except (SkillError, OSError, UnicodeError) as error:
+        _, body = split_manifest(manifest.read_text(encoding="utf-8"))
+        for _ in tree_entries(directory):
+            pass
+        return [f"{name}: {issue}" for issue in resource_issues(directory, body)]
+    except (SkillError, OSError, RuntimeError, ValueError) as error:
         return [f"{name}: {error}"]
 
 
