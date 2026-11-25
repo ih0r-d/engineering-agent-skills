@@ -119,6 +119,22 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(0, run_cli("uninstall", *self.args()).returncode)
         self.assertFalse(target.exists())
 
+    def test_offline_copy_accepts_standard_optional_frontmatter(self) -> None:
+        checkout = self.project.parent / "checkout"
+        source = checkout / "sample-skill"
+        source.mkdir(parents=True)
+        manifest = ("---\nname: sample-skill\ndescription: >-\n  Review sample changes.\n"
+                    "compatibility: Requires Git\nmetadata: {author: 'Example team'}\n"
+                    "allowed-tools: Read\n---\n# Instructions\n")
+        (source / "SKILL.md").write_text(manifest, encoding="utf-8")
+        args = ["--agent", "codex", "--target", str(self.project), "--skill", source.name]
+        with patch.object(skills, "SKILLS", checkout), redirect_stdout(io.StringIO()):
+            skills.apply_selection(skills.create_parser().parse_args(["install", *args, "--mode", "copy"]))
+            target = self.target.with_name(source.name)
+            self.assertEqual(manifest, (target / "SKILL.md").read_text(encoding="utf-8"))
+            skills.apply_selection(skills.create_parser().parse_args(["uninstall", *args]))
+        self.assertFalse(target.exists())
+
     def test_unmanaged_files_are_never_overwritten_or_deleted(self) -> None:
         target = self.project / ".agents/skills/java-quality"
         target.mkdir(parents=True)

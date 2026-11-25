@@ -1,0 +1,12 @@
+[project]
+name = "engineering-agent-skills-validation"
+version = "0.0.0"
+requires-python = ">=3.11"
+dependencies = ["PyYAML==6.0.4", "skills-ref"]
+
+[tool.uv]
+package = false
+build-constraint-dependencies = ["hatchling==1.33.0"]
+
+[tool.uv.sources]
+skills-ref = { git = "https://github.com/agentskills/agentskills.git", rev = "f130f348f502d9804278a617f86929846896d2e9", subdirectory = "skills-ref" }
