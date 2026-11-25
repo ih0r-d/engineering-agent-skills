@@ -1,6 +1,6 @@
 # Maintaining Engineering Agent Skills
 
-These instructions govern maintenance of this toolkit, including when it is checked out as a submodule. Installed Skills follow the consuming project's instructions. `skills/` contains the shared Codex and Claude Code definitions, `scripts/` contains the installer and validator, and `tests/` and `evals/` cover deterministic checks and agent behavior.
+These instructions govern maintenance of this toolkit, including when it is checked out as a submodule. Installed Skills follow the consuming project's instructions. `skills/` contains the shared definitions, `.scripts/` contains the installer and validation tooling, and `scripts/` preserves historical entrypoints. `tests/` and `evals/` cover deterministic checks and agent behavior.
 
 ## Develop Skills
 
@@ -12,5 +12,5 @@ These instructions govern maintenance of this toolkit, including when it is chec
 ## Maintain installation and verification
 
 - Keep the installer offline and standard-library-only. Require an explicit Skill selection, preserve both agents' project and user paths, and keep relative directory links, copy mode, dry runs and ownership checks working. Preserve consumer instructions, build files and unrelated paths. Use disposable targets and synthetic data for integration checks.
-- Run `python3 scripts/skills.py validate` and `python3 -B -m unittest discover -s tests -v` before changing installer behavior and after relevant changes. Add focused regression coverage for changed behavior. Use positive and misleading cases when Skill routing changes, and keep model evaluations separate from offline tests. [Evaluation protocol](evals/README.md)
+- Run `python3 .scripts/skills.py validate` and `python3 -B -m unittest discover -s tests -v` before changing installer behavior and after relevant changes. Add focused regression coverage for changed behavior. Use positive and misleading cases when Skill routing changes, and keep model evaluations separate from offline tests. [Evaluation protocol](evals/README.md)
 - Inspect Git status before editing and review the final diff and check results. Preserve unrelated work. Require explicit authorization for consumer project changes, dependency or build changes, staging, commits, tags, pushes and other remote actions.
