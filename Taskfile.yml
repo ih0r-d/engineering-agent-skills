@@ -9,10 +9,15 @@ tasks:
       - task --list
 
   validate:
-    desc: Validate Agent Skills and YAML metadata
+    desc: Validate catalog membership, skill resources, and the Agent Skills specification
     cmds:
-      - python3 .scripts/skills.py validate
-      - uv run --no-build --no-python-downloads .scripts/validate_yaml.py
+      - python3 -B .scripts/skills.py validate
+      - task: validate:spec
+
+  validate:spec:
+    desc: Validate YAML and run the pinned Agent Skills checks and tests
+    cmds:
+      - bash .scripts/check.sh spec
 
   test:
     desc: Run all offline tests
@@ -27,18 +32,18 @@ tasks:
   quality:
     desc: Run static analysis and security checks
     cmds:
-      - shellcheck .scripts/*.sh
-      - actionlint
-      - zizmor --offline --collect=all .
+      - task: syntax:check
+      - bash .scripts/check.sh quality
+
+  syntax:check:
+    desc: Check wrapper and fixture shell syntax
+    cmds:
+      - bash .scripts/check.sh syntax
 
   docs:check:
     desc: Check local Markdown links and anchors
     cmds:
-      - >-
-        lychee --offline --include-fragments --no-progress
-        './*.md'
-        './skills/**/*.md'
-        './evals/**/*.md'
+      - bash .scripts/check.sh docs
 
   ci:
     desc: Run all required quality gates
