@@ -41,27 +41,50 @@ class InstallerTests(unittest.TestCase):
         completed = run_cli("validate")
         self.assertEqual(0, completed.returncode, completed.stderr)
 
+    def test_legacy_python_entrypoint_matches_current_cli(self) -> None:
+        legacy = [sys.executable, str(ROOT / "scripts/skills.py")]
+        for args, status in (
+            (("list",), 0),
+            (("install", *self.args("--mode", "copy", "--dry-run")), 0),
+            (("uninstall", *self.args("--dry-run")), 0),
+            (("install", "--agent", "codex"), 2),
+        ):
+            with self.subTest(args=args):
+                current = run_cli(*args)
+                result = subprocess.run(legacy + list(args), cwd=self.project, capture_output=True,
+                                        text=True, check=False, timeout=10)
+                self.assertEqual(status, current.returncode)
+                self.assertEqual((current.returncode, current.stdout, current.stderr),
+                                 (result.returncode, result.stdout, result.stderr))
+        self.assertFalse((self.project / ".agents").exists())
+
     @unittest.skipUnless(shutil.which("bash"), "Bash is required for the shell wrappers")
     def test_wrappers_resolve_their_checkout_with_cdpath_set(self) -> None:
         lookup = self.project.parent / "cdpath"
-        (lookup / ".scripts").mkdir(parents=True)
-        for script, args, status in (
-            ("validate.sh", (), "PASS:"),
-            ("install.sh", self.args(), "INSTALLED"),
-            ("uninstall.sh", self.args(), "REMOVED"),
-        ):
-            with self.subTest(script=script):
-                result = subprocess.run(
-                    ["bash", f".scripts/{script}", *args],
-                    cwd=ROOT,
-                    env={**os.environ, "CDPATH": str(lookup)},
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                    timeout=10,
-                )
-                self.assertEqual(0, result.returncode, result.stderr)
-                self.assertIn(status, result.stdout)
+        for directory in (".scripts", "scripts"):
+            (lookup / directory).mkdir(parents=True)
+            for script, args, status, message in (
+                ("validate.sh", (), 0, "PASS:"),
+                ("install.sh", self.args("--dry-run"), 0, "DRY RUN install"),
+                ("install.sh", self.args(), 0, "INSTALLED"),
+                ("uninstall.sh", self.args("--dry-run"), 0, "DRY RUN remove"),
+                ("uninstall.sh", self.args(), 0, "REMOVED"),
+                ("install.sh", ("--agent", "unknown"), 2, "invalid choice"),
+            ):
+                with self.subTest(directory=directory, script=script, args=args):
+                    result = subprocess.run(
+                        [f"{directory}/{script}", *args],
+                        cwd=ROOT,
+                        env={**os.environ, "CDPATH": str(lookup)},
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                        timeout=10,
+                    )
+                    self.assertEqual(status, result.returncode, result.stderr)
+                    self.assertIn(message, result.stdout if status == 0 else result.stderr)
+                    if "--dry-run" in args:
+                        self.assertEqual(script == "uninstall.sh", self.target.is_symlink())
         self.assertFalse(os.path.lexists(self.target))
 
     def test_symlink_installation_is_relative_and_reversible(self) -> None:
