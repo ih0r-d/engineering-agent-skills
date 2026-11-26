@@ -5,10 +5,45 @@ description: Review or fix Bash and POSIX sh scripts for unsafe expansions, exit
 
 # Shell Quality
 
-1. Start with the changed script and its entry points, callers and sourced files. Inventory other scripts only for a full audit. Identify actual interpreters and versions from shebangs, invocations, CI and build runners.
-2. Trace arguments, expansions, pipelines, exit codes and cleanup through both success and failure paths. Inspect operations on files and services before invoking the script. Read [shell behavior and portability](references/shell-review.md) for diagnosis and [verification cases](references/verification.md) when selecting commands or testing a fix.
-3. In review mode, leave files untouched and use applicable local syntax checks, ShellCheck and configured formatting checks. In verification mode, exercise behavior only in an isolated fixture after inspecting effects. Use temporary directories and controlled command stubs for destructive or network-dependent paths.
-4. Apply edits only for requested fixes. Keep supported interpreters, argument semantics, output and exit codes compatible. Contain fixes to the affected expansion, status check or cleanup path. Require a demonstrated need before adding a new runtime dependency or refactoring the script.
-5. Report severity, file and line, failing arguments or exit status, practical impact, the smallest fix and a reproducible check. Save complete non-sensitive logs locally and summarize relevant diagnostics.
+## Operating Modes
 
-Treat command-runner evaluation as a build automation concern. Use this workflow for the shell actually invoked, including recipe bodies where relevant.
+| Mode | Responsibility |
+| --- | --- |
+| Review | Leave files untouched and use applicable local syntax checks, ShellCheck and configured formatting checks. |
+| Fix | Apply edits only for requested fixes within the affected behavior. |
+| Verification | Exercise behavior only in an isolated fixture after inspecting effects. |
+
+## Workflow
+
+1. Start with the changed script and its entry points, callers and sourced files. Inventory other scripts only for a full audit.
+2. Identify actual interpreters and versions from shebangs, invocations, CI and build runners.
+3. Trace arguments, expansions, pipelines, exit codes and cleanup through both success and failure paths.
+4. Inspect operations on files and services before invoking the script.
+5. Load relevant references according to the task.
+6. Perform checks or requested fixes within the selected operating mode. Use temporary directories and controlled command stubs for destructive or network-dependent paths.
+7. Save complete non-sensitive logs locally and summarize relevant diagnostics.
+
+## Reference Selection
+
+| Reference | Load when |
+| --- | --- |
+| [Shell behavior and portability](references/shell-review.md) | Diagnosing shell semantics, expansions, exit status or portability issues. |
+| [Verification cases](references/verification.md) | Selecting verification commands or testing a fix. |
+
+## Constraints
+
+- Keep supported interpreters, argument semantics, output and exit codes compatible.
+- Contain fixes to the affected expansion, status check or cleanup path.
+- Require a demonstrated need before adding a new runtime dependency or refactoring the script.
+- Treat command-runner evaluation as a build automation concern.
+- Use this workflow for the shell actually invoked, including recipe bodies where relevant.
+
+## Expected Output
+
+For each finding, report:
+
+- Severity and file location.
+- Failing arguments or exit status.
+- Practical impact.
+- Smallest applicable fix.
+- Reproducible verification check.
