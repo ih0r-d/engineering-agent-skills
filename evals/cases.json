@@ -324,5 +324,66 @@
     "avoid_skills": [
       "system-design"
     ]
+  },
+  {
+    "id": "architecture-review-data-ownership",
+    "skill": "architecture-review",
+    "fixture": null,
+    "prompt": "Review an existing order processing architecture where the order service and payment service independently update the same order status in a shared database. Payment retries may execute concurrently. Assess architectural risks without modifying the system.",
+    "expected": [
+      "Identify shared state ownership and concurrency risks.",
+      "Explain affected business invariants and possible failure scenarios.",
+      "Distinguish established architectural concerns from unverified runtime behavior.",
+      "Recommend proportionate mitigations and verification criteria.",
+      "Avoid unauthorized implementation changes."
+    ],
+    "avoid_skills": [
+      "system-design",
+      "refactoring"
+    ]
+  },
+  {
+    "id": "architecture-review-unjustified-migration",
+    "skill": "architecture-review",
+    "fixture": null,
+    "prompt": "Review an existing modular monolith with explicit module boundaries, one deployment, and stable operational behavior. The team proposes migrating to microservices, but no independent scaling or deployment requirements have been established.",
+    "expected": [
+      "Evaluate the existing architecture against actual requirements.",
+      "Avoid treating the modular monolith as an architectural defect.",
+      "Identify evidence needed to justify a migration.",
+      "Explain operational complexity and migration trade-offs.",
+      "Avoid inventing performance or scalability problems."
+    ],
+    "avoid_skills": [
+      "system-design"
+    ]
+  },
+  {
+    "id": "architecture-review-insufficient-evidence",
+    "skill": "architecture-review",
+    "fixture": null,
+    "prompt": "Assess the reliability of an existing distributed system. The only available information is that it contains five services.",
+    "expected": [
+      "Identify missing architecture, dependency, and operational evidence.",
+      "Distinguish potential risks from confirmed findings.",
+      "Avoid inventing failure scenarios as observed incidents.",
+      "Report review limitations and evidence required for further assessment."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-review-near-miss-system-design",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Design a new inventory management system from scratch. Define component boundaries, data ownership, and integration flows. There is no existing implementation.",
+    "expected": [
+      "Use the system design workflow.",
+      "Establish requirements, constraints, and assumptions.",
+      "Propose component boundaries and architectural alternatives.",
+      "Avoid presenting findings about a nonexistent architecture."
+    ],
+    "avoid_skills": [
+      "architecture-review"
+    ]
   }
 ]
