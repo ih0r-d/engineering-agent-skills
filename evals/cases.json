@@ -540,5 +540,42 @@
     "avoid_skills": [
       "bug-fixing"
     ]
+  },
+  {
+    "id": "root-cause-analysis-recurring-timeouts",
+    "skill": "root-cause-analysis",
+    "fixture": null,
+    "prompt": "Analyze recurring timeouts after retry storms. Logs show retries increased queue depth, but the first dependency slowdown is unexplained. Identify causal links and preventive actions.",
+    "expected": [
+      "Separate trigger, mechanism and contributing factors.",
+      "Mark the original slowdown as unknown.",
+      "Tie prevention and verification to supported links."
+    ],
+    "avoid_skills": [
+      "bug-fixing"
+    ]
+  },
+  {
+    "id": "root-cause-analysis-correlation",
+    "skill": "root-cause-analysis",
+    "fixture": null,
+    "prompt": "Errors started after a deployment, but no comparison or trace is available. Establish what causal conclusions can be drawn.",
+    "expected": [
+      "Distinguish chronology from causation.",
+      "Identify alternative explanations and needed evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "root-cause-analysis-near-miss-fix",
+    "skill": "bug-fixing",
+    "fixture": null,
+    "prompt": "Apply the already diagnosed local null handling correction and verify it. No broader causal report is requested.",
+    "expected": [
+      "Use scoped correction and regression verification."
+    ],
+    "avoid_skills": [
+      "root-cause-analysis"
+    ]
   }
 ]
