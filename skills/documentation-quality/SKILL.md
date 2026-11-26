@@ -5,10 +5,50 @@ description: Write, review, or verify READMEs, quick starts, consumer guides, ar
 
 # Documentation Quality
 
-1. Identify the audience, task and supported release or branch. For drift review, start with changed commands, API signatures, defaults or setup and trace them to the affected pages. Inventory the documentation only for a requested audit.
-2. Read [consumer documentation](references/consumer-docs.md) for README, quick start or how-to work, [maintainer documentation](references/technical-docs.md) for architecture and contributing, or [API and examples](references/api-and-examples.md) for contract prose, JavaDoc, docstrings and snippets.
-3. Verify claims against the consuming repository's actual CLI, API, tests and release or CI config. Check local links and rendered anchors with the repository's docs tools when available. Exercise safe commands and snippets with the stated prerequisites and working directory, using an isolated environment. Record claims and links that could only be inspected.
-4. Review mode leaves documents untouched. Draft or fix mode changes the requested material and follows its existing terminology. Verification mode runs applicable checks without rewriting docs. Keep one canonical explanation per contract and add links from other contexts. Use direct task steps for consumers and record trade-offs and invariants where maintainers need them.
-5. Report actionable drift with severity, location, the conflicting behavior or output, smallest correction and verification. Prioritize broken journeys and misleading contracts over stylistic preferences. Keep complete non-sensitive check logs locally.
+## Operating Modes
 
-Keep proposed features and supported behavior distinct. Use the language review workflow for API implementation changes and the release workflow for publication.
+| Mode | Responsibility |
+| --- | --- |
+| Review | Inspect documentation and report findings without editing. |
+| Draft or Fix | Change the requested material and follow its existing terminology. |
+| Verification | Run applicable checks without rewriting documentation. |
+
+## Workflow
+
+1. Identify the audience, task and supported release or branch.
+2. For drift review, start with changed commands, API signatures, defaults or setup and trace them to the affected pages. Inventory the documentation only for a requested audit.
+3. Load relevant references according to the documentation type.
+4. Verify claims against the consuming repository's actual CLI, API, tests and release or CI configuration.
+5. Check local links and rendered anchors with the repository's documentation tools when available.
+6. Exercise safe commands and snippets with the stated prerequisites and working directory, using an isolated environment.
+7. Record claims and links that could only be inspected.
+8. Keep complete non-sensitive check logs locally.
+
+## Reference Selection
+
+| Reference | Load when |
+| --- | --- |
+| [Consumer documentation](references/consumer-docs.md) | Writing or reviewing READMEs, quick starts or how-to guides. |
+| [Maintainer documentation](references/technical-docs.md) | Writing or reviewing architecture and contribution documentation. |
+| [API and examples](references/api-and-examples.md) | Reviewing contract prose, JavaDoc, docstrings or code snippets. |
+
+## Constraints
+
+- Keep one canonical explanation per contract and add links from other contexts.
+- Use direct task steps for consumers.
+- Record trade-offs and invariants where maintainers need them.
+- Prioritize broken user journeys and misleading contracts over stylistic preferences.
+- Keep proposed features and supported behavior distinct.
+- Use the language review workflow for API implementation changes.
+- Use the release workflow for publication.
+
+## Expected Output
+
+For each actionable documentation finding, report:
+
+- Severity and location.
+- Conflicting behavior or output.
+- Smallest applicable correction.
+- Verification result.
+
+Distinguish verified claims from claims that could only be inspected.
