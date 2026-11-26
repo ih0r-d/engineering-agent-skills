@@ -8,6 +8,7 @@ These instructions govern maintenance of this toolkit, including when it is chec
 - Every skill must pass the mandatory Agent Skills specification gate. Use one `skills/<skill-id>/SKILL.md` with a matching frontmatter name and a description keyed to the actual task. Use standard fields and register the skill in one category in `catalog.json`. [Agent Skills specification](https://agentskills.io/specification), [Repository architecture](docs/architecture.md)
 - Keep the entrypoint operational and concise. Link substantial domain guidance directly under `references/` and say when to read it. Use self-contained scripts for repeatable checks where they materially help. Keep consumer policy with the consumer.
 - State review, edit and verification boundaries. Start with the relevant changes, verify tool signals against behavior, and prefer the smallest supported change. Load only relevant references, reuse checks when inputs are unchanged, and summarize useful evidence.
+- Follow the [Skill Authoring Guide](docs/skill-authoring.md). Use the [Skill Template](templates/SKILL.md) as a starting point. Adapt headings, tables, and workflows to the skill's responsibility without introducing non-standard requirements.
 
 ## Maintain installation and verification
 

@@ -10,6 +10,7 @@ Start with the toolkit's maintenance instructions. In the change description, na
 - Keep `SKILL.md` usable on its own for common tasks. Link topic-specific references with a reason to load each one. Reuse relevant evidence and link upstream details for specialist tools. Keep examples and domain rules in the narrowest applicable reference.
 - Give the agent a practical way to confirm each finding. State the relevant input, expected behavior and observed impact. Separate defects and compatibility regressions from preferences, and prefer small changes that preserve intentional behavior and use existing tools.
 - Default to read-only review. Make only explicitly requested changes within the task scope. Keep consumer instructions and build configuration intact unless the user explicitly requests their modification. Protect private code and credentials, and inspect commands for network or write effects before running them.
+- Use the [Skill Authoring Guide](docs/skill-authoring.md) and [Skill Template](templates/SKILL.md) when creating or restructuring skills. Preserve existing behavior during formatting-only changes.
 
 ## Verify changes
 
