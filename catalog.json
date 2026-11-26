@@ -8,7 +8,7 @@
     {
       "id": "software-architecture",
       "name": "Software Architecture",
-      "skills": ["architecture-review", "system-design"]
+      "skills": ["api-design", "architecture-review", "system-design"]
     },
     {
       "id": "bug-fixing-and-reliability",
