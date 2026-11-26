@@ -4,7 +4,7 @@
 
 [![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
 [![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
-[![Skills](https://img.shields.io/badge/skills-9-2563eb)](#skill-catalog)
+[![Skills](https://img.shields.io/badge/skills-10-2563eb)](#skill-catalog)
 [![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
 [![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
 [![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
@@ -39,6 +39,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`python-quality`](skills/python-quality/SKILL.md) | Python typing, import behavior, packaging, exceptions, lifecycle, concurrency, and tests |
 | [`refactoring`](skills/refactoring/SKILL.md) | Scoped structural improvements with a verified behavior baseline |
 | [`shell-quality`](skills/shell-quality/SKILL.md) | POSIX `sh` and Bash correctness, quoting, exit codes, cleanup, and portability |
+| [`system-design`](skills/system-design/SKILL.md) | System boundaries, component responsibilities, data flows, scalability, reliability, and architectural trade-offs |
 | [`build-automation-quality`](skills/build-automation-quality/SKILL.md) | Maven, Gradle, Makefile, and Taskfile correctness, dependency graphs, and reproducibility |
 | [`container-quality`](skills/container-quality/SKILL.md) | Dockerfile and Compose builds, secrets, image and container lifecycle, and runtime behavior |
 | [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
