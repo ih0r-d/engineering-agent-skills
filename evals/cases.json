@@ -159,7 +159,9 @@
       "Show how the baseline and candidate differ, and explain why the existing tests miss the failure.",
       "Recommend applying the cap to matches and adding a sparse-match test. Leave the fixture unchanged and report only executed checks."
     ],
-    "avoid_skills": ["refactoring"]
+    "avoid_skills": [
+      "refactoring"
+    ]
   },
   {
     "id": "code-review-clean-scope",
@@ -206,7 +208,9 @@
       "Treat the request as an authorized Python defect fix and confirm the shared default as the cause.",
       "Make omitted arguments independent while retaining explicit list mutation. Exercise both behaviors."
     ],
-    "avoid_skills": ["code-review"]
+    "avoid_skills": [
+      "code-review"
+    ]
   },
   {
     "id": "software-engineering-feature-request",
@@ -216,7 +220,10 @@
     "expected": [
       "Produce the new standalone pseudocode directly without a toolkit skill."
     ],
-    "avoid_skills": ["code-review", "refactoring"]
+    "avoid_skills": [
+      "code-review",
+      "refactoring"
+    ]
   },
   {
     "id": "refactoring-summary-duplication",
@@ -240,7 +247,9 @@
       "Keep the teammate's proposed behavior changes separate from the authorized edit.",
       "Verify before and after with the existing tests and report the scoped change."
     ],
-    "avoid_skills": ["code-review"]
+    "avoid_skills": [
+      "code-review"
+    ]
   },
   {
     "id": "refactoring-insufficient-evidence",
@@ -264,6 +273,56 @@
       "Check that separate omitted-argument calls get separate lists and that explicit list mutation is preserved.",
       "Describe the behavioral fix and keep unrelated structure untouched."
     ],
-    "avoid_skills": ["refactoring"]
+    "avoid_skills": [
+      "refactoring"
+    ]
+  },
+  {
+    "id": "system-design-order-processing",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Design an order processing system for a small online store. It must accept orders, reserve inventory, process payments, and recover from payment failures. Traffic estimates are unavailable. Provide a design proposal without implementing it.",
+    "expected": [
+      "Identify requirements, assumptions, and system boundaries.",
+      "Define component responsibilities, data ownership, and order processing flows.",
+      "Evaluate payment failures, consistency, duplicate processing, and recovery.",
+      "Justify architectural complexity without inventing workload measurements.",
+      "Provide alternatives, trade-offs, and validation criteria without editing files."
+    ],
+    "avoid_skills": [
+      "code-review",
+      "refactoring"
+    ]
+  },
+  {
+    "id": "system-design-notification-service",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Design an internal notification system supporting email and webhook delivery. Compare synchronous and asynchronous approaches, considering retries and duplicate delivery.",
+    "expected": [
+      "Identify delivery requirements and communication alternatives.",
+      "Explain component boundaries and data flows.",
+      "Address retry safety, duplicate delivery, and dependency failures.",
+      "Compare alternatives against stated requirements.",
+      "Distinguish confirmed requirements from assumptions."
+    ],
+    "avoid_skills": [
+      "refactoring"
+    ]
+  },
+  {
+    "id": "system-design-near-miss-code-review",
+    "skill": "code-review",
+    "fixture": "code-review",
+    "prompt": "Review the proposed change from before.py to after.py for correctness regressions. Do not redesign the system or modify files.",
+    "expected": [
+      "Use the scoped code review workflow.",
+      "Identify the selection regression from the available evidence.",
+      "Report actionable findings without proposing an unrelated system redesign.",
+      "Leave files unchanged."
+    ],
+    "avoid_skills": [
+      "system-design"
+    ]
   }
 ]
