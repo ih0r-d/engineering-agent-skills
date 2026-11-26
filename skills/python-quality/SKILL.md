@@ -5,12 +5,45 @@ description: Review Python code, imports, typing, packaging, and tests for runti
 
 # Python Quality
 
-Review mode leaves repository files untouched. Fix mode changes the affected behavior and its tests when requested. Verification mode uses existing commands and reports their actual coverage. Follow local project instructions for dependencies and configuration.
+## Operating Modes
 
-1. Start with the requested diff or module and its callers and tests. For a full audit, inventory packages, entry points and test environments. Determine the supported Python versions from packaging and CI and identify how the project selects its interpreter, environment and dependency groups.
-2. Trace the actual import and call paths, including installed-package behavior where relevant. Check failure, cleanup, cancellation, mutation and compatibility at the boundaries the change touches.
-3. Use [runtime and API review](references/quality-rubric.md) for language, typing and lifecycle, and [packaging and checks](references/packaging-and-checks.md) for installed artifacts, analyzer configuration and verification. Read the relevant reference as the task requires.
-4. Prefer existing Ruff, Pyright or mypy settings and targeted pytest runs. Verify analyzer findings against runtime behavior and supported versions. Keep full non-sensitive logs locally and rerun only when inputs or check conditions change.
-5. Give each finding a severity, file and line, failing input or caller, effect, small fix and verification. Identify gaps in the environment or coverage. Treat formatting as a configured check or an explicit formatting task.
+| Mode | Responsibility |
+| --- | --- |
+| Review | Inspect and report findings without modifying repository files. |
+| Fix | Change the affected behavior and its tests when requested. |
+| Verification | Use existing commands and report their actual coverage. |
 
-Keep public signatures, imports and exception behavior stable during fixes. Prefer direct control flow and existing types over new frameworks, protocols or wrappers introduced for a single diagnostic.
+## Workflow
+
+1. Start with the requested diff or module and its callers and tests. For a full audit, inventory packages, entry points and test environments.
+2. Determine the supported Python versions from packaging and CI. Identify how the project selects its interpreter, environment and dependency groups.
+3. Trace the actual import and call paths, including installed-package behavior where relevant. Check failure, cleanup, cancellation, mutation and compatibility at the boundaries the change touches.
+4. Load relevant references according to the task.
+5. Prefer existing Ruff, Pyright or mypy settings and targeted pytest runs. Verify analyzer findings against runtime behavior and supported versions.
+6. Keep full non-sensitive logs locally and rerun only when inputs or check conditions change.
+
+## Reference Selection
+
+| Reference | Load when |
+| --- | --- |
+| [Runtime and API review](references/quality-rubric.md) | Reviewing language semantics, typing or lifecycle behavior. |
+| [Packaging and checks](references/packaging-and-checks.md) | Reviewing installed artifacts, analyzer configuration or verification procedures. |
+
+## Constraints
+
+- Follow local project instructions for dependencies and configuration.
+- Keep public signatures, imports and exception behavior stable during fixes.
+- Prefer direct control flow and existing types over new frameworks, protocols or wrappers introduced for a single diagnostic.
+- Treat formatting as a configured check or an explicit formatting task.
+
+## Expected Output
+
+For each finding, report:
+
+- Severity and file location.
+- Failing input or caller.
+- Observed or established effect.
+- Smallest applicable fix.
+- Verification.
+
+Identify gaps in the environment or coverage.
