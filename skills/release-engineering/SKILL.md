@@ -5,10 +5,58 @@ description: Audit release readiness or prepare versions, changelogs, release no
 
 # Release Engineering
 
-1. Default to review or preparation. Identify the intended commit, last shipped release for the channel, version policy, distribution targets and existing CI release workflow. Check local evidence first and record missing or stale release information.
-2. Read [readiness and authorization](references/release-checklist.md) for versioning, release notes, gates and rollback. Read [artifact verification](references/artifact-verification.md) for the relevant Maven, Python or container channel.
-3. In review mode, inspect changes and gates without edits. In prepare mode, draft release notes, version changes or workflow fixes only as requested. In verification mode, inspect existing artifacts and run safe local checks after evaluating build hooks and CI profiles. Use existing release automation and scoped fixes.
-4. Require explicit authorization for the specific tag, push, publishing destination, secret rotation or production release trigger. Permission to prepare or verify gives no authority for those actions. Before authorized execution, confirm the commit, version, channel, approved effects and existing pipeline. Verify the published identity before reporting success and inspect for partial publication before retrying.
-5. Report readiness and blockers with severity, source location, affected artifact or consumer, mitigation and verification. Record the commit, baseline, artifacts, gate outcomes and unverified steps. Store complete non-sensitive logs locally.
+## Operating Modes
 
-Avoid publishing experiments and competing release pipelines. Honor distribution-specific immutability and preserve a viable recovery path.
+Default to review or preparation.
+
+| Mode | Responsibility |
+| --- | --- |
+| Review | Inspect changes and release gates without edits. |
+| Preparation | Draft release notes, version changes or workflow fixes only as requested. |
+| Verification | Inspect existing artifacts and run safe local checks after evaluating build hooks and CI profiles. |
+
+## Workflow
+
+1. Identify the intended commit, last shipped release for the channel, version policy, distribution targets and existing CI release workflow.
+2. Check local evidence first and record missing or stale release information.
+3. Load relevant references according to the release task and distribution channel.
+4. Inspect changes, artifacts and release gates within the selected operating mode.
+5. Use existing release automation and scoped fixes.
+6. Before authorized release execution, confirm the commit, version, channel, approved effects and existing pipeline.
+7. Verify the published identity before reporting success and inspect for partial publication before retrying.
+8. Store complete non-sensitive logs locally.
+
+## Reference Selection
+
+| Reference | Load when |
+| --- | --- |
+| [Readiness and authorization](references/release-checklist.md) | Preparing versions, release notes, gates or rollback plans. |
+| [Artifact verification](references/artifact-verification.md) | Verifying artifacts for the relevant Maven, Python or container channel. |
+
+## Authorization
+
+**Permission to prepare or verify does not authorize release execution.**
+
+Require explicit authorization for the specific operation:
+
+- Creating a release tag.
+- Pushing changes or tags.
+- Publishing to a distribution destination.
+- Rotating secrets.
+- Triggering a production release.
+
+## Constraints
+
+- Avoid publishing experiments and competing release pipelines.
+- Honor distribution-specific immutability.
+- Preserve a viable recovery path.
+
+## Expected Output
+
+Report release readiness and blockers, including:
+
+- Severity and source location.
+- Affected artifact or consumer.
+- Mitigation and verification.
+
+Record the commit, baseline, artifacts, gate outcomes and unverified steps.
