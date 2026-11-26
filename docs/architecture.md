@@ -11,6 +11,7 @@ The repository holds reusable engineering workflows for coding agents. A skill's
 | `tests/` | Deterministic installer, catalog, resource, and specification regressions |
 | `evals/` | Synthetic evaluation cases, fixtures, and the manual live evaluation protocol |
 | `docs/` | Architecture and compatibility guidance |
+| `templates/` | Reusable authoring templates excluded from skill discovery and installation |
 | `.github/` and `Taskfile.yml` | Hosted and local quality gates |
 
 ## Categories
@@ -30,6 +31,8 @@ The catalog registers these categories. Each skill belongs to one primary catego
 Each `SKILL.md` starts with YAML frontmatter containing a `name` that matches the parent directory and a `description` that tells agents what the workflow does and when to use it. Optional standard fields are `license`, `compatibility`, `metadata`, and experimental `allowed-tools`. Agent support for experimental fields varies. Metadata keys and values are YAML strings. Quote values such as `true` or `1.0` when they represent text. [Agent Skills specification](https://agentskills.io/specification)
 
 Keep the main instructions concise and usable for common tasks. The specification recommends keeping the entrypoint under 500 lines and instructions below 5,000 tokens. Link detailed guidance and other resources by portable paths relative to the skill. This repository asks authors to say when to read each substantial reference, to prefer one recurring engineering task per skill, and to add positive and near-miss routing cases. Existing optional client metadata, such as Java's Codex UI metadata, stays outside the portable frontmatter. [Contribution standards](../CONTRIBUTING.md), [Specification recommendations](https://agentskills.io/specification#progressive-disclosure)
+
+Follow the [Skill Authoring Guide](skill-authoring.md) for recommended Markdown conventions and use the [Skill Template](../templates/SKILL.md) as a starting point. These conventions complement the official specification without imposing additional format requirements.
 
 ## Validation and installation boundaries
 
