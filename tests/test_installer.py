@@ -42,7 +42,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr)
 
     def test_general_engineering_skills_install_and_uninstall_for_both_agents(self) -> None:
-        names = ("code-review",)
+        names = ("code-review", "refactoring")
         listing = run_cli("list")
         self.assertEqual(0, listing.returncode, listing.stderr)
         self.assertTrue(set(names) <= set(listing.stdout.splitlines()))

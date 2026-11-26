@@ -127,3 +127,8 @@ for items, prefix, limit in product(
 """
         result = run_fixture("code-review", sys.executable, "-B", "-c", program)
         self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_refactoring_fixture_has_public_behavior_baseline(self) -> None:
+        result = run_fixture("refactoring", sys.executable, "-B", "-m", "unittest", "-v",
+                             "test_summary")
+        self.assertEqual(0, result.returncode, result.stderr)

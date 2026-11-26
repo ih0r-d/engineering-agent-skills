@@ -4,7 +4,7 @@
 
 ## Deterministic checks
 
-Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every skill has an in-scope case and a named near-miss. It exercises the Python, shell, Make, documentation, and code review fixtures. The review checks show how passing tests can miss a regression and compare a clean candidate with the baseline. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
+Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every skill has an in-scope case and a named near-miss. It exercises the Python, shell, Make, documentation, code review, and refactoring fixtures. The review checks show how passing tests can miss a regression and compare a clean candidate with the baseline. The refactoring fixture tests establish return values and error behavior for the public functions. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
 
 Additional local checks are optional.
 
