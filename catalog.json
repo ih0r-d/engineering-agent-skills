@@ -3,7 +3,7 @@
     {
       "id": "software-engineering",
       "name": "Software Engineering",
-      "skills": ["java-quality", "python-quality", "shell-quality"]
+      "skills": ["code-review", "java-quality", "python-quality", "shell-quality"]
     },
     {
       "id": "software-architecture",

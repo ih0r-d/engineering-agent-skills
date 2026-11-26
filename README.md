@@ -4,7 +4,7 @@
 
 [![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
 [![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
-[![Skills](https://img.shields.io/badge/skills-7-2563eb)](#skill-catalog)
+[![Skills](https://img.shields.io/badge/skills-8-2563eb)](#skill-catalog)
 [![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
 [![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
 [![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
@@ -34,6 +34,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 
 | Skill | Engineering focus |
 | --- | --- |
+| [`code-review`](skills/code-review/SKILL.md) | Findings-first review of diffs, regressions, and missing verification |
 | [`java-quality`](skills/java-quality/SKILL.md) | Java API compatibility, concurrency, resource lifecycle, generated code, classloaders, proxies, and static-analysis findings |
 | [`python-quality`](skills/python-quality/SKILL.md) | Python typing, import behavior, packaging, exceptions, lifecycle, concurrency, and tests |
 | [`shell-quality`](skills/shell-quality/SKILL.md) | POSIX `sh` and Bash correctness, quoting, exit codes, cleanup, and portability |
@@ -42,7 +43,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
 | [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
 
-Skills are independently installable. Detailed guidance lives in each skill's `references/` directory and is loaded only when relevant. [Engineering categories](docs/architecture.md#categories)
+Skills are independently installable. Load optional `references/` only when relevant to the task. [Engineering categories](docs/architecture.md#categories), [Software Engineering skill boundaries](docs/software-engineering.md)
 
 ## Installation
 
