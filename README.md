@@ -4,7 +4,7 @@
 
 [![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
 [![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
-[![Skills](https://img.shields.io/badge/skills-16-2563eb)](#skill-catalog)
+[![Skills](https://img.shields.io/badge/skills-17-2563eb)](#skill-catalog)
 [![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
 [![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
 [![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
@@ -45,6 +45,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
 | [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
 | [`architecture-review`](skills/architecture-review/SKILL.md) | Architecture assessment, component boundaries, coupling, quality attributes, and architectural risk identification |
+| [`performance-analysis`](skills/performance-analysis/SKILL.md) | Performance baselines, profiling, bottleneck evidence, and benchmark design |
 | [`root-cause-analysis`](skills/root-cause-analysis/SKILL.md) | Causal chains, contributing factors, evidence quality, and recurrence prevention |
 | [`bug-fixing`](skills/bug-fixing/SKILL.md) | Scoped defect correction, regression tests, and compatibility verification |
 | [`bug-investigation`](skills/bug-investigation/SKILL.md) | Defect reproduction, diagnostic evidence, hypothesis testing, and fault isolation |
