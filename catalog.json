@@ -13,7 +13,7 @@
     {
       "id": "bug-fixing-and-reliability",
       "name": "Bug Fixing and Reliability",
-      "skills": ["bug-fixing", "bug-investigation", "performance-analysis", "root-cause-analysis"]
+      "skills": ["bug-fixing", "bug-investigation", "incident-analysis", "performance-analysis", "root-cause-analysis"]
     },
     {
       "id": "testing-and-quality-assurance",
