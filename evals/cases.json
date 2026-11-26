@@ -503,5 +503,42 @@
     "avoid_skills": [
       "bug-investigation"
     ]
+  },
+  {
+    "id": "bug-fixing-duplicate-processing",
+    "skill": "bug-fixing",
+    "fixture": null,
+    "prompt": "Fix a confirmed defect where a retry creates duplicate records. Preserve successful single-request behavior and add a regression check.",
+    "expected": [
+      "Confirm the contract and isolate the supported cause.",
+      "Propose or apply a minimal correction within available source and authorization.",
+      "Verify duplicate and normal cases; report missing source if unavailable."
+    ],
+    "avoid_skills": [
+      "refactoring"
+    ]
+  },
+  {
+    "id": "bug-fixing-uncertain-contract",
+    "skill": "bug-fixing",
+    "fixture": null,
+    "prompt": "Fix a rounding issue in a billing function, but the intended rounding rules and implementation are unavailable.",
+    "expected": [
+      "Identify missing contract and source.",
+      "Avoid speculative edits or invented verification."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "bug-fixing-near-miss-investigation",
+    "skill": "bug-investigation",
+    "fixture": null,
+    "prompt": "Investigate why a parser sometimes fails. Gather evidence only; do not change source.",
+    "expected": [
+      "Use diagnostic workflow and preserve files."
+    ],
+    "avoid_skills": [
+      "bug-fixing"
+    ]
   }
 ]
