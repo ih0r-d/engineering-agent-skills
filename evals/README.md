@@ -4,7 +4,7 @@
 
 ## Deterministic checks
 
-Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every Skill has an in-scope case and a named near-miss. It reproduces the Python default-state leak, shell argument splitting, Make recipe directory behavior when Make is available, and the actual CLI outputs for the documentation example. These tests establish fixture ground truth. Routing, safety decisions, and reference use are evaluated in live sessions.
+Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every skill has an in-scope case and a named near-miss. It exercises the Python, shell, Make, documentation, and code review fixtures. The review checks show how passing tests can miss a regression and compare a clean candidate with the baseline. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
 
 Additional local checks are optional.
 
@@ -16,7 +16,7 @@ Additional local checks are optional.
 
 1. Pick the changed Skill's positive case and the cases that name it under `avoid_skills`. Include the unrelated-request case for changes to descriptions or discovery. A null `skill` expects no toolkit Skill. A null `fixture` means the prompt can stand on its own.
 2. Create a fresh disposable project per run and copy only the case's fixture. Keep `cases.json` and the scoring criteria outside the project. Use synthetic inputs and keep publishing, deployment, credentials, and real registries unavailable.
-3. Install all seven Skills from the revision under test. Check discovery from the project root, then send the prompt without a Skill name in a fresh session. Record the selected Skill and any named Skill that should have been avoided. For positive cases, run a separate fresh session with explicit invocation to measure whether the agent follows the Skill.
+3. Install all skills from the revision under test. Check discovery from the project root, then send the prompt without a skill name in a fresh session. Record the primary skill, any observable supporting skills, and any named skill that should have been avoided. For positive cases, run a separate fresh session with explicit invocation to measure whether the agent follows the skill.
 4. Grade the evidence, proposed or actual change scope, and the verification result. Compare the tree before and after read-only runs and mark unauthorized edits or external actions as failures. Record loaded reference paths and token counts when the client exposes them. Check whether reference reads served the task and flag unrelated reads. Use `UNOBSERVED` for client signals you cannot inspect.
 5. Repeat against a known baseline revision with the same prompts, fixtures, client, model, permissions, and tool access. Change only the installed Skill revision. Use fresh sessions for each run, compare the per-case outcomes, and repeat inconsistent results before calling a regression.
 

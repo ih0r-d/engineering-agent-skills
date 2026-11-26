@@ -94,3 +94,36 @@ print(first is second, first, explicit)
         self.assertEqual(2, stale_example.returncode)
         self.assertIn("--json", stale_example.stderr)
         self.assertEqual({"status": "ok"}, json.loads(corrected.stdout))
+
+    def test_code_review_fixture_passes_existing_tests_but_underfills_sparse_matches(self) -> None:
+        existing = run_fixture("code-review", sys.executable, "-B", "-m", "unittest", "-v",
+                               "test_first_matches")
+        self.assertEqual(0, existing.returncode, existing.stderr)
+
+        program = """
+import after
+import before
+
+items = ['bronze', 'amber', 'azure']
+print(before.first_matches(items, 'a', 2))
+print(after.first_matches(items, 'a', 2))
+"""
+        result = run_fixture("code-review", sys.executable, "-B", "-c", program)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual("['amber', 'azure']\n['amber']\n", result.stdout)
+
+    def test_clean_review_fixture_preserves_observable_results(self) -> None:
+        program = """
+from itertools import product
+from before import first_matches as baseline
+from clean import first_matches as candidate
+
+for items, prefix, limit in product(
+    ([], ['bronze', 'amber', 'azure'], ['amber', 'amber', 'bronze']),
+    ('a', 'b', '', 'z'),
+    (-1, 0, 1, 2, 5),
+):
+    assert candidate(items, prefix, limit) == baseline(items, prefix, limit), (items, prefix, limit)
+"""
+        result = run_fixture("code-review", sys.executable, "-B", "-c", program)
+        self.assertEqual(0, result.returncode, result.stderr)

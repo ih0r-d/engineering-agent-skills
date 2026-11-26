@@ -41,6 +41,27 @@ class InstallerTests(unittest.TestCase):
         completed = run_cli("validate")
         self.assertEqual(0, completed.returncode, completed.stderr)
 
+    def test_general_engineering_skills_install_and_uninstall_for_both_agents(self) -> None:
+        names = ("code-review",)
+        listing = run_cli("list")
+        self.assertEqual(0, listing.returncode, listing.stderr)
+        self.assertTrue(set(names) <= set(listing.stdout.splitlines()))
+        args = ("--agent", "all", "--target", str(self.project), "--skill", ",".join(names))
+        for mode in ("symlink", "copy"):
+            with self.subTest(mode=mode):
+                installed = run_cli("install", *args, "--mode", mode)
+                self.assertEqual(0, installed.returncode, installed.stderr)
+                targets = [self.project / path / name for path in (".agents/skills", ".claude/skills")
+                           for name in names]
+                for target in targets:
+                    manifest = target / "SKILL.md"
+                    self.assertEqual(mode == "symlink", target.is_symlink())
+                    self.assertEqual((ROOT / "skills" / target.name / "SKILL.md").read_bytes(),
+                                     manifest.read_bytes())
+                removed = run_cli("uninstall", *args)
+                self.assertEqual(0, removed.returncode, removed.stderr)
+                self.assertFalse(any(os.path.lexists(target) for target in targets))
+
     def test_legacy_python_entrypoint_matches_current_cli(self) -> None:
         legacy = [sys.executable, str(ROOT / "scripts/skills.py")]
         for args, status in (
