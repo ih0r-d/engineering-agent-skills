@@ -1,6 +1,6 @@
 # Authoring quality review
 
-Use this checklist when making scope, disclosure, size, script, or evaluation decisions. The repository's [canonical standard](../../../docs/skill-authoring.md) distinguishes format requirements from local recommendations.
+Use this checklist when making scope, disclosure, size, script, or evaluation decisions. When maintaining this toolkit, the repository's `docs/skill-authoring.md` distinguishes its conventions from official format requirements.
 
 ## Review the skill
 

@@ -298,23 +298,44 @@ def inline_destinations(body: str) -> Iterator[str]:
                 yield angled or re.sub(r"\\([()])", r"\1", inline)
 
 
-def resource_issues(directory: Path, body: str) -> list[str]:
+def markdown_anchor_ids(document: Path) -> set[str]:
+    """Collect common GitHub-style heading slugs and explicit HTML IDs."""
+    anchors = set(re.findall(r"\bid=[\"']([^\"']+)[\"']", document.read_text(encoding="utf-8")))
+    counts: dict[str, int] = {}
+    for heading in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", document.read_text(encoding="utf-8"), re.M):
+        slug = re.sub(r"[^\w -]", "", heading.lower()).replace(" ", "-")
+        count = counts.get(slug, 0)
+        anchors.add(slug if count == 0 else f"{slug}-{count}")
+        counts[slug] = count + 1
+    return anchors
+
+
+def resource_issues(directory: Path, source: Path, body: str) -> list[str]:
     root = directory.resolve()
     issues = set()
     for link in inline_destinations(body):
         url = urlsplit(link)
         path = unquote(url.path)
-        if url.scheme == "file" or (PureWindowsPath(link).drive and not url.netloc):
+        if url.scheme in ("http", "https"):
+            if not url.netloc:
+                issues.add(f"Invalid external URL: {link}")
+        elif url.scheme or url.netloc or (PureWindowsPath(link).drive and not url.netloc):
             issues.add(f"Expected a portable relative resource path: {link}")
-        elif not url.scheme and not url.netloc and path:
+        elif path or url.fragment:
             if path.startswith("/") or "\\" in path or PureWindowsPath(path).drive:
                 issues.add(f"Expected a portable relative resource path: {link}")
                 continue
-            resource = root / path
+            resource = source.parent / path if path else source
             if not resource.resolve().is_relative_to(root):
                 issues.add(f"Resource path leaves the skill: {link}")
             elif not resource.exists():
                 issues.add(f"Missing resource: {link}")
+            elif url.fragment and resource.suffix.lower() == ".md":
+                try:
+                    if unquote(url.fragment) not in markdown_anchor_ids(resource):
+                        issues.add(f"Missing document anchor: {link}")
+                except (OSError, UnicodeError):
+                    issues.add(f"Unreadable Markdown resource: {link}")
     return sorted(issues)
 
 
@@ -330,7 +351,12 @@ def validate_skill(directory: Path) -> list[str]:
         _, body = split_manifest(manifest.read_text(encoding="utf-8"))
         for _ in tree_entries(directory):
             pass
-        return [f"{name}: {issue}" for issue in resource_issues(directory, body)]
+        issues = resource_issues(directory, manifest, body)
+        for document in sorted(directory.rglob("*.md")):
+            if document == manifest or document.is_symlink():
+                continue
+            issues.extend(resource_issues(directory, document, document.read_text(encoding="utf-8")))
+        return [f"{name}: {issue}" for issue in sorted(set(issues))]
     except (SkillError, OSError, RuntimeError, ValueError) as error:
         return [f"{name}: {error}"]
 

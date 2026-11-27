@@ -39,6 +39,27 @@ class SkillValidationTests(unittest.TestCase):
                          "Read [the rules](references/rules.md#check).\n")
         self.assertEqual([], skills.validate_skill(self.directory))
 
+    def test_validates_links_and_anchors_in_bundled_references(self) -> None:
+        reference = self.directory / "references/rules.md"
+        reference.parent.mkdir()
+        reference.write_text("# Running checks\n\nSee [entrypoint](../SKILL.md#instructions).\n", encoding="utf-8")
+        self.write_skill(body="# Instructions\n\nRead [the rules](references/rules.md#running-checks).\n")
+        self.assertEqual([], skills.validate_skill(self.directory))
+
+        reference.write_text("[Missing](missing.md#unknown)\n", encoding="utf-8")
+        issues = skills.validate_skill(self.directory)
+        self.assertTrue(any("Missing resource: missing.md" in issue for issue in issues), issues)
+        self.assertTrue(any("Missing document anchor" in issue for issue in issues), issues)
+
+    def test_rejects_reference_escape_and_invalid_external_url(self) -> None:
+        reference = self.directory / "references/rules.md"
+        reference.parent.mkdir()
+        reference.write_text("[Escape](../../../outside.md) [Bad](https:///missing-host)\n", encoding="utf-8")
+        self.write_skill(body="Read [rules](references/rules.md).\n")
+        issues = skills.validate_skill(self.directory)
+        self.assertTrue(any("Resource path leaves the skill" in issue for issue in issues), issues)
+        self.assertTrue(any("Invalid external URL" in issue for issue in issues), issues)
+
     def test_rejects_missing_resources_and_allows_unlinked_resources(self) -> None:
         reference = self.directory / "references/unlinked.md"
         reference.parent.mkdir()
