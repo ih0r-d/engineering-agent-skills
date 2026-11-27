@@ -35,5 +35,19 @@
       "Compile and run Names with a suitable local JDK and report the command and result, or report what prevented the check."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "java-quality-persistence-n-plus-one",
+    "skill": "java-quality",
+    "fixture": null,
+    "prompt": "A JPA endpoint returns 30 records, then performs one query per record. Find the likely fetch-boundary issue and propose a verification that preserves paging.",
+    "expected": [
+      "Inspect actual SQL and associations at the endpoint boundary.",
+      "Choose a use-case fetch plan and account for row multiplication and paging semantics.",
+      "Keep repository/build configuration changes out of scope unless explicitly requested."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
   }
 ]

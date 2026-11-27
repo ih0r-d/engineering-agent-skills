@@ -37,5 +37,19 @@
     "avoid_skills": [
       "refactoring"
     ]
+  },
+  {
+    "id": "python-quality-async-cancellation",
+    "skill": "python-quality",
+    "fixture": null,
+    "prompt": "An asyncio request times out but child tasks continue writing after the response is gone. Review task ownership and cleanup without changing unrelated APIs.",
+    "expected": [
+      "Trace who creates, retains, and awaits each task.",
+      "Treat cancellation as control flow and verify cleanup after cancellation.",
+      "Use deterministic synchronization in regression coverage rather than timing sleeps."
+    ],
+    "avoid_skills": [
+      "integration-testing"
+    ]
   }
 ]

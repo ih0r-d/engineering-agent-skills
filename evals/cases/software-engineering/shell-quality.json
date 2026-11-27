@@ -10,5 +10,19 @@
       "Avoid adding Bash arrays or changing the interpreter."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "shell-quality-trap-status",
+    "skill": "shell-quality",
+    "fixture": null,
+    "prompt": "A shell command fails, the EXIT trap removes temporary files, and CI reports success. Diagnose status propagation and propose a safe fixture test.",
+    "expected": [
+      "Check whether cleanup overwrites the original exit status.",
+      "Verify only owned temporary paths are removed on success and failure.",
+      "Exercise controlled failure and assert the caller receives a nonzero status."
+    ],
+    "avoid_skills": [
+      "build-automation-quality"
+    ]
   }
 ]
