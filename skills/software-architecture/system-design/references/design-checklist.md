@@ -54,6 +54,19 @@ These approaches are not mutually exclusive. Select them according to requiremen
 
 Apply only mechanisms justified by the identified failure scenarios.
 
+### Distributed consistency choices
+
+- Keep a modular monolith when one deployment and transactional boundary meet ownership and scaling needs. A service boundary adds network failure, deployment coordination, observability, and data consistency work; independent deployment or ownership must justify that cost.
+- Identify the owner of each invariant and authoritative record. A bounded context is useful when domain language, rules, and change ownership actually differ; drawing a service boundary around every entity is not a design method.
+- When a database update and message publication must stay consistent, explicitly address the dual-write failure window. A transactional outbox can atomically record the state change and event for later delivery, but adds relay, duplicate delivery, ordering, retention, and operational work.
+- Assume an at-least-once delivery path can redeliver unless the contract proves otherwise. Make consumer effects idempotent using a stable event/operation identity and durable deduplication where required; do not assume a retry is safe merely because the request timed out.
+- Use bounded retries with backoff only for transient failures and idempotent operations. Coordinate timeout budgets across layers and avoid retry multiplication that overloads a failing dependency.
+- Evolve schemas and APIs so old and new consumers can coexist for the rollout window. Verify expand-and-contract steps and compatibility against deployed consumers before removing old fields or data.
+
+These patterns are options for specific consistency and failure requirements, not default prerequisites for distributed systems.
+
+Further reading: [AWS transactional outbox pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html).
+
 ## Security
 
 - Identify trust boundaries.

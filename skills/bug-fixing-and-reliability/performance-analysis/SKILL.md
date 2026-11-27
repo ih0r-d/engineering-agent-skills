@@ -19,6 +19,7 @@ description: Analyze software performance using measurements, profiling, workloa
 | Reference | Load when |
 | --- | --- |
 | [Detailed checklist](references/measurement-checklist.md) | Additional guidance is needed for performance baselines, profiling, bottleneck evidence, and benchmark design. |
+| [Observability and SLOs](references/observability-and-slos.md) | Selecting service health indicators, reviewing alerting, or interpreting SLI/SLO and error-budget evidence. |
 
 ## Constraints
 
