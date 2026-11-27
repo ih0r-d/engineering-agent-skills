@@ -652,5 +652,40 @@
     "avoid_skills": [
       "incident-analysis"
     ]
+  },
+  {
+    "id": "test-strategy-payment-plan",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Plan tests for a checkout flow with payment retries and inventory reservation. No implementation is requested.",
+    "expected": [
+      "Prioritize duplicate charges and inventory consistency.",
+      "Map risks to test levels and define observable acceptance criteria.",
+      "Leave files unchanged."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "test-strategy-coverage-evidence",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Our suite reports 90 percent line coverage but no failure-path tests. Define a test strategy.",
+    "expected": [
+      "Distinguish line coverage from behavioral coverage.",
+      "Prioritize failure paths and define verification gates without inventing measurements."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "test-strategy-near-miss-system-design",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Design a new order system with component boundaries and data ownership. Test planning is outside scope.",
+    "expected": [
+      "Provide an architectural proposal rather than a test plan."
+    ],
+    "avoid_skills": [
+      "test-strategy"
+    ]
   }
 ]
