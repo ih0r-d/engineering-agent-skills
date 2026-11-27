@@ -49,5 +49,19 @@
     "avoid_skills": [
       "performance-analysis"
     ]
+  },
+  {
+    "id": "java-quality-native-image-metadata",
+    "skill": "java-quality",
+    "fixture": null,
+    "prompt": "A service works on the JVM but fails in GraalVM Native Image when it loads a plugin-selected class and a bundled schema. Diagnose likely reachability gaps and outline verification without changing the build.",
+    "expected": [
+      "Trace runtime-selected classes and resources to their reflection and resource reachability requirements.",
+      "Treat tracing-agent output as evidence from exercised paths rather than proof of complete metadata.",
+      "Verify behavior in the native executable and check class initialization timing for build-environment state."
+    ],
+    "avoid_skills": [
+      "build-automation-quality"
+    ]
   }
 ]
