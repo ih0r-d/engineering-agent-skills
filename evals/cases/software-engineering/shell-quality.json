@@ -24,5 +24,19 @@
     "avoid_skills": [
       "build-automation-quality"
     ]
+  },
+  {
+    "id": "shell-quality-posix-process-substitution",
+    "skill": "shell-quality",
+    "fixture": null,
+    "prompt": "A script is invoked with sh but contains Bash process substitution and pipefail. Review portability and propose a minimal compatible correction without changing the required interpreter.",
+    "expected": [
+      "Identify process substitution and pipefail as Bash-specific rather than portable POSIX sh behavior.",
+      "Check the actual supported interpreter and avoid assuming macOS system Bash matches a newer developer Bash.",
+      "Preserve producer failure status using a construct supported by the required shell and test arguments containing whitespace."
+    ],
+    "avoid_skills": [
+      "build-automation-quality"
+    ]
   }
 ]

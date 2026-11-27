@@ -63,5 +63,19 @@
     "avoid_skills": [
       "build-automation-quality"
     ]
+  },
+  {
+    "id": "java-quality-quarkus-event-loop-blocking",
+    "skill": "java-quality",
+    "fixture": null,
+    "prompt": "A Quarkus REST handler uses a synchronous database client from an event-loop request path. Review the risk and verification approach without changing the execution model yet.",
+    "expected": [
+      "Use the Quarkus dependency and endpoint annotations/configuration to confirm the execution thread and version-specific dispatch behavior.",
+      "Explain why blocking work on an event loop can delay unrelated requests and choose the supported blocking boundary or async client based on the actual call.",
+      "Verify through the real Quarkus runtime with bounded representative concurrency; do not infer safety from a unit test alone."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
   }
 ]
