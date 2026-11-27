@@ -95,5 +95,19 @@
     "avoid_skills": [
       "requirements-analysis"
     ]
+  },
+  {
+    "id": "system-design-dual-write-outbox-tradeoffs",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "A service commits an order and then publishes an event; intermittent broker errors leave orders invisible downstream. Assess consistency options without assuming a microservice split.",
+    "expected": [
+      "Identify the database/message dual-write failure window and the invariant that must hold.",
+      "Consider an outbox or another justified transaction mechanism, including relay operations, duplicate delivery, ordering, and idempotent consumers.",
+      "Compare with a simpler in-process or modular-monolith option against ownership and failure requirements; do not prescribe distributed services by default."
+    ],
+    "avoid_skills": [
+      "api-design"
+    ]
   }
 ]
