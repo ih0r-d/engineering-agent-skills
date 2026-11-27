@@ -33,7 +33,7 @@
     {
       "id": "ai-engineering",
       "name": "AI Engineering",
-      "skills": ["prompt-engineering", "skill-authoring", "skill-evaluation"]
+      "skills": ["context-engineering", "prompt-engineering", "skill-authoring", "skill-evaluation"]
     }
   ]
 }
