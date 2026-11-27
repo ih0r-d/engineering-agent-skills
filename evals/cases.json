@@ -862,5 +862,39 @@
     "avoid_skills": [
       "git-workflow"
     ]
+  },
+  {
+    "id": "deployment-migration-rollback",
+    "skill": "deployment",
+    "fixture": null,
+    "prompt": "Plan a rolling deployment with a destructive database migration and old instances still running. Do not deploy.",
+    "expected": [
+      "Identify mixed-version incompatibility and unsafe rollback.",
+      "Propose staged compatible migration and verification gates."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "deployment-health-gates",
+    "skill": "deployment",
+    "fixture": null,
+    "prompt": "Plan a canary rollout for a new image digest with no baseline metrics available.",
+    "expected": [
+      "Define artifact checks, observation signals and stop conditions.",
+      "Do not invent metrics or execute deployment."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "deployment-near-miss",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Review artifact signing and publication readiness for a library. No runtime rollout is involved.",
+    "expected": [
+      "Use release engineering rather than deployment planning."
+    ],
+    "avoid_skills": [
+      "deployment"
+    ]
   }
 ]
