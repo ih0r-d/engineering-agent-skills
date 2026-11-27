@@ -19,6 +19,8 @@ description: Plan, review, or verify software deployment and rollout procedures.
 | Reference | Load when |
 | --- | --- |
 | [Detailed guidance](references/rollout-checklist.md) | Task-specific decisions require additional guidance. |
+| [Kubernetes rollouts](references/kubernetes-rollouts.md) | Kubernetes manifests, Deployments, probe behavior, pod termination, or rollout recovery are in scope. |
+| [Helm releases](references/helm-releases.md) | A Helm chart, values file, or Helm-managed release is in scope. |
 
 ## Constraints
 
