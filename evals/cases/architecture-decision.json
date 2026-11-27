@@ -1,0 +1,28 @@
+[
+  {
+    "id": "architecture-decision-storage-choice",
+    "skill": "architecture-decision",
+    "fixture": null,
+    "prompt": "Draft a proposed ADR comparing relational and document storage for a service requiring multi-record transactions. Workload measurements are unavailable. Return the draft only.",
+    "expected": [
+      "Compare options against transaction requirements and other explicit drivers.",
+      "Record trade-offs, unknown evidence, recommendation, proposed status, and validation criteria.",
+      "Do not invent benchmarks or approval or edit files."
+    ],
+    "avoid_skills": [
+      "system-design"
+    ]
+  },
+  {
+    "id": "architecture-decision-superseding",
+    "skill": "architecture-decision",
+    "fixture": null,
+    "prompt": "Revisit an accepted ADR choosing synchronous delivery because a new requirement permits deferred processing. Propose a replacement without rewriting history.",
+    "expected": [
+      "Identify changed drivers and compare retaining the decision with alternatives.",
+      "Keep prior rationale and propose a linked superseding ADR.",
+      "Do not mark the replacement accepted without approval."
+    ],
+    "avoid_skills": []
+  }
+]

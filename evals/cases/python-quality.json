@@ -1,0 +1,41 @@
+[
+  {
+    "id": "python-shared-default",
+    "skill": "python-quality",
+    "fixture": "python",
+    "prompt": "Review the Python tag API for state leakage. Cite a reproducible failure and recommend a minimal fix. Keep the review read-only.",
+    "expected": [
+      "Demonstrate that two default calls share the same list.",
+      "Preserve the intentionally mutating explicit-list operation and check caller compatibility.",
+      "Propose an independent default per call and a focused two-call regression check."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "code-review-near-miss-python-fix",
+    "skill": "python-quality",
+    "fixture": "python",
+    "prompt": "Fix add_tag in tags.py so calls that omit a list no longer share state. Preserve the behavior for explicitly supplied lists and verify the fix.",
+    "expected": [
+      "Treat the request as an authorized Python defect fix and confirm the shared default as the cause.",
+      "Make omitted arguments independent while retaining explicit list mutation. Exercise both behaviors."
+    ],
+    "avoid_skills": [
+      "code-review"
+    ]
+  },
+  {
+    "id": "refactoring-near-miss-bug-fix",
+    "skill": "python-quality",
+    "fixture": "python",
+    "prompt": "Refactor add_tag to eliminate the shared list between calls that omit the argument. Fix the leak while leaving explicitly provided lists mutable by the function.",
+    "expected": [
+      "Recognize the authorized behavioral fix despite the refactor wording and verify the mutable-default cause.",
+      "Check that separate omitted-argument calls get separate lists and that explicit list mutation is preserved.",
+      "Describe the behavioral fix and keep unrelated structure untouched."
+    ],
+    "avoid_skills": [
+      "refactoring"
+    ]
+  }
+]

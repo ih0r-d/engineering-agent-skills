@@ -1,0 +1,25 @@
+[
+  {
+    "id": "unrelated-request",
+    "skill": null,
+    "fixture": null,
+    "prompt": "Summarize this meeting in one sentence. We agreed to meet on Tuesday. Mia will send the agenda.",
+    "expected": [
+      "Use none of the engineering skills."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "software-engineering-feature-request",
+    "skill": null,
+    "fixture": null,
+    "prompt": "Sketch a new standalone function in pseudocode that converts Celsius to Fahrenheit. Return the pseudocode in your reply.",
+    "expected": [
+      "Produce the new standalone pseudocode directly without a toolkit skill."
+    ],
+    "avoid_skills": [
+      "code-review",
+      "refactoring"
+    ]
+  }
+]

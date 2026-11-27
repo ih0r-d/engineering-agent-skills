@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compose-startup-readiness",
+    "skill": "container-quality",
+    "fixture": "container",
+    "prompt": "Review Compose startup during local development. The API exits when its first database connection fails. Leave files and services untouched.",
+    "expected": [
+      "Identify the short depends_on and cite the healthcheck and documented startup behavior.",
+      "Recommend a scoped readiness condition, preserving the loopback port and noting the probe's coverage.",
+      "Avoid pulling images, starting a daemon workload, or flagging the local development tag alone."
+    ],
+    "avoid_skills": []
+  }
+]

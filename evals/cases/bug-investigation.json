@@ -1,0 +1,40 @@
+[
+  {
+    "id": "bug-investigation-intermittent",
+    "skill": "bug-investigation",
+    "fixture": null,
+    "prompt": "An import job sometimes fails after reading a file. No logs or reproduction are available. Investigate without editing.",
+    "expected": [
+      "Identify missing inputs, environment and evidence.",
+      "Propose competing hypotheses and safe discriminating checks.",
+      "Do not assert a cause or edit implementation."
+    ],
+    "avoid_skills": [
+      "refactoring"
+    ]
+  },
+  {
+    "id": "bug-investigation-reproduction",
+    "skill": "bug-investigation",
+    "fixture": null,
+    "prompt": "A parser rejects a valid empty record only in one environment. Plan a focused reproduction and isolate the failing boundary.",
+    "expected": [
+      "Compare environment and input contracts.",
+      "Define controlled failing and passing cases.",
+      "Distinguish reproduced results from planned checks."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "bug-fixing-near-miss-investigation",
+    "skill": "bug-investigation",
+    "fixture": null,
+    "prompt": "Investigate why a parser sometimes fails. Gather evidence only; do not change source.",
+    "expected": [
+      "Use diagnostic workflow and preserve files."
+    ],
+    "avoid_skills": [
+      "bug-fixing"
+    ]
+  }
+]

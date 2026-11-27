@@ -1,0 +1,24 @@
+[
+  {
+    "id": "dependency-management-transitive-conflict",
+    "skill": "dependency-management",
+    "fixture": null,
+    "prompt": "Two Maven dependencies request different versions of a library. Propose a minimal resolution without editing.",
+    "expected": [
+      "Inspect resolved dependency paths and compatibility before selecting a change.",
+      "Avoid blanket upgrades."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "dependency-management-lockfile-drift",
+    "skill": "dependency-management",
+    "fixture": null,
+    "prompt": "An authorized targeted dependency update changes dozens of unrelated lockfile entries. Review the diff before proceeding.",
+    "expected": [
+      "Distinguish necessary transitive changes from unrelated drift.",
+      "Preserve reproducibility and report verification limits."
+    ],
+    "avoid_skills": []
+  }
+]

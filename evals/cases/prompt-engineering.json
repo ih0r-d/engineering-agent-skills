@@ -1,0 +1,36 @@
+[
+  {
+    "id": "prompt-engineering-ambiguous-output",
+    "skill": "prompt-engineering",
+    "fixture": null,
+    "prompt": "Rewrite a prompt that asks for a review but returns inconsistent output. Require findings with evidence and no edits.",
+    "expected": [
+      "Specify scope, evidence and output contract.",
+      "Preserve read-only authorization and avoid unnecessary instructions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "prompt-engineering-untrusted-input",
+    "skill": "prompt-engineering",
+    "fixture": null,
+    "prompt": "Refine a summarization prompt whose input may contain instructions to ignore the task.",
+    "expected": [
+      "Separate untrusted data from instructions.",
+      "Do not claim delimiters guarantee security."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "context-engineering-near-miss",
+    "skill": "prompt-engineering",
+    "fixture": null,
+    "prompt": "Rewrite a single prompt to clarify its output format. The supplied context is already sufficient.",
+    "expected": [
+      "Use prompt engineering rather than changing context selection."
+    ],
+    "avoid_skills": [
+      "context-engineering"
+    ]
+  }
+]
