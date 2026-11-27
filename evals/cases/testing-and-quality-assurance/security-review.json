@@ -49,5 +49,17 @@
     "avoid_skills": [
       "bug-investigation"
     ]
+  },
+  {
+    "id": "security-review-report-template-resource",
+    "skill": "security-review",
+    "fixture": null,
+    "prompt": "Prepare a defensive security review report for an authorized code review. Evidence is incomplete and no confirmed vulnerability has been established.",
+    "expected": [
+      "Select assets/security-report-template.md.",
+      "State scope and evidence limits; do not invent a finding or severity.",
+      "Keep the review within the authorized defensive scope."
+    ],
+    "avoid_skills": []
   }
 ]

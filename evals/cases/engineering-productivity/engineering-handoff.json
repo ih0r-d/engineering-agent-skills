@@ -20,5 +20,17 @@
       "Do not invent hashes or test outcomes."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "engineering-handoff-template-resource",
+    "skill": "engineering-handoff",
+    "fixture": null,
+    "prompt": "Transfer partially completed work to another engineer. Include what changed, evidence, unresolved blockers, and the next safe step without reproducing full logs.",
+    "expected": [
+      "Select assets/handoff-template.md.",
+      "Separate verified checks from skipped or unknown results.",
+      "Keep the handoff focused and do not claim completion without evidence."
+    ],
+    "avoid_skills": []
   }
 ]

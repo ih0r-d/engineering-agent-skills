@@ -77,6 +77,35 @@ class InstallerTests(unittest.TestCase):
                           "--skill", "skill-authoring")
         self.assertEqual(0, removed.returncode, removed.stderr)
 
+    def test_bundled_script_and_asset_survive_copy_and_symlink_installation(self) -> None:
+        for mode in ("symlink", "copy"):
+            with self.subTest(mode=mode):
+                args = ("--agent", "codex", "--target", str(self.project), "--skill", "git-workflow",
+                        "--mode", mode)
+                installed = run_cli("install", *args)
+                self.assertEqual(0, installed.returncode, installed.stderr)
+                target = self.project / ".agents/skills/git-workflow"
+                script = target / "scripts/validate-commit.py"
+                self.assertTrue(script.is_file())
+                self.assertTrue(script.stat().st_mode & 0o111)
+                check = subprocess.run(
+                    [str(script), "--message", "feat: installed script works"],
+                    capture_output=True, text=True, check=False, timeout=10,
+                )
+                self.assertEqual(0, check.returncode, check.stderr)
+                self.assertIn("valid", check.stdout)
+                uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "git-workflow")
+                self.assertEqual(0, run_cli("uninstall", *uninstall).returncode)
+
+        args = ("--agent", "codex", "--target", str(self.project), "--skill", "architecture-decision",
+                "--mode", "copy")
+        installed = run_cli("install", *args)
+        self.assertEqual(0, installed.returncode, installed.stderr)
+        asset = self.project / ".agents/skills/architecture-decision/assets/adr-template.md"
+        self.assertTrue(asset.is_file())
+        uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "architecture-decision")
+        self.assertEqual(0, run_cli("uninstall", *uninstall).returncode)
+
     def test_migrates_legacy_flat_symlinks_and_removes_dangling_legacy_link(self) -> None:
         source = skills.skill_path("java-quality")
         legacy_source = skills.SKILLS / "java-quality"

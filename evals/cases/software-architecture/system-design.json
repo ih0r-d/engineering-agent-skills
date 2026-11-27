@@ -109,5 +109,17 @@
     "avoid_skills": [
       "api-design"
     ]
+  },
+  {
+    "id": "system-design-template-resource",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Provide a reusable system design deliverable for a webhook service, including security boundaries, failure handling, deployment, and open questions.",
+    "expected": [
+      "Select assets/system-design-template.md and adapt it to the request.",
+      "Address component responsibilities, contracts, failure handling, and operational concerns.",
+      "Do not implement the design."
+    ],
+    "avoid_skills": []
   }
 ]

@@ -75,5 +75,19 @@
     "avoid_skills": [
       "deployment"
     ]
+  },
+  {
+    "id": "release-readiness-asset-authorization-boundary",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Assess a release candidate and prepare a go/no-go evidence checklist. Do not publish or deploy it.",
+    "expected": [
+      "Select assets/release-readiness-checklist.md.",
+      "Record verification gaps and a readiness decision separately from authorization.",
+      "Do not publish or deploy."
+    ],
+    "avoid_skills": [
+      "deployment"
+    ]
   }
 ]

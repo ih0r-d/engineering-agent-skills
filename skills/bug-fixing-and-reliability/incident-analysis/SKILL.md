@@ -20,6 +20,8 @@ description: Analyze an operational incident and prepare an evidence-based incid
 | --- | --- |
 | [Detailed checklist](references/postmortem-checklist.md) | Additional guidance is needed for incident impact, timelines, response review, and postmortem follow-up. |
 
+When documenting a postmortem, use [the evidence-based template](assets/postmortem-template.md); keep hypotheses and unknowns separate from confirmed facts.
+
 ## Constraints
 
 - Do not invent incident times, impact numbers, owners, or recovery status.

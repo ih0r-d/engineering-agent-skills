@@ -24,5 +24,17 @@
       "Do not mark the replacement accepted without approval."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "architecture-decision-template-resource",
+    "skill": "architecture-decision",
+    "fixture": null,
+    "prompt": "Draft a proposed ADR comparing a managed queue with database polling. Include decision drivers, alternatives, trade-offs, validation, and revisit conditions; do not edit repository files.",
+    "expected": [
+      "Select assets/adr-template.md for the ADR structure.",
+      "Keep status proposed and distinguish evidence from assumptions.",
+      "Do not edit files or claim approval."
+    ],
+    "avoid_skills": []
   }
 ]

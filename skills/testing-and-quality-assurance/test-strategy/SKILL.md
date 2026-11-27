@@ -20,6 +20,8 @@ description: Define risk-based software testing strategies, coverage goals, test
 | --- | --- |
 | [Detailed guidance](references/strategy-checklist.md) | Additional guidance on test or review decisions is needed. |
 
+When a reusable plan is requested, use [the test plan template](assets/test-plan-template.md) and tailor coverage to the stated risks.
+
 ## Constraints
 
 - Default to planning without modifying files unless requested.

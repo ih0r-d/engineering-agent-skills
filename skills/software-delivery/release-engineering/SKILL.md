@@ -35,6 +35,8 @@ Default to review or preparation.
 | [Release lifecycle](references/release-lifecycle.md) | Establishing a release candidate, applying a version policy, or promoting an immutable artifact. |
 | [Hotfixes and backports](references/hotfix-and-backport.md) | Releasing an urgent correction or maintaining the fix across supported release lines. |
 
+When assessing a release candidate, use [the readiness checklist](assets/release-readiness-checklist.md). A completed checklist records evidence; it does not authorize publishing or deployment.
+
 ## Authorization
 
 **Permission to prepare or verify does not authorize release execution.**

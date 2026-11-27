@@ -35,5 +35,19 @@
     "avoid_skills": [
       "unit-testing"
     ]
+  },
+  {
+    "id": "test-strategy-plan-template-resource",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Create a reusable test plan for a payment change, including risk-based levels, deterministic data, acceptance, regression, and exit criteria.",
+    "expected": [
+      "Select assets/test-plan-template.md and tailor it to stated risks.",
+      "Define observable coverage and exit criteria without inventing metrics.",
+      "Plan tests without implementing them."
+    ],
+    "avoid_skills": [
+      "unit-testing"
+    ]
   }
 ]
