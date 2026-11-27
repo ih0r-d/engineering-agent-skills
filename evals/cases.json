@@ -998,5 +998,39 @@
     "avoid_skills": [
       "implementation-planning"
     ]
+  },
+  {
+    "id": "task-decomposition-delivery-slices",
+    "skill": "task-decomposition",
+    "fixture": null,
+    "prompt": "Break an approved checkout enhancement into independently verifiable backlog items with dependencies. Do not create tickets.",
+    "expected": [
+      "Define coherent outcomes and integration checks.",
+      "Do not invent owners or ticket IDs."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "task-decomposition-unknown-dependency",
+    "skill": "task-decomposition",
+    "fixture": null,
+    "prompt": "Decompose a reporting feature whose upstream API contract is unknown.",
+    "expected": [
+      "Separate discovery from dependent implementation.",
+      "Identify prerequisites and avoid unsupported commitments."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "task-decomposition-near-miss",
+    "skill": "implementation-planning",
+    "fixture": null,
+    "prompt": "Plan the concrete code and verification sequence for one already defined work item. Do not edit.",
+    "expected": [
+      "Use implementation planning rather than splitting the backlog."
+    ],
+    "avoid_skills": [
+      "task-decomposition"
+    ]
   }
 ]
