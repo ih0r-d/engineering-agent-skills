@@ -34,5 +34,19 @@
     "avoid_skills": [
       "release-engineering"
     ]
+  },
+  {
+    "id": "deployment-kubernetes-liveness-cascade",
+    "skill": "deployment",
+    "fixture": null,
+    "prompt": "During a dependency slowdown, Kubernetes repeatedly restarts healthy but overloaded pods because liveness probes fail. Review safer probe and rollout diagnosis without changing the cluster.",
+    "expected": [
+      "Distinguish liveness restart semantics from readiness traffic gating and startup initialization.",
+      "Inspect probe cost, thresholds, dependency coupling, resource pressure, and observed restart/traffic patterns.",
+      "Avoid a readiness or liveness change without defining recovery behavior and rollout verification; do not touch the cluster."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
   }
 ]

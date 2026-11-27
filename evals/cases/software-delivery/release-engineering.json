@@ -61,5 +61,19 @@
     "avoid_skills": [
       "bug-investigation"
     ]
+  },
+  {
+    "id": "release-partial-publication-failure",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "A release job created a tag and uploaded one package, then failed before uploading the remaining platform artifacts. Review safe recovery without rerunning publication.",
+    "expected": [
+      "Inspect which tags and artifact identities became visible, tied to the candidate commit and channel, before retrying.",
+      "Respect immutable versioning and registry behavior; determine whether to resume, yank/repair, or issue a corrective version under project policy.",
+      "Report partial release state and require authorization for additional tags, publication, or production actions."
+    ],
+    "avoid_skills": [
+      "deployment"
+    ]
   }
 ]

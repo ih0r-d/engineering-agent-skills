@@ -34,5 +34,19 @@
     "avoid_skills": [
       "build-automation-quality"
     ]
+  },
+  {
+    "id": "ci-cd-jenkins-retry-side-effect",
+    "skill": "ci-cd",
+    "fixture": null,
+    "prompt": "A Jenkinsfile retries an entire release stage after a timeout, and the stage may already have uploaded an artifact. Review the failure semantics without triggering Jenkins.",
+    "expected": [
+      "Load Jenkins Pipeline guidance and inspect retry scope, agent/workspace behavior, and post conditions.",
+      "Establish whether the upload already occurred and whether the step is idempotent before retrying.",
+      "Preserve artifact identity and release authorization; distinguish local inspection from hosted execution."
+    ],
+    "avoid_skills": [
+      "release-engineering"
+    ]
   }
 ]
