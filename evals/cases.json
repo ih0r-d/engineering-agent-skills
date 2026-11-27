@@ -964,5 +964,39 @@
     "avoid_skills": [
       "requirements-analysis"
     ]
+  },
+  {
+    "id": "implementation-planning-scoped-change",
+    "skill": "implementation-planning",
+    "fixture": null,
+    "prompt": "Plan adding an optional order note to an existing API without breaking clients. No source files are available. Do not implement.",
+    "expected": [
+      "Sequence contract, storage and verification changes conditionally.",
+      "Do not invent paths or claim tests ran."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "implementation-planning-migration-risk",
+    "skill": "implementation-planning",
+    "fixture": null,
+    "prompt": "Plan a compatible schema change during rolling deployment. Existing instances must continue working.",
+    "expected": [
+      "Identify mixed-version compatibility and staged verification.",
+      "Separate recovery risks from assumptions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "implementation-planning-near-miss",
+    "skill": "refactoring",
+    "fixture": null,
+    "prompt": "Perform a scoped refactoring of existing code while preserving behavior.",
+    "expected": [
+      "Use the authorized refactoring workflow rather than returning only a plan."
+    ],
+    "avoid_skills": [
+      "implementation-planning"
+    ]
   }
 ]
