@@ -1066,5 +1066,39 @@
     "avoid_skills": [
       "engineering-handoff"
     ]
+  },
+  {
+    "id": "skill-authoring-portable-skill",
+    "skill": "skill-authoring",
+    "fixture": null,
+    "prompt": "Create a portable skill for recurring database migration reviews. Propose the skill instructions and resources without editing.",
+    "expected": [
+      "Define a coherent task and precise activation boundaries.",
+      "Use standard frontmatter and selective references; avoid unnecessary scripts."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "skill-authoring-bloated-skill",
+    "skill": "skill-authoring",
+    "fixture": null,
+    "prompt": "Improve a skill that repeats its entire reference in SKILL.md and has vague activation text. Propose changes only.",
+    "expected": [
+      "Remove duplication while preserving task-critical instructions.",
+      "Define reference selection and positive and near-miss cases."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "skill-authoring-near-miss",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Update a consumer README quick start to match the actual CLI. No skill definition changes are requested.",
+    "expected": [
+      "Use documentation verification rather than skill authoring."
+    ],
+    "avoid_skills": [
+      "skill-authoring"
+    ]
   }
 ]

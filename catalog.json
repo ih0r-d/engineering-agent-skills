@@ -33,7 +33,7 @@
     {
       "id": "ai-engineering",
       "name": "AI Engineering",
-      "skills": []
+      "skills": ["skill-authoring"]
     }
   ]
 }
