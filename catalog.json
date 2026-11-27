@@ -23,7 +23,7 @@
     {
       "id": "software-delivery",
       "name": "Software Delivery",
-      "skills": ["build-automation-quality", "ci-cd", "container-quality", "release-engineering"]
+      "skills": ["build-automation-quality", "ci-cd", "container-quality", "git-workflow", "release-engineering"]
     },
     {
       "id": "engineering-productivity",

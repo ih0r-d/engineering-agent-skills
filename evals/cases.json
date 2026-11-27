@@ -828,5 +828,39 @@
     "avoid_skills": [
       "ci-cd"
     ]
+  },
+  {
+    "id": "git-workflow-commit-format",
+    "skill": "git-workflow",
+    "fixture": null,
+    "prompt": "Propose a Conventional Commit for a new API feature with task ENG-123. Do not commit.",
+    "expected": [
+      "Use feat and the supplied task identifier, for example feat: ENG-123: add API validation.",
+      "Leave Git state unchanged."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "git-workflow-mixed-changes",
+    "skill": "git-workflow",
+    "fixture": null,
+    "prompt": "A working tree contains a requested bug fix and unrelated user edits. Plan an atomic commit without staging.",
+    "expected": [
+      "Separate unrelated changes and inspect intended diff.",
+      "Do not stage or commit without authorization."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "git-workflow-near-miss",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Assess whether a candidate release is ready and draft release notes. Do not perform Git operations.",
+    "expected": [
+      "Use release readiness guidance without committing or tagging."
+    ],
+    "avoid_skills": [
+      "git-workflow"
+    ]
   }
 ]
