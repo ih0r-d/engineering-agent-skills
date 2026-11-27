@@ -35,5 +35,19 @@
     "avoid_skills": [
       "root-cause-analysis"
     ]
+  },
+  {
+    "id": "bug-fixing-mitigation-vs-permanent-fix",
+    "skill": "bug-fixing",
+    "fixture": null,
+    "prompt": "A feature flag prevents a confirmed production data-loss defect from recurring, but the underlying defect remains. Plan the scoped permanent correction and verification without deploying.",
+    "expected": [
+      "Label the feature flag as a mitigation, not a confirmed permanent correction.",
+      "Establish the defect cause, regression case, compatibility boundary, and safe implementation scope before editing.",
+      "Keep deployment and flag removal separately gated; define evidence required before retiring the mitigation."
+    ],
+    "avoid_skills": [
+      "incident-analysis"
+    ]
   }
 ]
