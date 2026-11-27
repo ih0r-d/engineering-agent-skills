@@ -5,6 +5,7 @@
 - Inspect the actual launcher. `sh script.sh` selects sh regardless of the shebang, and `source` uses the caller's shell. In POSIX sh use positional arguments with `set --` and `"$@"`. Use Bash arrays only within the advertised Bash baseline. Check macOS system Bash 3.2 if supported before using associative arrays or `mapfile`.
 - Quote expansions where the shell splits or globs them, including filenames and command substitutions used as arguments. Preserve deliberately applied globbing, such as `"$dir"/*.txt`, and handle no matches explicitly. Pass arguments as separate words and avoid building command lines by concatenation or `eval`. Check whitespace, wildcard characters, leading dashes and empty arguments. Use an option terminator where supported or anchor paths using absolute names or `./`.
 - Confirm platform utilities as well as syntax. GNU and BSD behavior differs for `sed -i`, `stat`, `readlink -f` and other flags. Follow the supported platforms and prefer existing portable invocations over ad hoc detection layers.
+- Treat process substitution (`<(...)`, `>(...)`), arrays, `[[ ... ]]`, `mapfile`, `read -d`, and `pipefail` as Bash features rather than portable POSIX sh. Check the exact Bash baseline before using newer builtins. Process substitutions run asynchronously; do not assume the enclosing command's status includes every substituted producer's failure.
 
 ## Status, cleanup and filesystem effects
 

@@ -35,6 +35,9 @@ description: Review Java source or generated Java for correctness, API compatibi
 | [Java type and value contracts](references/type-contracts.md) | Reviewing equality, hashing, ordering, records, sealed hierarchies, or generics. |
 | [Persistence](references/persistence.md) | Investigating JPA/Hibernate query counts, entity state, lazy loading, locking, or transaction scope. |
 | [Native Image](references/native-image.md) | Diagnosing GraalVM native-image failures, reflection metadata, resources, or class initialization. |
+| [Spring Boot](references/spring-boot.md) | Spring Boot starters, auto-configuration, externalized configuration, Actuator, or Boot test behavior are in scope. |
+| [Quarkus](references/quarkus.md) | A Quarkus BOM, `quarkus.*` setting, ArC bean, Quarkus REST endpoint, or native build is involved. |
+| [Design trade-offs](references/design-tradeoffs.md) | Assessing an abstraction, inheritance choice, design pattern, or stateful Stream pipeline. |
 | [Static analysis](references/static-analysis.md) | Choosing checks or investigating analyzer diagnostics. |
 | [Minimal-change examples](references/anti-overengineering.md) | Evaluating duplication or cleanup findings with competing fixes. |
 

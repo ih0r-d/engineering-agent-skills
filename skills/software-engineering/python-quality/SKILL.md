@@ -30,6 +30,10 @@ description: Review Python code, imports, typing, packaging, and tests for runti
 | [Packaging and checks](references/packaging-and-checks.md) | Reviewing installed artifacts, analyzer configuration or verification procedures. |
 | [Asyncio lifecycle](references/asyncio.md) | Tracing task ownership, cancellation, timeouts, or blocking work on an event loop. |
 | [Typing contracts](references/typing.md) | Evaluating generic API variance, protocols, narrowing, or runtime validation boundaries. |
+| [Runtime and concurrency](references/runtime-and-concurrency.md) | Investigating memory retention, aliasing, threads, processes, GIL/free-threading, or event-loop boundaries. |
+| [FastAPI](references/fastapi.md) | FastAPI routes, dependencies, ASGI lifecycle, request validation, or async endpoint behavior are in scope. |
+| [Pydantic](references/pydantic.md) | Pydantic models, validators, settings, strictness, or serialized API/configuration shapes are in scope. |
+| [SQLAlchemy](references/sqlalchemy.md) | SQLAlchemy Session/AsyncSession scope, ORM state, query loading, or transaction behavior is in scope. |
 
 ## Constraints
 
