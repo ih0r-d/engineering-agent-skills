@@ -51,5 +51,33 @@
     "avoid_skills": [
       "integration-testing"
     ]
+  },
+  {
+    "id": "python-quality-fastapi-blocking-dependency",
+    "skill": "python-quality",
+    "fixture": null,
+    "prompt": "A FastAPI async endpoint awaits a dependency that calls a synchronous database client and creates a session that is never closed on exceptions. Review the execution and ownership boundaries without changing public routes.",
+    "expected": [
+      "Load FastAPI and asyncio guidance because framework dependencies and an async request path are explicit.",
+      "Trace whether the synchronous call runs directly on the event loop and define a bounded, supported blocking boundary.",
+      "Give the session one clear request or unit-of-work owner and verify cleanup on success and failure."
+    ],
+    "avoid_skills": [
+      "integration-testing"
+    ]
+  },
+  {
+    "id": "python-quality-sqlalchemy-session-concurrency",
+    "skill": "python-quality",
+    "fixture": null,
+    "prompt": "Two child asyncio tasks share one SQLAlchemy AsyncSession and intermittently mix transaction state. Diagnose the ownership issue and propose deterministic regression coverage.",
+    "expected": [
+      "Load the SQLAlchemy and asyncio references and confirm SQLAlchemy version.",
+      "Give each concurrent task an independent session/unit of work rather than sharing one session concurrently.",
+      "Use synchronization and controlled database operations to test transaction isolation without sleep-based timing."
+    ],
+    "avoid_skills": [
+      "bug-investigation"
+    ]
   }
 ]
