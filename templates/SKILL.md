@@ -22,6 +22,10 @@ State the useful outcome in one sentence.
 
 Link only real resources, and say when each one is useful. Remove this section if no reference is needed.
 
+## Reusable resources
+
+Use a bundled script or asset only when the current task needs it. State its path, required input, and expected result; omit this section when the skill has no such resources.
+
 ## Gotchas
 
 - Record non-obvious failure modes that affect the common path.
