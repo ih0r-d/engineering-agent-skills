@@ -1,6 +1,6 @@
 # Maintaining Engineering Agent Skills
 
-These instructions govern maintenance of this toolkit, including when it is checked out as a submodule. Installed Skills follow the consuming project's instructions. `skills/` contains the shared definitions, `.scripts/` contains the installer and validation tooling, and `scripts/` preserves historical entrypoints. `tests/` and `evals/` cover deterministic checks and agent behavior.
+These instructions govern maintenance of this toolkit, including when it is checked out as a submodule. Installed Skills follow the consuming project's instructions. `skills/` contains the shared definitions, `.scripts/` contains the installer, validation, and documentation-generation tooling, and `scripts/` preserves historical entrypoints. `tests/` and `evals/` cover deterministic checks and agent behavior.
 
 ## Develop Skills
 

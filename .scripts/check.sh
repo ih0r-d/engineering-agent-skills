@@ -19,6 +19,7 @@ case "${1:-}" in
     zizmor --offline --collect=all .
     ;;
   docs)
+    uv run --project .scripts/spec --locked --no-python-downloads python .scripts/generate_readme.py --check
     lychee --offline --include-fragments --no-progress \
       './*.md' './docs/**/*.md' './skills/**/*.md' './evals/**/*.md' './templates/**/*.md'
     ;;
