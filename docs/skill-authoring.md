@@ -17,6 +17,14 @@ Every skill directory contains `SKILL.md` with YAML frontmatter and Markdown ins
 
 Keep `SKILL.md` sufficient for the common path. Put substantial specialized guidance in focused `references/` files and link each directly with a task- or symptom-based loading condition. Never require all references by default; avoid deep reference chains and copied external pages. Note version-sensitive behavior and link its authoritative source. Scripts and assets are optional; include them only when they make a reusable task materially easier.
 
+### Scripts, assets, and hooks
+
+- A bundled script is justified for a repeatable, deterministic operation that adds value beyond an obvious existing command. Prefer Python standard library for structured work, keep it independent of the source checkout, accept explicit inputs, and define useful output, exit codes, dependencies, and side effects. Prefer read-only behavior; never silently overwrite or perform destructive actions. Avoid hidden network access and shell interpolation of user input. Add automated tests for executable scripts.
+- An asset is justified when a reusable template or data file improves a recurring deliverable. Keep it focused, adapt it to the consuming project's conventions, and identify in `SKILL.md` when to use it. Do not add decorative or duplicate templates.
+- Link each script or asset by a portable relative path and load or run it only for its stated task. Keep essential safety constraints in `SKILL.md`; do not force agents to inspect every resource.
+- Skills describe procedures, references hold technical knowledge, scripts perform deterministic operations, and assets provide reusable deliverables. Hooks are separate event-driven callers. Scripts may be designed for future hook invocation, but a skill package must not install hooks, edit client configuration, or change global Git settings automatically.
+- Repository maintenance tools belong in `.scripts/`, not inside portable skill packages. Bundled scripts and assets must work when the owning skill is installed alone.
+
 ## Workflow and resources
 
 1. Identify the requested outcome and whether the user asked for review, planning, or implementation. Inspect only relevant skills, project conventions, and source material; expand scope when findings require it.
