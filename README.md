@@ -4,7 +4,7 @@
 
 [![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
 [![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
-[![Skills](https://img.shields.io/badge/skills-21-2563eb)](#skill-catalog)
+[![Skills](https://img.shields.io/badge/skills-22-2563eb)](#skill-catalog)
 [![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
 [![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
 [![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
@@ -46,6 +46,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
 | [`architecture-review`](skills/architecture-review/SKILL.md) | Architecture assessment, component boundaries, coupling, quality attributes, and architectural risk identification |
 | [`incident-analysis`](skills/incident-analysis/SKILL.md) | Incident impact, timelines, response review, and postmortem follow-up |
+| [`security-review`](skills/security-review/SKILL.md) | Defensive security assessment, access control, sensitive data, and vulnerability mitigation |
 | [`integration-testing`](skills/integration-testing/SKILL.md) | Integration and contract tests, real collaborator behavior, and isolated environments |
 | [`unit-testing`](skills/unit-testing/SKILL.md) | Focused unit tests, test doubles, deterministic isolation, and regression coverage |
 | [`test-strategy`](skills/test-strategy/SKILL.md) | Risk-based test planning, coverage gaps, test levels, and quality gates |
