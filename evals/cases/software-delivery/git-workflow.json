@@ -20,5 +20,19 @@
       "Do not stage or commit without authorization."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "git-workflow-backport-strategy",
+    "skill": "git-workflow",
+    "fixture": null,
+    "prompt": "We maintain two patch branches and need to apply a confirmed fix from main. Recommend a safe Git integration plan without assuming GitFlow or rewriting shared history.",
+    "expected": [
+      "Inspect repository branch and backport conventions before selecting targets.",
+      "Use cherry-pick or an equivalent targeted change with source-commit traceability, and resolve conflicts against the older branch behavior.",
+      "Avoid force-pushing or silently rewriting shared history."
+    ],
+    "avoid_skills": [
+      "release-engineering"
+    ]
   }
 ]

@@ -20,5 +20,19 @@
       "Do not invent metrics or execute deployment."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "deployment-helm-failed-upgrade-state",
+    "skill": "deployment",
+    "fixture": null,
+    "prompt": "A Helm upgrade timed out after a database migration hook ran. The workload looks unhealthy. Plan diagnosis and recovery without touching the cluster.",
+    "expected": [
+      "Load Helm- and Kubernetes-specific guidance and establish the installed versions, context, namespace, release revision, and partial effects.",
+      "Do not assume Helm rollback reverses database migration or hook side effects.",
+      "Define stop criteria and compare a compatible rollback with a forward recovery before authorizing a change."
+    ],
+    "avoid_skills": [
+      "release-engineering"
+    ]
   }
 ]
