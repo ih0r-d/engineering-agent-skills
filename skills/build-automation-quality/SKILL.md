@@ -29,6 +29,7 @@ description: Review or repair Maven and Gradle build configuration, Makefiles, a
 | --- | --- |
 | [Maven and Gradle](references/jvm-builds.md) | Reviewing or repairing JVM build configuration. |
 | [Make and Task](references/build-system-review.md) | Reviewing task dependencies, command runners or incremental execution. |
+| [Build reproducibility](references/reproducibility.md) | Diagnosing stale outputs, cache misses, non-hermetic builds, or cross-platform drift. |
 
 ## Constraints
 
