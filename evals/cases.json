@@ -930,5 +930,39 @@
     "avoid_skills": [
       "dependency-management"
     ]
+  },
+  {
+    "id": "requirements-analysis-ambiguous-checkout",
+    "skill": "requirements-analysis",
+    "fixture": null,
+    "prompt": "Clarify requirements for checkout retries and inventory reservation. The payment retry policy is unknown. Do not design the system.",
+    "expected": [
+      "Separate confirmed behavior from unknown policy.",
+      "Define verifiable acceptance criteria and ask about duplicate charge behavior."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "requirements-analysis-conflicting-rules",
+    "skill": "requirements-analysis",
+    "fixture": null,
+    "prompt": "Analyze two requirements: all orders are editable and shipped orders are immutable. No stakeholder decision exists.",
+    "expected": [
+      "Identify the conflict and decision required.",
+      "Do not invent approval or implementation."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "requirements-analysis-near-miss",
+    "skill": "system-design",
+    "fixture": null,
+    "prompt": "Design the component boundaries of a new service from already approved requirements.",
+    "expected": [
+      "Use system design rather than eliciting requirements again."
+    ],
+    "avoid_skills": [
+      "requirements-analysis"
+    ]
   }
 ]
