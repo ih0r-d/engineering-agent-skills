@@ -24,9 +24,18 @@ This record tracks the Phase 2.8 inspection and the changes made so far. All 35 
 - Prompt engineering edits prompts; context engineering chooses evidence and instructions; token optimization reports only measured efficiency.
 - Skill authoring defines the reusable workflow; skill evaluation measures its observed behavior.
 
+## Lifecycle composition
+
+Use these as optional handoffs when the request crosses the corresponding boundary; they are not mandatory pipelines:
+
+- Standard release: requirements and compatibility → implementation and tests → code review and CI → release readiness and artifact verification → separately authorized deployment and recovery verification.
+- Production defect: incident impact/timeline → evidence-based investigation → authorized mitigation or correction → regression and compatibility tests → hotfix/backport release → separately authorized rollout and consumer recovery checks.
+- Maintenance release: dependency/security assessment → compatibility and build checks → focused implementation/testing → release artifact review → environment deployment only when requested.
+- Backport: confirmed correction → supported release-line selection → targeted patch and test on each line → patch artifact verification; preserve the forward-line fix.
+
 ## Remaining depth work
 
-The reference expansion is incremental, not exhaustive. Fifteen evaluation cases were added for release/backport, deployment failure, provider-specific CI artifact flow, framework/runtime failure boundaries, test lifecycle isolation, SLO target selection, and architecture/security risks. Structural validation does not establish agent behavior; no model evaluations were run.
+The reference expansion is incremental, not exhaustive. Nineteen evaluation cases were added for release/backport and partial publication, deployment/probe failure, provider-specific CI artifact flow and retries, framework/runtime failure boundaries, test lifecycle isolation, SLO target selection, mitigation versus correction, and architecture/security risks. Structural validation does not establish agent behavior; no model evaluations were run.
 
 ### Remaining high-priority work
 
