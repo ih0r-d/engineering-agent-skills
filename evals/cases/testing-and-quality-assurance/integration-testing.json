@@ -22,5 +22,19 @@
       "Distinguish simulated and real boundary evidence."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "integration-testing-testcontainers-readiness",
+    "skill": "integration-testing",
+    "fixture": null,
+    "prompt": "A Testcontainers-backed database test passes locally but flakes in CI immediately after container start. Review readiness, isolation, and runtime prerequisites without starting containers.",
+    "expected": [
+      "Load Testcontainers guidance and confirm framework/runtime versions and container daemon/image-pull prerequisites.",
+      "Wait on a service-specific readiness condition with bounded timeout rather than a fixed sleep.",
+      "Check database state isolation, static versus per-test lifecycle, and parallel execution support before changing fixture scope."
+    ],
+    "avoid_skills": [
+      "unit-testing"
+    ]
   }
 ]
