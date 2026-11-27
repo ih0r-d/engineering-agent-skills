@@ -18,7 +18,7 @@
     {
       "id": "testing-and-quality-assurance",
       "name": "Testing and Quality Assurance",
-      "skills": ["integration-testing", "test-strategy", "unit-testing"]
+      "skills": ["integration-testing", "security-review", "test-strategy", "unit-testing"]
     },
     {
       "id": "software-delivery",
