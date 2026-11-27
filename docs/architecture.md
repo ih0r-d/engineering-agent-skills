@@ -1,6 +1,6 @@
 # Repository architecture
 
-The repository holds reusable engineering workflows for coding agents. A skill's stable identifier is its directory name. Its entrypoint is `skills/<skill-id>/SKILL.md`, and any resources it needs travel in the same directory. Existing installed symlinks and explicit invocations depend on those names and paths.
+The repository holds reusable engineering workflows for coding agents. A skill's stable identifier is recorded in `catalog.json`; its source package is `skills/<category-id>/<skill-id>/SKILL.md`. Category containers are organizational only. Installers resolve each package through catalog membership and install it flat as `<agent-skills>/<skill-id>` so existing invocations remain stable.
 
 | Path | Responsibility |
 | --- | --- |
@@ -20,7 +20,7 @@ See the [context engineering architecture](context-architecture.md) for the sepa
 
 ## Categories
 
-The catalog registers these categories. Each skill belongs to one primary category. Empty categories are valid. The validator compares membership with the discovered skill directories, and installers discover skills directly from the filesystem. [Catalog and current mappings](../catalog.json)
+The catalog registers these categories with stable IDs. Each skill belongs to one primary category. The validator compares unique catalog membership with physical category directories, rejecting missing, duplicate, misplaced, and unregistered skill packages. [Catalog and current mappings](../catalog.json)
 
 - Software Engineering
 - Software Architecture
@@ -40,7 +40,7 @@ Follow the [Skill Authoring Guide](skill-authoring.md) for recommended Markdown 
 
 ## Validation and installation boundaries
 
-The Python 3.10+ installer uses only the standard library. It checks the skill tree, manifest boundaries, ordinary inline resource paths, and ownership before writing. The offline `validate` command also checks catalog membership. The maintainer gate uses PyYAML to parse YAML and the pinned official `skills-ref` metadata validator for specification rules. This accepts standard YAML forms such as flow mappings, which the upstream CLI parser restricts. Repository checks also enforce string types and duplicate-key handling, and Lychee checks local Markdown links and anchors. [Reference implementation](https://github.com/agentskills/agentskills/tree/f130f348f502d9804278a617f86929846896d2e9/skills-ref), [Maintainer dependency lock](../.scripts/spec/uv.lock)
+The Python 3.10+ installer uses only the standard library. It resolves package sources through the catalog, installs flat skill directories, and checks bundled Markdown resource paths and ownership before writing. The offline `validate` command also checks category membership and layout. Evaluation cases follow the same catalog categories. The maintainer gate uses PyYAML and the pinned official `skills-ref` metadata validator. Repository checks enforce YAML types and duplicate-key handling; Lychee checks Markdown links and anchors. [Reference implementation](https://github.com/agentskills/agentskills/tree/f130f348f502d9804278a617f86929846896d2e9/skills-ref), [Maintainer dependency lock](../.scripts/spec/uv.lock)
 
 The installer supports project and user scope. A relative symlink follows the checked-out skill while a copied skill is an independently verified snapshot. Existing skill folders, installation scopes, and agent destinations are compatibility boundaries. [Installer compatibility](compatibility.md)
 

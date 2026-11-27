@@ -5,7 +5,7 @@ These instructions govern maintenance of this toolkit, including when it is chec
 ## Develop Skills
 
 - Write Skills, code, comments, documentation and commit messages in English.
-- Every skill must pass the mandatory Agent Skills specification gate. Use one `skills/<skill-id>/SKILL.md` with a matching frontmatter name and a description keyed to the actual task. Use standard fields and register the skill in one category in `catalog.json`. [Agent Skills specification](https://agentskills.io/specification), [Repository architecture](docs/architecture.md)
+- Every skill must pass the mandatory Agent Skills specification gate. Use `skills/<category-id>/<skill-id>/SKILL.md`; `catalog.json` is the source of truth for category membership. Keep installed packages flat under their stable skill IDs. [Agent Skills specification](https://agentskills.io/specification), [Repository architecture](docs/architecture.md)
 - Keep the entrypoint operational and concise. The repository targets 30–100 lines and fewer than 1,500 tokens as advisory goals; the official recommendation is under 500 lines and 5,000 tokens. Do not remove necessary guidance to meet a target. Follow the [canonical authoring standard](docs/skill-authoring.md); keep consumer policy with the consumer.
 - State review, edit and verification boundaries. Start with the relevant changes, verify tool signals against behavior, and prefer the smallest supported change. Load only relevant references, reuse checks when inputs are unchanged, and summarize useful evidence.
 - Use [templates/SKILL.md](templates/SKILL.md) as an adaptable starting point; headings, references, scripts, and assets are conditional choices, not requirements.

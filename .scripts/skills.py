@@ -37,8 +37,35 @@ def is_redirect(path: Path) -> bool:
 def skill_directories() -> list[Path]:
     if is_redirect(SKILLS) or not SKILLS.is_dir():
         raise SkillError(f"Expected a local skills directory: {SKILLS}")
-    return sorted(path for path in SKILLS.iterdir() if not path.name.startswith(".")
-                  and (path.is_dir() or path.is_symlink()))
+    return sorted(path for path in catalog_skill_paths().values() if path.is_dir() or path.is_symlink())
+
+
+def discover_skill_locations() -> list[Path]:
+    """Find all leaf directories in category containers, including unregistered entries."""
+    if is_redirect(SKILLS) or not SKILLS.is_dir():
+        raise SkillError(f"Expected a local skills directory: {SKILLS}")
+    return [path for category in SKILLS.iterdir()
+            if category.is_dir() and not is_redirect(category)
+            for path in category.iterdir() if path.is_dir() or path.is_symlink()]
+
+
+def catalog_skill_paths(path: Path | None = None) -> dict[str, Path]:
+    path = CATALOG if path is None else path
+    try:
+        catalog = json.loads(path.read_text(encoding="utf-8"))
+        return {skill: SKILLS / category["id"] / skill
+                for category in catalog["categories"] for skill in category["skills"]
+                if isinstance(category.get("id"), str) and valid_name(category["id"])
+                and isinstance(skill, str) and valid_name(skill)}
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise SkillError(f"Could not resolve skills from catalog: {error}") from error
+
+
+def skill_path(name: str) -> Path:
+    paths = catalog_skill_paths()
+    if name not in paths:
+        raise SkillError(f"Unknown skill {name!r}")
+    return paths[name]
 
 
 def valid_name(name: str) -> bool:
@@ -49,11 +76,11 @@ def valid_name(name: str) -> bool:
 
 
 def available_skills() -> list[str]:
-    return [path.name for path in skill_directories()
-            if valid_name(path.name) and not is_redirect(path) and (path / "SKILL.md").is_file()]
+    return [name for name, path in catalog_skill_paths().items()
+            if not is_redirect(path) and (path / "SKILL.md").is_file()]
 
 
-def validate_catalog(path: Path, skill_ids: set[str]) -> list[str]:
+def validate_catalog(path: Path, skill_ids: set[str], locations: list[Path] | None = None) -> list[str]:
     """Check logical category membership against the discovered skill IDs."""
     try:
         catalog = json.loads(path.read_text(encoding="utf-8"))
@@ -88,6 +115,34 @@ def validate_catalog(path: Path, skill_ids: set[str]) -> list[str]:
 
     issues.extend(f"catalog.json: unknown skill {name!r}" for name in sorted(listed - skill_ids))
     issues.extend(f"catalog.json: missing skill {name!r}" for name in sorted(skill_ids - listed))
+    if locations is not None:
+        expected = {skill: SKILLS / category["id"] / skill
+                    for category in catalog["categories"] for skill in category["skills"]}
+        category_ids = {category["id"] for category in catalog["categories"]}
+        if SKILLS.is_dir():
+            actual_categories = {entry.name for entry in SKILLS.iterdir() if entry.is_dir() or entry.is_symlink()}
+            for category in sorted(actual_categories - category_ids):
+                issues.append(f"skills: unregistered category directory {SKILLS / category}")
+            for category in sorted(category_ids - actual_categories):
+                issues.append(f"catalog.json: missing category directory {SKILLS / category}")
+        found_ids = [location.name for location in locations]
+        for skill in sorted(set(found_ids) - set(expected)):
+            for location in (entry for entry in locations if entry.name == skill):
+                issues.append(f"skills: unregistered skill directory {location}")
+        for skill in sorted(set(found_ids) & set(expected)):
+            actual = [entry for entry in locations if entry.name == skill]
+            if len(actual) > 1:
+                issues.append(f"skills: duplicate skill directory {skill!r}")
+            if actual and actual[0].resolve() != expected[skill].resolve():
+                issues.append(f"catalog.json: skill {skill!r} must be under category {expected[skill].parent.name!r}")
+        for skill, directory in expected.items():
+            if not directory.is_dir():
+                issues.append(f"catalog.json: missing skill directory {directory}")
+        for category in catalog["categories"]:
+            category_dir = SKILLS / category["id"]
+            category_manifest = category_dir / "SKILL.md"
+            if category_manifest.exists():
+                issues.append(f"skills: category container cannot contain SKILL.md: {category_manifest}")
     return issues
 
 
@@ -169,9 +224,13 @@ def tree_digest(directory: Path, *, installed: bool = False) -> str:
 
 def owned_mode(source: Path, destination: Path) -> str:
     if destination.is_symlink():
+        linked = destination.parent / os.readlink(destination)
         expected = os.path.relpath(source, start=destination.parent)
-        if os.readlink(destination) == expected:
+        legacy = os.path.relpath(SKILLS / source.name, start=destination.parent)
+        if os.readlink(destination) == expected and linked.resolve() == source.resolve():
             return "symlink"
+        if os.readlink(destination) == legacy and linked.resolve() == (SKILLS / source.name).resolve():
+            return "legacy-symlink"
     elif destination.is_dir() and not is_redirect(destination):
         marker = destination / MARKER
         if not marker.is_symlink() and marker.is_file():
@@ -225,7 +284,7 @@ def apply_selection(args: argparse.Namespace) -> None:
     digests = {}
     if installing:
         for name in names:
-            source = SKILLS / name
+            source = skill_path(name)
             issues = validate_skill(source)
             if issues:
                 raise SkillError(issues[0])
@@ -235,16 +294,22 @@ def apply_selection(args: argparse.Namespace) -> None:
     # Reject known conflicts across the selection before changing any destination.
     plan = []
     for name in names:
-        source = SKILLS / name
+        source = skill_path(name)
         for target in targets:
             destination = target / name
             mode = owned_mode(source, destination) if os.path.lexists(destination) else None
-            if installing and mode is not None and mode != args.mode:
+            if installing and mode is not None and mode not in (args.mode, "legacy-symlink"):
+                raise SkillError(f"Already installed in {mode} mode: {destination}. Uninstall first.")
+            if installing and mode == "legacy-symlink" and args.mode != "symlink":
                 raise SkillError(f"Already installed in {mode} mode: {destination}. Uninstall first.")
             plan.append((source, destination, mode))
 
     for source, destination, mode in plan:
-        if installing and mode is not None:
+        if installing and mode == "legacy-symlink":
+            destination.unlink()
+            install(source, destination, "symlink", None)
+            print(f"MIGRATED {source.name} symlink: {destination}")
+        elif installing and mode is not None:
             print(f"SKIP (already installed): {destination}")
         elif installing:
             if args.dry_run:
@@ -261,7 +326,7 @@ def apply_selection(args: argparse.Namespace) -> None:
             check_target(destination.parent)
             if owned_mode(source, destination) != mode:
                 raise SkillError(f"Installation mode changed during removal: {destination}")
-            if mode == "symlink":
+            if mode in ("symlink", "legacy-symlink"):
                 destination.unlink()
             else:
                 shutil.rmtree(destination)
@@ -388,7 +453,8 @@ def main() -> int:
         elif args.command == "validate":
             directories = skill_directories()
             issues = [issue for directory in directories for issue in validate_skill(directory)]
-            issues.extend(validate_catalog(CATALOG, {directory.name for directory in directories}))
+            locations = discover_skill_locations()
+            issues.extend(validate_catalog(CATALOG, {directory.name for directory in directories}, locations))
             if not directories:
                 issues.append("No skill directories found")
             if issues:

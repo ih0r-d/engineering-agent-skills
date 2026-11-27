@@ -63,16 +63,20 @@ class EvaluationTests(unittest.TestCase):
         original_dir = evaluation_cases.CASE_DIR
         try:
             evaluation_cases.CASE_DIR = EVALS / "cases"
-            cases = json.loads((evaluation_cases.CASE_DIR / "java-quality.json").read_text())
+            case_file = evaluation_cases.catalog_case_paths()["java-quality"]
+            cases = json.loads(case_file.read_text())
             cases[0]["prompt"] = " "
             # The validator operates on the real catalog and files. Exercise its diagnostic
             # formatting through a copied temporary case tree, without changing repository data.
             import tempfile
             with tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
-                for path in evaluation_cases.CASE_DIR.glob("*.json"):
-                    (root / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
-                (root / "java-quality.json").write_text(json.dumps(cases), encoding="utf-8")
+                for path in evaluation_cases.CASE_DIR.rglob("*.json"):
+                    destination = root / path.relative_to(evaluation_cases.CASE_DIR)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    destination.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+                destination = root / case_file.relative_to(evaluation_cases.CASE_DIR)
+                destination.write_text(json.dumps(cases), encoding="utf-8")
                 evaluation_cases.CASE_DIR = root
                 issues = evaluation_cases.validate_cases()
                 self.assertTrue(any("java-quality.json case '" in issue and "prompt" in issue for issue in issues), issues)
