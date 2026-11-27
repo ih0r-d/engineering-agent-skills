@@ -4,7 +4,7 @@
 
 [![Validate skills](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/ih0r-d/engineering-agent-skills/actions/workflows/validate.yml)
 [![Agent Skills](https://img.shields.io/badge/standard-Agent%20Skills-57534e)](https://agentskills.io/specification)
-[![Skills](https://img.shields.io/badge/skills-32-2563eb)](#skill-catalog)
+[![Skills](https://img.shields.io/badge/skills-33-2563eb)](#skill-catalog)
 [![Codex & Claude Code](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code-0f766e)](#supported-agents)
 [![Python 3.10+](https://img.shields.io/badge/offline%20installer-Python%203.10%2B-3776ab)](#offline-installation)
 [![Stand with Ukraine](https://img.shields.io/badge/Stand%20with-Ukraine-0057b7)](https://u24.gov.ua/)
@@ -48,6 +48,7 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 | [`implementation-planning`](skills/implementation-planning/SKILL.md) | Scoped implementation sequencing, verification, and change risks |
 | [`requirements-analysis`](skills/requirements-analysis/SKILL.md) | Requirements, business rules, scope, and verifiable acceptance criteria |
 | [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
+| [`prompt-engineering`](skills/prompt-engineering/SKILL.md) | Prompt design, output contracts, ambiguity, and instruction boundaries |
 | [`skill-evaluation`](skills/skill-evaluation/SKILL.md) | Behavioral evaluations, routing, controlled comparisons, and regression evidence |
 | [`skill-authoring`](skills/skill-authoring/SKILL.md) | Portable skill authoring, activation boundaries, and specification compliance |
 | [`dependency-management`](skills/dependency-management/SKILL.md) | Dependency resolution, compatibility, lockfiles, and scoped upgrades |

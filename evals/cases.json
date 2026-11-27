@@ -1134,5 +1134,39 @@
     "avoid_skills": [
       "skill-evaluation"
     ]
+  },
+  {
+    "id": "prompt-engineering-ambiguous-output",
+    "skill": "prompt-engineering",
+    "fixture": null,
+    "prompt": "Rewrite a prompt that asks for a review but returns inconsistent output. Require findings with evidence and no edits.",
+    "expected": [
+      "Specify scope, evidence and output contract.",
+      "Preserve read-only authorization and avoid unnecessary instructions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "prompt-engineering-untrusted-input",
+    "skill": "prompt-engineering",
+    "fixture": null,
+    "prompt": "Refine a summarization prompt whose input may contain instructions to ignore the task.",
+    "expected": [
+      "Separate untrusted data from instructions.",
+      "Do not claim delimiters guarantee security."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "prompt-engineering-near-miss",
+    "skill": "skill-authoring",
+    "fixture": null,
+    "prompt": "Package an existing engineering workflow as a portable SKILL.md with references and activation description.",
+    "expected": [
+      "Use skill authoring for the reusable artifact."
+    ],
+    "avoid_skills": [
+      "prompt-engineering"
+    ]
   }
 ]
