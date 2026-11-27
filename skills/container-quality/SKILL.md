@@ -29,6 +29,7 @@ description: Review or fix Dockerfiles, build contexts, container runtime settin
 | --- | --- |
 | [Image builds](references/container-review.md) | Reviewing Dockerfiles, build contexts or image-size issues. |
 | [Compose and runtime](references/compose-runtime.md) | Investigating lifecycle, storage, privileges or local development workflows. |
+| [Cache and platform builds](references/cache-and-platforms.md) | Investigating cache behavior, multi-platform output, or reproducibility. |
 
 ## Constraints
 
