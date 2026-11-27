@@ -32,6 +32,8 @@ description: Review Java source or generated Java for correctness, API compatibi
 | [JVM diagnostics](references/runtime-diagnostics.md) | Investigating heap growth, GC pauses, thread starvation, native memory, or class-loader retention. |
 | [Spring transactions](references/spring-transactions.md) | Debugging missing transaction boundaries, rollback behavior, or proxy-based advice. |
 | [Virtual threads](references/virtual-threads.md) | Reviewing Java 21+ blocking concurrency or pinning symptoms. |
+| [Java type and value contracts](references/type-contracts.md) | Reviewing equality, hashing, ordering, records, sealed hierarchies, or generics. |
+| [Persistence](references/persistence.md) | Investigating JPA/Hibernate query counts, entity state, lazy loading, locking, or transaction scope. |
 | [Static analysis](references/static-analysis.md) | Choosing checks or investigating analyzer diagnostics. |
 | [Minimal-change examples](references/anti-overengineering.md) | Evaluating duplication or cleanup findings with competing fixes. |
 

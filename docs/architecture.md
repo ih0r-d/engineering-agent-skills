@@ -38,6 +38,8 @@ Keep the main instructions concise and usable for common tasks. The specificatio
 
 Follow the [Skill Authoring Guide](skill-authoring.md) for recommended Markdown conventions and use the [Skill Template](../templates/SKILL.md) as a starting point. These conventions complement the official specification without imposing additional format requirements.
 
+See the [Phase 2.8 catalog audit](skill-audit.md) for reviewed responsibility boundaries, retained workflows, and identified technical depth gaps.
+
 ## Validation and installation boundaries
 
 The Python 3.10+ installer uses only the standard library. It resolves package sources through the catalog, installs flat skill directories, and checks bundled Markdown resource paths and ownership before writing. The offline `validate` command also checks category membership and layout. Evaluation cases follow the same catalog categories. The maintainer gate uses PyYAML and the pinned official `skills-ref` metadata validator. Repository checks enforce YAML types and duplicate-key handling; Lychee checks Markdown links and anchors. [Reference implementation](https://github.com/agentskills/agentskills/tree/f130f348f502d9804278a617f86929846896d2e9/skills-ref), [Maintainer dependency lock](../.scripts/spec/uv.lock)
