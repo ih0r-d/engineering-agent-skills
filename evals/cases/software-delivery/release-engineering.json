@@ -47,5 +47,19 @@
     "avoid_skills": [
       "deployment"
     ]
+  },
+  {
+    "id": "release-hotfix-backport-readiness",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "A patch is needed for two supported release lines after a production defect. Review the hotfix plan, backports, and release evidence. Do not push, tag, publish, or deploy.",
+    "expected": [
+      "Identify the supported target branches and keep the correction minimal for each line.",
+      "Require regression and compatibility evidence on every backport target; a cherry-pick alone is not verification.",
+      "Distinguish mitigation, artifact release, and deployment, and preserve authorization boundaries."
+    ],
+    "avoid_skills": [
+      "bug-investigation"
+    ]
   }
 ]

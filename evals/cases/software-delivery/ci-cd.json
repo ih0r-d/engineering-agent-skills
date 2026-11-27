@@ -20,5 +20,19 @@
       "Do not invent speedups."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "ci-cd-gitlab-needs-artifact-flow",
+    "skill": "ci-cd",
+    "fixture": null,
+    "prompt": "In a .gitlab-ci.yml pipeline, a deploy job starts after needs was added but cannot find the package produced in an earlier stage. Review the likely artifact-flow issue without editing the pipeline.",
+    "expected": [
+      "Load GitLab CI guidance because the provider is identified by the repository file.",
+      "Inspect needs and artifact download configuration together; a scheduling edge does not guarantee every prior artifact is fetched.",
+      "Keep deploy and publish credentials outside untrusted pipeline paths and preserve artifact identity."
+    ],
+    "avoid_skills": [
+      "build-automation-quality"
+    ]
   }
 ]
