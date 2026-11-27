@@ -34,6 +34,7 @@ description: Review Java source or generated Java for correctness, API compatibi
 | [Virtual threads](references/virtual-threads.md) | Reviewing Java 21+ blocking concurrency or pinning symptoms. |
 | [Java type and value contracts](references/type-contracts.md) | Reviewing equality, hashing, ordering, records, sealed hierarchies, or generics. |
 | [Persistence](references/persistence.md) | Investigating JPA/Hibernate query counts, entity state, lazy loading, locking, or transaction scope. |
+| [Native Image](references/native-image.md) | Diagnosing GraalVM native-image failures, reflection metadata, resources, or class initialization. |
 | [Static analysis](references/static-analysis.md) | Choosing checks or investigating analyzer diagnostics. |
 | [Minimal-change examples](references/anti-overengineering.md) | Evaluating duplication or cleanup findings with competing fixes. |
 
