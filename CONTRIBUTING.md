@@ -4,13 +4,11 @@ Start with the toolkit's maintenance instructions. In the change description, na
 
 ## Author and review Skills
 
-- Give each Skill one recurring engineering responsibility that works across repositories. Check adjacent descriptions and document the boundary when their triggers could overlap.
-- Write descriptions around observable inputs, user intent and tasks. Add a positive scenario and a plausible request that should route elsewhere. Keep examples and expected findings with the evaluations. [Evaluation procedure](evals/README.md)
-- Every skill must pass the official Agent Skills specification gate. Use the flat `skills/<skill-id>/SKILL.md` layout and register the ID once in `catalog.json`. Use portable resources and standard frontmatter. Identify the client version and settings when reporting client-specific behavior. [Agent Skills specification](https://agentskills.io/specification), [Repository architecture](docs/architecture.md), [Client compatibility](docs/compatibility.md)
-- Keep `SKILL.md` usable on its own for common tasks. Link topic-specific references with a reason to load each one. Reuse relevant evidence and link upstream details for specialist tools. Keep examples and domain rules in the narrowest applicable reference.
+- Follow the [canonical Skill Authoring Standard](docs/skill-authoring.md) for format requirements and repository recommendations. It covers scope, descriptions, references, scripts, size targets, and evaluation.
+- Keep `SKILL.md` sufficient for common tasks; load linked specialist references only when their stated condition applies. Register each skill in one category and use portable resources. [Repository architecture](docs/architecture.md), [Client compatibility](docs/compatibility.md)
 - Give the agent a practical way to confirm each finding. State the relevant input, expected behavior and observed impact. Separate defects and compatibility regressions from preferences, and prefer small changes that preserve intentional behavior and use existing tools.
 - Default to read-only review. Make only explicitly requested changes within the task scope. Keep consumer instructions and build configuration intact unless the user explicitly requests their modification. Protect private code and credentials, and inspect commands for network or write effects before running them.
-- Use the [Skill Authoring Guide](docs/skill-authoring.md) and [Skill Template](templates/SKILL.md) when creating or restructuring skills. Preserve existing behavior during formatting-only changes.
+- Use [templates/SKILL.md](templates/SKILL.md) as an adaptable starting point. Preserve existing behavior during formatting-only changes.
 
 ## Verify changes
 

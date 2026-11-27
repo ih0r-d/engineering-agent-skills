@@ -1,144 +1,46 @@
-# Skill Authoring Guide
+# Skill Authoring Standard
 
-This guide defines recommended authoring and Markdown conventions for Engineering Agent Skills. The [Agent Skills specification](https://agentskills.io/specification) remains the authoritative format specification.
+This is the canonical repository guide for creating and changing portable Agent Skills. The [Agent Skills specification](https://agentskills.io/specification) defines format requirements; this guide adds repository recommendations. Consumer project policy remains with the consumer.
 
-## Design principles
+## Format requirements
 
-| Principle | Guidance |
-| --- | --- |
-| Single responsibility | Address one recurring engineering task. |
-| Portability | Keep canonical instructions independent of agent implementations. |
-| Composability | Use complementary skills without duplicating their responsibilities. |
-| Progressive disclosure | Load additional resources only when relevant. |
-| Evidence-based execution | Establish findings from observable behavior, contracts, and verification. |
-| Context efficiency | Avoid redundant instructions and unnecessary detail. |
-| Maintainability | Prefer clear, focused, and reusable instructions. |
+Every skill directory contains `SKILL.md` with YAML frontmatter and Markdown instructions. Required `name` must match the directory, be 1–64 lowercase letters, digits, or hyphens, have no leading/trailing or consecutive hyphens. Required `description` must be non-empty and no more than 1024 characters, and describe both capability and use conditions. Optional standard fields are `license`, `compatibility` (up to 500 characters), `metadata` (string keys and values), and experimental `allowed-tools`. Use no non-standard fields as requirements. The official body format does not require particular headings.
 
-## Directory structure
+## Repository recommendations
 
-Use the canonical skill layout:
-
-    skills/<skill-id>/
-    ├── SKILL.md
-    ├── references/
-    ├── scripts/
-    └── assets/
-
-Only `SKILL.md` is required. Add resource directories when they serve a concrete purpose. Do not create empty directories.
-
-## Frontmatter
-
-Use standard fields defined by the Agent Skills specification.
-
-| Field | Status |
-| --- | --- |
-| `name` | Required |
-| `description` | Required |
-| `license` | Optional |
-| `compatibility` | Optional |
-| `metadata` | Optional |
-| `allowed-tools` | Experimental |
-
-Write descriptions around the skill's responsibility, observable inputs, and activation conditions.
-
-Avoid proprietary required fields and unnecessary client-specific metadata.
-
-## Markdown structure
-
-Use meaningful sections to separate distinct instruction types.
-
-| Section | Purpose |
-| --- | --- |
-| Scope | Define responsibilities and boundaries. |
-| Operating Modes | Distinguish supported execution modes. |
-| Workflow | Describe the execution sequence. |
-| Reference Selection | Explain when additional resources are relevant. |
-| Constraints | Define restrictions and compatibility requirements. |
-| Verification | Establish how results should be checked. |
-| Expected Output | Describe the required deliverable. |
-| Examples | Illustrate relevant behavior and edge cases. |
-
-These sections are recommendations, not mandatory headings. Include only sections that improve the skill's clarity and execution.
-
-## Markdown conventions
-
-| Element | Usage |
-| --- | --- |
-| Level-one heading | Skill title |
-| Level-two heading | Main instruction section |
-| Level-three heading | Subsection within a complex workflow |
-| Ordered list | Sequential execution steps |
-| Unordered list | Independent requirements or constraints |
-| Table | Operating modes, decision criteria, or reference selection |
-| Bold text | Critical instructions and restrictions |
-| Inline code | Identifiers, paths, commands, and technical terms |
-| Fenced code block | Executable examples and structured snippets |
-| Relative link | Skill-local resources |
-
-Use tables for information that benefits from comparison or explicit selection criteria. Avoid tables when a short paragraph or list communicates the same instruction more clearly.
-
-## Workflow design
-
-Workflows should establish the task scope, identify relevant evidence, perform authorized actions, verify results, and communicate the outcome.
-
-Use ordered steps when execution order matters. Separate conditional behavior from unconditional requirements.
-
-Keep authorization boundaries explicit. Loading a supporting skill does not authorize actions outside the user's request.
-
-## Skill composition
-
-Select the primary skill according to the requested outcome.
-
-Use supporting skills when their specialized guidance contributes relevant evidence or verification.
-
-For example, a Java pull request review uses `code-review` as the primary workflow and `java-quality` for language-specific contracts and behavior.
-
-Do not duplicate supporting skill instructions or assume that clients automatically load other skills.
+- Design one coherent engineering capability with explicit responsibility boundaries. Compose with adjacent skills when their expertise helps; do not copy their procedures.
+- Ground guidance in real tasks, project artifacts, documented behavior, and observed failure modes. Prefer actionable procedures, a clear default, and justified alternatives. Match instruction specificity to operational risk and preserve authorization boundaries.
+- Describe user intent and activation conditions, using realistic terminology and scenarios. Avoid broad catch-all triggers and keyword stuffing. Test positive prompts, near misses, and legitimate composition.
+- Aim for 30–100 lines and fewer than 1,500 tokens in most entrypoints; these are advisory targets, not gates. Do not enforce a minimum or remove necessary guidance to meet them. The official best-practice recommendation is under 500 lines and 5,000 tokens. Keep critical gotchas in the entrypoint when a reliable reference trigger is unlikely.
 
 ## Progressive disclosure
 
-Keep the entrypoint sufficient for common tasks.
+Keep `SKILL.md` sufficient for the common path. Put substantial specialized guidance in focused `references/` files and link each directly with a task- or symptom-based loading condition. Never require all references by default; avoid deep reference chains and copied external pages. Note version-sensitive behavior and link its authoritative source. Scripts and assets are optional; include them only when they make a reusable task materially easier.
 
-Move substantial specialist guidance into focused resources and link them directly from `SKILL.md`.
+## Workflow and resources
 
-| Resource | Purpose |
-| --- | --- |
-| `references/` | Detailed guidance, decision criteria, and technical examples |
-| `scripts/` | Repeatable executable procedures |
-| `assets/` | Static templates, schemas, and other supporting resources |
+1. Identify the requested outcome and whether the user asked for review, planning, or implementation. Inspect only relevant skills, project conventions, and source material; expand scope when findings require it.
+2. Confirm the capability is recurring and distinct. Review adjacent descriptions for overlap, define what belongs here, and preserve IDs and contracts when revising.
+3. Draft activation conditions and an operational workflow with concrete defaults, risks, gotchas, authorization, and observable success criteria.
+4. Add references only for specialized detail with a clear loading trigger. Add scripts only for reusable deterministic work; ensure predictable exit codes, useful errors, non-interactive use, documented dependencies and side effects, and dry-run support when appropriate. Test bundled scripts. Add assets only when a reusable template or data file has practical value.
+5. Review for correctness, portability, clarity, duplication, and context cost. Inspect only task-relevant files; preserve unrelated changes; reuse tooling; do not install dependencies without justification. Stop when evidence is sufficient and report uncertainty rather than inventing results.
+6. Verify format and links with repository checks. Add focused regression coverage for changed behavior. Evaluate activation and output behavior separately from structural validation.
 
-Explain when each reference should be loaded. Keep resource paths relative to the skill directory and avoid deeply nested reference chains.
+## Evaluation
 
-Follow the specification's recommended instruction size limits. Prefer the smallest instruction set that preserves reliable task execution.
+Define observable success, relevant edge cases, positive and negative activation, and responsibility boundaries. Compare agent runs with and without the skill (or against the previous version) on equivalent tasks. Judge correctness first, then context, latency, or cost. Offline schema and fixture checks do not demonstrate behavioral effectiveness; never claim effectiveness without execution evidence. Follow the [evaluation protocol](../evals/README.md).
 
-## Verification and evaluation
+## Repository resources
 
-Validate every skill using the repository's existing quality gates.
+- [Repository architecture](architecture.md): catalog, validation, and portability conventions.
+- [Context architecture](context-architecture.md): separation of reusable skills from project instructions and evidence.
+- [Skill template](../templates/SKILL.md): adaptable starting point, not a required heading structure.
+- [Contribution guide](../CONTRIBUTING.md): repository maintenance and quality gates.
 
-Cover positive activation, plausible near misses, responsibility boundaries, and expected behavior through evaluation cases.
+## Official sources
 
-Distinguish deterministic fixture checks from live agent evaluations.
-
-Formatting-only changes must preserve existing responsibilities, authorization boundaries, reference selection conditions, and expected behavior.
-
-See the [evaluation protocol](../evals/README.md) and [contribution standards](../CONTRIBUTING.md).
-
-## Authoring checklist
-
-- The skill follows the official Agent Skills specification.
-- The description identifies the intended task and activation conditions.
-- Responsibilities do not unnecessarily overlap with adjacent skills.
-- Markdown structure supports clear instruction execution.
-- References have explicit selection conditions.
-- Instructions preserve authorization and compatibility boundaries.
-- Verification requirements are actionable.
-- Examples and evaluation cases cover relevant behavior.
-- Content avoids unnecessary repetition.
-- Repository quality gates pass.
-
-## References
-
-- [Agent Skills specification](https://agentskills.io/specification)
-- [Repository architecture](architecture.md)
-- [Contribution standards](../CONTRIBUTING.md)
-- [Evaluation protocol](../evals/README.md)
+- [Specification](https://agentskills.io/specification)
+- [Best practices](https://agentskills.io/skill-creation/best-practices)
+- [Optimizing descriptions](https://agentskills.io/skill-creation/optimizing-descriptions)
+- [Using scripts](https://agentskills.io/skill-creation/using-scripts)
+- [Evaluating skills](https://agentskills.io/skill-creation/evaluating-skills)
