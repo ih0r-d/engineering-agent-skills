@@ -28,6 +28,8 @@ description: Review Python code, imports, typing, packaging, and tests for runti
 | --- | --- |
 | [Runtime and API review](references/quality-rubric.md) | Reviewing language semantics, typing or lifecycle behavior. |
 | [Packaging and checks](references/packaging-and-checks.md) | Reviewing installed artifacts, analyzer configuration or verification procedures. |
+| [Asyncio lifecycle](references/asyncio.md) | Tracing task ownership, cancellation, timeouts, or blocking work on an event loop. |
+| [Typing contracts](references/typing.md) | Evaluating generic API variance, protocols, narrowing, or runtime validation boundaries. |
 
 ## Constraints
 

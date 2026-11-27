@@ -29,6 +29,7 @@ description: Review or fix Bash and POSIX sh scripts for unsafe expansions, exit
 | --- | --- |
 | [Shell behavior and portability](references/shell-review.md) | Diagnosing shell semantics, expansions, exit status or portability issues. |
 | [Verification cases](references/verification.md) | Selecting verification commands or testing a fix. |
+| [Processes and traps](references/process-lifecycle.md) | Reviewing background jobs, signal handling, traps, or cleanup status. |
 
 ## Constraints
 
