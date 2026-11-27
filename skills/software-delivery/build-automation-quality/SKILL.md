@@ -27,8 +27,10 @@ description: Review or repair Maven and Gradle build configuration, Makefiles, a
 
 | Reference | Load when |
 | --- | --- |
-| [Maven and Gradle](references/jvm-builds.md) | Reviewing or repairing JVM build configuration. |
-| [Make and Task](references/build-system-review.md) | Reviewing task dependencies, command runners or incremental execution. |
+| [Maven](references/maven.md) | `pom.xml`, Maven Wrapper, plugins, profiles, or reactor builds are involved. |
+| [Gradle](references/gradle.md) | `build.gradle[.kts]`, Gradle Wrapper, task graph, or dependency resolution is involved. |
+| [GNU Make](references/make.md) | A Makefile, target dependency graph, or recipe execution is involved. |
+| [Taskfile](references/taskfile.md) | `Taskfile.yml`, `task` dependencies, status checks, or variable expansion is involved. |
 | [Build reproducibility](references/reproducibility.md) | Diagnosing stale outputs, cache misses, non-hermetic builds, or cross-platform drift. |
 
 ## Constraints
