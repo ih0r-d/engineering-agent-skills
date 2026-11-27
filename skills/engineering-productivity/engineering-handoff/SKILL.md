@@ -19,6 +19,8 @@ description: Prepare or review engineering handoffs using verified repository st
 | --- | --- |
 | [Detailed guidance](references/handoff-checklist.md) | Task-specific decisions require additional guidance. |
 
+When transferring ownership or resuming interrupted work, use [the compact handoff template](assets/handoff-template.md) and include only relevant evidence.
+
 ## Constraints
 
 - Do not invent completion, test outcomes, approvals, or commit hashes.

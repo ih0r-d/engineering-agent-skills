@@ -28,6 +28,8 @@ Keep existing architecture assessments, detailed API contracts, and formal archi
 | --- | --- |
 | [System design checklist](references/design-checklist.md) | Evaluating architectural alternatives, quality attributes, failure scenarios, or design completeness. |
 
+When a design deliverable is requested, use [the system design template](assets/system-design-template.md) as a structure and omit irrelevant sections.
+
 ## Design Principles
 
 | Principle | Guidance |

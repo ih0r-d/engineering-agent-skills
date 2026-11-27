@@ -23,5 +23,17 @@
       "Identify consumer-facing verification and remaining uncertainty."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "incident-analysis-postmortem-template-resource",
+    "skill": "incident-analysis",
+    "fixture": null,
+    "prompt": "Prepare an outage postmortem template. We know an alert fired and a rollback began, but exact times, cause, and recovery evidence are missing.",
+    "expected": [
+      "Select assets/postmortem-template.md.",
+      "Keep missing facts and causal hypotheses explicit and distinguish mitigation from verified recovery.",
+      "Use blameless follow-up without inventing timestamps or impact."
+    ],
+    "avoid_skills": []
   }
 ]

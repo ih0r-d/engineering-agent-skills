@@ -32,6 +32,8 @@ Support a specific architectural decision. Keep complete system designs, archite
 | --- | --- |
 | [ADR guidance](references/adr-guide.md) | Comparing alternatives, drafting a decision record, or superseding a previous decision. |
 
+When asked to draft a reusable ADR, start from [the ADR template](assets/adr-template.md), adapting status and sections to local conventions.
+
 ## Constraints
 
 - Do not invent benchmarks, stakeholder approval, or decision history.

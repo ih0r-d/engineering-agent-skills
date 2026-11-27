@@ -20,6 +20,8 @@ description: Review software changes, architecture boundaries, and configuration
 | --- | --- |
 | [Detailed guidance](references/security-checklist.md) | Additional guidance on test or review decisions is needed. |
 
+When producing a security review report, use [the report template](assets/security-report-template.md). Record only evidence-backed findings and state scope limitations.
+
 ## Constraints
 
 - Default to read-only defensive assessment within the authorized scope.
