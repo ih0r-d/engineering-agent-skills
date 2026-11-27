@@ -1,58 +1,35 @@
 ---
 name: skill-name
-description: Describe what the skill does and when agents should use it.
+description: Explain the capability and when to use it, using realistic user tasks.
 ---
 
-# Skill Title
+# Skill title
 
-Briefly describe the skill's purpose and intended outcome.
-
-## Scope
-
-- Define the primary responsibility.
-- Identify applicable tasks.
-- Identify exclusions and responsibility boundaries.
-
-## Operating Modes
-
-| Mode | Purpose | Authorization |
-| --- | --- | --- |
-| Review | Inspect and report findings | Read-only |
-| Fix | Apply scoped corrections | Explicit authorization |
-| Verify | Execute applicable checks | No source changes |
+State the useful outcome in one sentence.
 
 ## Workflow
 
-1. Establish the task scope and relevant context.
-2. Inspect the implementation, contracts, and available evidence.
-3. Load relevant references when additional guidance is needed.
-4. Perform authorized actions within the established scope.
-5. Verify the result using applicable checks.
-
-## Reference Selection
-
-| Reference | Load when |
-| --- | --- |
-| `references/topic.md` (replace with an actual resource link) | Additional domain-specific guidance is required |
+1. Establish scope and inspect relevant evidence.
+2. Follow the task-specific procedure and defaults.
+3. Verify observable outcomes and report remaining uncertainty.
 
 ## Constraints
 
-- Respect the consuming project's instructions.
-- Preserve applicable compatibility contracts.
-- Avoid unrelated changes and unnecessary dependencies.
-- Distinguish verified evidence from assumptions.
-- Do not perform unauthorized actions.
+- Respect consumer instructions and authorization boundaries.
+- Preserve unrelated work; avoid unnecessary dependencies and side effects.
+
+## Reference selection
+
+Link only real resources, and say when each one is useful. Remove this section if no reference is needed.
+
+## Gotchas
+
+- Record non-obvious failure modes that affect the common path.
 
 ## Verification
 
-- Establish the relevant baseline.
-- Run applicable existing checks.
-- Compare expected and observed behavior.
-- Report failed, skipped, and unverified checks.
+- State the relevant check and what passing evidence looks like.
 
-## Expected Output
+## Expected output
 
-- Findings or implemented changes.
-- Supporting evidence.
-- Verification commands and results.
-- Remaining risks and limitations.
+- Describe the findings, artifact, or decision the user should receive.
