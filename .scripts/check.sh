@@ -20,7 +20,7 @@ case "${1:-}" in
     ;;
   docs)
     lychee --offline --include-fragments --no-progress \
-      './*.md' './docs/**/*.md' './skills/**/*.md' './evals/**/*.md'
+      './*.md' './docs/**/*.md' './skills/**/*.md' './evals/**/*.md' './templates/**/*.md'
     ;;
   *)
     printf 'Usage: bash .scripts/check.sh {syntax|spec|quality|docs}\n' >&2
