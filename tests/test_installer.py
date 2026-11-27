@@ -56,7 +56,7 @@ class InstallerTests(unittest.TestCase):
                 for target in targets:
                     manifest = target / "SKILL.md"
                     self.assertEqual(mode == "symlink", target.is_symlink())
-                    self.assertEqual((ROOT / "skills" / target.name / "SKILL.md").read_bytes(),
+                    self.assertEqual(skills.skill_path(target.name).joinpath("SKILL.md").read_bytes(),
                                      manifest.read_bytes())
                 removed = run_cli("uninstall", *args)
                 self.assertEqual(0, removed.returncode, removed.stderr)
@@ -76,6 +76,23 @@ class InstallerTests(unittest.TestCase):
         removed = run_cli("uninstall", "--agent", "codex", "--target", str(self.project),
                           "--skill", "skill-authoring")
         self.assertEqual(0, removed.returncode, removed.stderr)
+
+    def test_migrates_legacy_flat_symlinks_and_removes_dangling_legacy_link(self) -> None:
+        source = skills.skill_path("java-quality")
+        legacy_source = skills.SKILLS / "java-quality"
+        legacy_target = os.path.relpath(legacy_source, start=self.target.parent)
+        self.target.parent.mkdir(parents=True, exist_ok=True)
+        self.target.symlink_to(legacy_target, target_is_directory=True)
+        self.assertFalse(self.target.exists())
+
+        installed = run_cli("install", *self.args())
+        self.assertEqual(0, installed.returncode, installed.stderr)
+        self.assertIn("MIGRATED", installed.stdout)
+        self.assertEqual(os.path.relpath(source, start=self.target.parent), os.readlink(self.target))
+        self.assertTrue((self.target / "SKILL.md").is_file())
+        removed = run_cli("uninstall", *self.args())
+        self.assertEqual(0, removed.returncode, removed.stderr)
+        self.assertFalse(os.path.lexists(self.target))
 
     def test_legacy_python_entrypoint_matches_current_cli(self) -> None:
         legacy = [sys.executable, str(ROOT / "scripts/skills.py")]
@@ -157,14 +174,18 @@ class InstallerTests(unittest.TestCase):
 
     def test_offline_copy_accepts_standard_optional_frontmatter(self) -> None:
         checkout = self.project.parent / "checkout"
-        source = checkout / "sample-skill"
+        source = checkout / "software-engineering/sample-skill"
         source.mkdir(parents=True)
+        catalog_file = checkout / "catalog.json"
+        catalog_file.write_text(json.dumps({"categories": [{"id": "software-engineering",
+                                                             "name": "Software Engineering",
+                                                             "skills": ["sample-skill"]}]}))
         manifest = ("---\nname: sample-skill\ndescription: >-\n  Review sample changes.\n"
                     "compatibility: Requires Git\nmetadata: {author: 'Example team'}\n"
                     "allowed-tools: Read\n---\n# Instructions\n")
         (source / "SKILL.md").write_text(manifest, encoding="utf-8")
         args = ["--agent", "codex", "--target", str(self.project), "--skill", source.name]
-        with patch.object(skills, "SKILLS", checkout), redirect_stdout(io.StringIO()):
+        with patch.object(skills, "SKILLS", checkout), patch.object(skills, "CATALOG", catalog_file), redirect_stdout(io.StringIO()):
             skills.apply_selection(skills.create_parser().parse_args(["install", *args, "--mode", "copy"]))
             target = self.target.with_name(source.name)
             self.assertEqual(manifest, (target / "SKILL.md").read_text(encoding="utf-8"))
@@ -196,7 +217,7 @@ class InstallerTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(content)
 
-        manifest = (ROOT / "skills/java-quality/SKILL.md").read_bytes()
+        manifest = skills.skill_path("java-quality").joinpath("SKILL.md").read_bytes()
         args = ("--agent", "all", "--target", str(self.project), "--skill", "java-quality")
         for mode in ("symlink", "copy"):
             with self.subTest(mode=mode):
@@ -319,9 +340,10 @@ class InstallerTests(unittest.TestCase):
     def test_exact_relative_link_survives_project_relocation_and_dangling_source(self) -> None:
         checkout_path = Path(".tooling/engineering-agent-skills")
         checkout = self.project / checkout_path
-        skill_path = checkout_path / "skills/java-quality"
+        skill_path = checkout_path / "skills/software-engineering/java-quality"
         targets = (".agents/skills/java-quality", ".claude/skills/java-quality")
-        shutil.copytree(ROOT / "skills/java-quality", checkout / "skills/java-quality")
+        shutil.copytree(skills.skill_path("java-quality"), self.project / skill_path)
+        shutil.copy2(ROOT / "catalog.json", checkout / "catalog.json")
         installer = checkout / ".scripts/skills.py"
         installer.parent.mkdir()
         shutil.copy2(ROOT / ".scripts/skills.py", installer)
@@ -359,7 +381,7 @@ class InstallerTests(unittest.TestCase):
             self.assertFalse(os.path.lexists(moved / target))
 
     def test_legacy_copy_requires_matching_content(self) -> None:
-        source = ROOT / "skills/java-quality"
+        source = skills.skill_path("java-quality")
         shutil.copytree(source, self.target)
         marker = self.target / skills.MARKER
         marker.write_text(json.dumps({"source": str(source), "skill": source.name}))
@@ -395,8 +417,8 @@ class InstallerTests(unittest.TestCase):
 
     def test_prevents_installation_inside_skill_source(self) -> None:
         catalog = self.project / "catalog"
-        source = catalog / "java-quality"
-        shutil.copytree(ROOT / "skills/java-quality", source)
+        source = catalog / "software-engineering/java-quality"
+        shutil.copytree(skills.skill_path("java-quality"), source)
         with patch.object(skills, "SKILLS", catalog):
             args = skills.create_parser().parse_args([
                 "install", "--agent", "codex", "--target", str(source), "--skill", "java-quality",
@@ -407,8 +429,8 @@ class InstallerTests(unittest.TestCase):
 
     def test_copies_from_read_only_source_with_removable_directory_modes(self) -> None:
         catalog = self.project / "catalog"
-        source = catalog / "java-quality"
-        shutil.copytree(ROOT / "skills/java-quality", source)
+        source = catalog / "software-engineering/java-quality"
+        shutil.copytree(skills.skill_path("java-quality"), source)
         directories = [source, source / "references"]
         for directory in directories:
             directory.chmod(0o555)

@@ -1,6 +1,6 @@
 # Skill evaluations
 
-[cases](cases/) stores one JSON array per catalog Skill plus [unrelated.json](cases/unrelated.json) for requests with no primary Skill. Each case records its prompt, expected primary Skill, nearby Skills to avoid, optional fixture, and observable acceptance criteria. Every non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
+[cases](cases/) stores one JSON array per catalog Skill at `cases/<category-id>/<skill-id>.json`, plus [unrelated.json](cases/unrelated.json) for requests with no primary Skill. `catalog.json` determines the category and path. Each case records its prompt, expected primary Skill, nearby Skills to avoid, optional fixture, and observable acceptance criteria. Every non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
 
 ## Deterministic checks
 

@@ -17,15 +17,25 @@ def catalog_skills() -> set[str]:
     return {skill for category in catalog["categories"] for skill in category["skills"]}
 
 
+def catalog_case_paths() -> dict[str, Path]:
+    catalog = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
+    return {skill: CASE_DIR / category["id"] / f"{skill}.json"
+            for category in catalog["categories"] for skill in category["skills"]}
+
+
 def load_cases(skill: str | None = None) -> list[dict[str, Any]]:
     """Load all cases, one skill's cases, or unrelated cases in stable order."""
     if skill is not None:
-        path = CASE_DIR / f"{skill}.json"
+        if skill not in catalog_skills():
+            raise ValueError(f"Unknown evaluation skill {skill!r}")
+        path = catalog_case_paths().get(skill)
+        if path is None:
+            raise ValueError(f"Unknown evaluation skill {skill!r}")
         if not path.is_file():
             raise ValueError(f"No evaluation case file for skill {skill!r}")
         paths = [path]
     else:
-        paths = sorted(CASE_DIR.glob("*.json"))
+        paths = sorted(CASE_DIR.rglob("*.json"))
     cases: list[dict[str, Any]] = []
     for path in paths:
         try:
@@ -39,7 +49,7 @@ def load_cases(skill: str | None = None) -> list[dict[str, Any]]:
 
 
 def load_unrelated_cases() -> list[dict[str, Any]]:
-    return load_cases(None) if not CASE_DIR.exists() else _load_file(CASE_DIR / "unrelated.json")
+    return _load_file(CASE_DIR / "unrelated.json")
 
 
 def _load_file(path: Path) -> list[dict[str, Any]]:
@@ -64,24 +74,31 @@ def relevant_cases(skill: str) -> list[dict[str, Any]]:
 def validate_cases(skills: set[str] | None = None) -> list[str]:
     skills = catalog_skills() if skills is None else skills
     issues: list[str] = []
-    expected_files = {f"{skill}.json" for skill in skills} | {"unrelated.json"}
+    skill_files = catalog_case_paths()
+    expected_files = {path.relative_to(CASE_DIR).as_posix() for path in skill_files.values()} | {"unrelated.json"}
     if not CASE_DIR.is_dir():
         return ["evals/cases: missing case directory"]
-    actual_files = {path.name for path in CASE_DIR.iterdir()}
+    allowed_directories = {path.parent.relative_to(CASE_DIR).as_posix() for path in skill_files.values()}
+    actual_paths = {path.relative_to(CASE_DIR).as_posix() for path in CASE_DIR.rglob("*")}
+    actual_files = {relative for relative in actual_paths if (CASE_DIR / relative).is_file()}
     for name in sorted(expected_files - actual_files):
         issues.append(f"evals/cases/{name}: missing evaluation file")
-    for name in sorted(actual_files - expected_files):
+    for name in sorted(actual_paths - expected_files - allowed_directories):
         issues.append(f"evals/cases/{name}: unexpected evaluation file")
     ids: set[str] = set()
     positive: set[str] = set()
     near_miss: set[str] = set()
-    for path in sorted(CASE_DIR.iterdir()):
-        if path.name not in expected_files or path.suffix != ".json" or not path.is_file():
+    for path in sorted(CASE_DIR.rglob("*")):
+        relative_path = path.relative_to(CASE_DIR).as_posix()
+        if relative_path not in expected_files or path.suffix != ".json" or not path.is_file():
             continue
         try:
             filename = path.relative_to(ROOT).as_posix()
         except ValueError:
             filename = f"evals/cases/{path.name}"
+        if path.is_symlink() or not path.resolve().is_relative_to(CASE_DIR.resolve()):
+            issues.append(f"{filename}: evaluation file must be a regular file within evals/cases")
+            continue
         try:
             cases = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError) as error:
@@ -106,7 +123,7 @@ def validate_cases(skills: set[str] | None = None) -> list[str]:
             else:
                 ids.add(case_id)
             skill = case.get("skill")
-            expected_skill = None if path.name == "unrelated.json" else path.stem
+            expected_skill = None if relative_path == "unrelated.json" else path.stem
             if skill != expected_skill:
                 issues.append(f"{label}: skill must match filename ({expected_skill!r})")
             if skill is not None and skill not in skills:
@@ -142,7 +159,7 @@ def validate_cases(skills: set[str] | None = None) -> list[str]:
                             or not any(target.iterdir())):
                         issues.append(f"{label}: invalid or unsafe fixture {fixture!r}")
     for skill in sorted(skills - positive):
-        issues.append(f"evals/cases/{skill}.json: no positive case for {skill}")
+        issues.append(f"{skill_files[skill].relative_to(ROOT)}: no positive case for {skill}")
     for skill in sorted(skills - near_miss):
         issues.append(f"evals/cases: no case avoids skill {skill}")
     return issues

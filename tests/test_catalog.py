@@ -13,7 +13,18 @@ import skills
 
 class CatalogTests(unittest.TestCase):
     def test_repository_catalog_covers_filesystem(self) -> None:
-        self.assertEqual([], skills.validate_catalog(skills.CATALOG, set(skills.available_skills())))
+        self.assertEqual([], skills.validate_catalog(
+            skills.CATALOG, set(skills.available_skills()), skills.discover_skill_locations()))
+
+    def test_rejects_category_misplacement_and_unregistered_directories(self) -> None:
+        misplaced = skills.SKILLS / "software-architecture/java-quality"
+        extra = skills.SKILLS / "software-engineering/unregistered-skill"
+        issues = skills.validate_catalog(
+            skills.CATALOG, set(skills.available_skills()),
+            [misplaced, extra],
+        )
+        self.assertTrue(any("must be under category 'software-engineering'" in issue for issue in issues), issues)
+        self.assertTrue(any("unregistered skill directory" in issue for issue in issues), issues)
 
     def test_empty_categories_are_valid(self) -> None:
         self.assertEqual([], self.issues(["java-quality"], [], {"java-quality"}))

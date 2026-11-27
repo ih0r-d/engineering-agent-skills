@@ -36,41 +36,41 @@ For project-specific rules and agent instruction templates, see the [Context Eng
 
 | Skill | Engineering focus |
 | --- | --- |
-| [`code-review`](skills/code-review/SKILL.md) | Findings-first review of diffs, regressions, and missing verification |
-| [`java-quality`](skills/java-quality/SKILL.md) | Java API compatibility, concurrency, resource lifecycle, generated code, classloaders, proxies, and static-analysis findings |
-| [`python-quality`](skills/python-quality/SKILL.md) | Python typing, import behavior, packaging, exceptions, lifecycle, concurrency, and tests |
-| [`refactoring`](skills/refactoring/SKILL.md) | Scoped structural improvements with a verified behavior baseline |
-| [`shell-quality`](skills/shell-quality/SKILL.md) | POSIX `sh` and Bash correctness, quoting, exit codes, cleanup, and portability |
-| [`system-design`](skills/system-design/SKILL.md) | System boundaries, component responsibilities, data flows, scalability, reliability, and architectural trade-offs |
-| [`build-automation-quality`](skills/build-automation-quality/SKILL.md) | Maven, Gradle, Makefile, and Taskfile correctness, dependency graphs, and reproducibility |
-| [`container-quality`](skills/container-quality/SKILL.md) | Dockerfile and Compose builds, secrets, image and container lifecycle, and runtime behavior |
-| [`documentation-quality`](skills/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
-| [`engineering-handoff`](skills/engineering-handoff/SKILL.md) | Engineering context transfer, verified state, blockers, and next actions |
-| [`task-decomposition`](skills/task-decomposition/SKILL.md) | Verifiable work items, dependency ordering, and delivery slices |
-| [`implementation-planning`](skills/implementation-planning/SKILL.md) | Scoped implementation sequencing, verification, and change risks |
-| [`requirements-analysis`](skills/requirements-analysis/SKILL.md) | Requirements, business rules, scope, and verifiable acceptance criteria |
-| [`release-engineering`](skills/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
-| [`token-optimization`](skills/token-optimization/SKILL.md) | Measured token efficiency, concise output, and correctness-preserving optimization |
-| [`context-engineering`](skills/context-engineering/SKILL.md) | Context selection, progressive disclosure, evidence preservation, and compaction |
-| [`prompt-engineering`](skills/prompt-engineering/SKILL.md) | Prompt design, output contracts, ambiguity, and instruction boundaries |
-| [`skill-evaluation`](skills/skill-evaluation/SKILL.md) | Behavioral evaluations, routing, controlled comparisons, and regression evidence |
-| [`skill-authoring`](skills/skill-authoring/SKILL.md) | Portable skill authoring, activation boundaries, and specification compliance |
-| [`dependency-management`](skills/dependency-management/SKILL.md) | Dependency resolution, compatibility, lockfiles, and scoped upgrades |
-| [`deployment`](skills/deployment/SKILL.md) | Rollout planning, environment verification, migration compatibility, and recovery |
-| [`git-workflow`](skills/git-workflow/SKILL.md) | Atomic commits, Conventional Commits, task identifiers, branching, and safe Git operations |
-| [`ci-cd`](skills/ci-cd/SKILL.md) | Pipeline design, quality gates, workflow security, and CI reliability |
-| [`architecture-review`](skills/architecture-review/SKILL.md) | Architecture assessment, component boundaries, coupling, quality attributes, and architectural risk identification |
-| [`incident-analysis`](skills/incident-analysis/SKILL.md) | Incident impact, timelines, response review, and postmortem follow-up |
-| [`security-review`](skills/security-review/SKILL.md) | Defensive security assessment, access control, sensitive data, and vulnerability mitigation |
-| [`integration-testing`](skills/integration-testing/SKILL.md) | Integration and contract tests, real collaborator behavior, and isolated environments |
-| [`unit-testing`](skills/unit-testing/SKILL.md) | Focused unit tests, test doubles, deterministic isolation, and regression coverage |
-| [`test-strategy`](skills/test-strategy/SKILL.md) | Risk-based test planning, coverage gaps, test levels, and quality gates |
-| [`performance-analysis`](skills/performance-analysis/SKILL.md) | Performance baselines, profiling, bottleneck evidence, and benchmark design |
-| [`root-cause-analysis`](skills/root-cause-analysis/SKILL.md) | Causal chains, contributing factors, evidence quality, and recurrence prevention |
-| [`bug-fixing`](skills/bug-fixing/SKILL.md) | Scoped defect correction, regression tests, and compatibility verification |
-| [`bug-investigation`](skills/bug-investigation/SKILL.md) | Defect reproduction, diagnostic evidence, hypothesis testing, and fault isolation |
-| [`architecture-decision`](skills/architecture-decision/SKILL.md) | Architecture decision records, alternatives, decision drivers, trade-offs, and consequences |
-| [`api-design`](skills/api-design/SKILL.md) | API contracts, protocol semantics, schemas, error handling, versioning, and consumer compatibility |
+| [`code-review`](skills/software-engineering/code-review/SKILL.md) | Findings-first review of diffs, regressions, and missing verification |
+| [`java-quality`](skills/software-engineering/java-quality/SKILL.md) | Java API compatibility, concurrency, resource lifecycle, generated code, classloaders, proxies, and static-analysis findings |
+| [`python-quality`](skills/software-engineering/python-quality/SKILL.md) | Python typing, import behavior, packaging, exceptions, lifecycle, concurrency, and tests |
+| [`refactoring`](skills/software-engineering/refactoring/SKILL.md) | Scoped structural improvements with a verified behavior baseline |
+| [`shell-quality`](skills/software-engineering/shell-quality/SKILL.md) | POSIX `sh` and Bash correctness, quoting, exit codes, cleanup, and portability |
+| [`system-design`](skills/software-architecture/system-design/SKILL.md) | System boundaries, component responsibilities, data flows, scalability, reliability, and architectural trade-offs |
+| [`build-automation-quality`](skills/software-delivery/build-automation-quality/SKILL.md) | Maven, Gradle, Makefile, and Taskfile correctness, dependency graphs, and reproducibility |
+| [`container-quality`](skills/software-delivery/container-quality/SKILL.md) | Dockerfile and Compose builds, secrets, image and container lifecycle, and runtime behavior |
+| [`documentation-quality`](skills/engineering-productivity/documentation-quality/SKILL.md) | README, Quick Start, consumer and maintainer guides, API documentation, and documentation drift |
+| [`engineering-handoff`](skills/engineering-productivity/engineering-handoff/SKILL.md) | Engineering context transfer, verified state, blockers, and next actions |
+| [`task-decomposition`](skills/engineering-productivity/task-decomposition/SKILL.md) | Verifiable work items, dependency ordering, and delivery slices |
+| [`implementation-planning`](skills/engineering-productivity/implementation-planning/SKILL.md) | Scoped implementation sequencing, verification, and change risks |
+| [`requirements-analysis`](skills/engineering-productivity/requirements-analysis/SKILL.md) | Requirements, business rules, scope, and verifiable acceptance criteria |
+| [`release-engineering`](skills/software-delivery/release-engineering/SKILL.md) | Release readiness, versioning, artifacts, CI/CD, release notes, and recovery planning |
+| [`token-optimization`](skills/ai-engineering/token-optimization/SKILL.md) | Measured token efficiency, concise output, and correctness-preserving optimization |
+| [`context-engineering`](skills/ai-engineering/context-engineering/SKILL.md) | Context selection, progressive disclosure, evidence preservation, and compaction |
+| [`prompt-engineering`](skills/ai-engineering/prompt-engineering/SKILL.md) | Prompt design, output contracts, ambiguity, and instruction boundaries |
+| [`skill-evaluation`](skills/ai-engineering/skill-evaluation/SKILL.md) | Behavioral evaluations, routing, controlled comparisons, and regression evidence |
+| [`skill-authoring`](skills/ai-engineering/skill-authoring/SKILL.md) | Portable skill authoring, activation boundaries, and specification compliance |
+| [`dependency-management`](skills/software-delivery/dependency-management/SKILL.md) | Dependency resolution, compatibility, lockfiles, and scoped upgrades |
+| [`deployment`](skills/software-delivery/deployment/SKILL.md) | Rollout planning, environment verification, migration compatibility, and recovery |
+| [`git-workflow`](skills/software-delivery/git-workflow/SKILL.md) | Atomic commits, Conventional Commits, task identifiers, branching, and safe Git operations |
+| [`ci-cd`](skills/software-delivery/ci-cd/SKILL.md) | Pipeline design, quality gates, workflow security, and CI reliability |
+| [`architecture-review`](skills/software-architecture/architecture-review/SKILL.md) | Architecture assessment, component boundaries, coupling, quality attributes, and architectural risk identification |
+| [`incident-analysis`](skills/bug-fixing-and-reliability/incident-analysis/SKILL.md) | Incident impact, timelines, response review, and postmortem follow-up |
+| [`security-review`](skills/testing-and-quality-assurance/security-review/SKILL.md) | Defensive security assessment, access control, sensitive data, and vulnerability mitigation |
+| [`integration-testing`](skills/testing-and-quality-assurance/integration-testing/SKILL.md) | Integration and contract tests, real collaborator behavior, and isolated environments |
+| [`unit-testing`](skills/testing-and-quality-assurance/unit-testing/SKILL.md) | Focused unit tests, test doubles, deterministic isolation, and regression coverage |
+| [`test-strategy`](skills/testing-and-quality-assurance/test-strategy/SKILL.md) | Risk-based test planning, coverage gaps, test levels, and quality gates |
+| [`performance-analysis`](skills/bug-fixing-and-reliability/performance-analysis/SKILL.md) | Performance baselines, profiling, bottleneck evidence, and benchmark design |
+| [`root-cause-analysis`](skills/bug-fixing-and-reliability/root-cause-analysis/SKILL.md) | Causal chains, contributing factors, evidence quality, and recurrence prevention |
+| [`bug-fixing`](skills/bug-fixing-and-reliability/bug-fixing/SKILL.md) | Scoped defect correction, regression tests, and compatibility verification |
+| [`bug-investigation`](skills/bug-fixing-and-reliability/bug-investigation/SKILL.md) | Defect reproduction, diagnostic evidence, hypothesis testing, and fault isolation |
+| [`architecture-decision`](skills/software-architecture/architecture-decision/SKILL.md) | Architecture decision records, alternatives, decision drivers, trade-offs, and consequences |
+| [`api-design`](skills/software-architecture/api-design/SKILL.md) | API contracts, protocol semantics, schemas, error handling, versioning, and consumer compatibility |
 Skills are independently installable. Load optional `references/` only when relevant to the task. [Engineering categories](docs/architecture.md#categories), [Software Engineering skill boundaries](docs/software-engineering.md)
 
 For creating or revising skills, use the [repository Skill Authoring Standard](docs/skill-authoring.md). It distinguishes official format requirements from local recommendations and evaluation practices.
@@ -187,8 +187,8 @@ git submodule add \
 The built-in installer creates relative symlinks by default:
 
 ```text
-.agents/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/java-quality
-.claude/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/java-quality
+.agents/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/software-engineering/java-quality
+.claude/skills/java-quality -> ../../.tooling/engineering-agent-skills/skills/software-engineering/java-quality
 ```
 
 The links remain valid when the project and initialized submodule move together. After a fresh clone, initialize the submodule before using the installed Skills:
@@ -268,7 +268,7 @@ The live evaluation procedure measures review behavior in the client. [Evaluatio
 
 ## Repository Layout
 
-`skills/<skill-id>/SKILL.md` is the canonical entrypoint. `catalog.json` groups the skills by engineering category. Implementation, validation, and compatibility entrypoints are described in the [architecture guide](docs/architecture.md).
+`skills/<category-id>/<skill-id>/SKILL.md` is the canonical entrypoint. `catalog.json` is the source of truth for category membership; installers place each package flat under the installed skill ID. Implementation, validation, and compatibility entrypoints are described in the [architecture guide](docs/architecture.md).
 
 ## Contributing
 
