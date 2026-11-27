@@ -73,6 +73,8 @@ For project-specific rules and agent instruction templates, see the [Context Eng
 | [`api-design`](skills/api-design/SKILL.md) | API contracts, protocol semantics, schemas, error handling, versioning, and consumer compatibility |
 Skills are independently installable. Load optional `references/` only when relevant to the task. [Engineering categories](docs/architecture.md#categories), [Software Engineering skill boundaries](docs/software-engineering.md)
 
+For creating or revising skills, use the [repository Skill Authoring Standard](docs/skill-authoring.md). It distinguishes official format requirements from local recommendations and evaluation practices.
+
 ## Installation
 
 Choose the method that fits your project:
