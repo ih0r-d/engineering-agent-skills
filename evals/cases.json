@@ -697,7 +697,7 @@
       "Cover sparse matches, ordering, duplicates, and nonpositive limits.",
       "Assert public behavior rather than implementation details."
     ],
-    "avoid_skills": []
+    "avoid_skills": ["integration-testing"]
   },
   {
     "id": "unit-testing-mock-boundary",
@@ -720,6 +720,42 @@
     ],
     "avoid_skills": [
       "unit-testing"
+    ]
+  },
+  {
+    "id": "integration-testing-database-contract",
+    "skill": "integration-testing",
+    "fixture": null,
+    "prompt": "Design integration tests for a repository that writes orders in a transaction. A unique constraint must reject duplicates. Do not start services.",
+    "expected": [
+      "Use a representative database for transaction and constraint evidence.",
+      "Define isolated setup, assertions, and cleanup without starting services."
+    ],
+    "avoid_skills": [
+      "unit-testing"
+    ]
+  },
+  {
+    "id": "integration-testing-webhook-contract",
+    "skill": "integration-testing",
+    "fixture": null,
+    "prompt": "Plan a provider-consumer webhook compatibility test with duplicate delivery and a new optional field.",
+    "expected": [
+      "Check serialization, consumer behavior, and duplicate effects.",
+      "Distinguish simulated and real boundary evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "integration-testing-near-miss-unit",
+    "skill": "unit-testing",
+    "fixture": null,
+    "prompt": "Write a proposal for unit tests of a pure tax calculation with no external collaborators.",
+    "expected": [
+      "Focus on deterministic inputs and output assertions without integration infrastructure."
+    ],
+    "avoid_skills": [
+      "integration-testing"
     ]
   }
 ]
