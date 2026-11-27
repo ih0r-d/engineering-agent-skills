@@ -41,9 +41,14 @@ tasks:
       - bash .scripts/check.sh syntax
 
   docs:check:
-    desc: Check local Markdown links and anchors
+    desc: Check generated README catalog, local Markdown links, and anchors
     cmds:
       - bash .scripts/check.sh docs
+
+  docs:generate:
+    desc: Regenerate the README skill catalog from catalog.json and skill metadata
+    cmds:
+      - uv run --project .scripts/spec --locked --no-python-downloads python .scripts/generate_readme.py
 
   ci:
     desc: Run all required quality gates

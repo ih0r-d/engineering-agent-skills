@@ -6,7 +6,7 @@ The repository holds reusable engineering workflows for coding agents. A skill's
 | --- | --- |
 | `skills/` | Canonical skill instructions and resources |
 | `catalog.json` | Category definitions and unique skill membership by ID |
-| `.scripts/` | Offline installer, repository checks, and locked maintainer dependencies |
+| `.scripts/` | Offline installer, validators, generated README catalog tooling, repository checks, and locked maintainer dependencies |
 | `scripts/` | Compatibility entrypoints for older checkouts and submodule instructions |
 | `tests/` | Deterministic installer, catalog, resource, and specification regressions |
 | `evals/` | Synthetic evaluation cases, fixtures, and the manual live evaluation protocol |

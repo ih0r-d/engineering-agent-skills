@@ -12,7 +12,7 @@ Start with the toolkit's maintenance instructions. In the change description, na
 
 ## Verify changes
 
-Run `task ci` from the root with Python 3.11+, Task, uv, Bash, ShellCheck, actionlint, zizmor, and Lychee available. Add a focused regression test for changed behavior and exercise installation and removal for installer changes. Verify discovery and activation in the affected clients before making live compatibility claims. [Local validation](README.md#validation-and-evaluations), [Live evaluations](evals/README.md#run-live-evaluations)
+Run `task ci` from the root with Python 3.11+, Task, uv, Bash, ShellCheck, actionlint, zizmor, and Lychee available. Add a focused regression test for changed behavior and exercise installation and removal for installer changes. Verify discovery and activation in the affected clients before making live compatibility claims. [Local validation](README.md#quality-assurance-and-evaluation), [Live evaluations](evals/README.md#run-live-evaluations)
 
 Use the focused tasks during development.
 
@@ -22,7 +22,10 @@ task test
 task eval:check
 task syntax:check
 task quality
+task docs:generate
 task docs:check
 ```
+
+`task docs:generate` updates the marked README catalog from `catalog.json` and the parsed skill frontmatter. `task docs:check` fails when that generated block is stale, then checks local Markdown links and anchors.
 
 `task validate:spec` runs the specification gate and its deterministic tests. uv installs the official reference validator at a full upstream commit SHA and resolves its dependencies from the checked-in lock. The first setup requires access to GitHub and PyPI or a populated uv cache. With dependencies cached, `UV_OFFLINE=1 task ci` runs the complete suite offline. GitHub Actions retains its Linux and macOS installer matrix, uses checksum-verified analyzer downloads, and checks the wrappers with ShellCheck. The shell evaluation fixture deliberately contains the expansion exercised by the tests. [Maintainer configuration](.scripts/spec/pyproject.toml), [Workflow](.github/workflows/validate.yml), [Dependabot configuration](.github/dependabot.yml)
