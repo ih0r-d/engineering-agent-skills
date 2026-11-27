@@ -28,6 +28,8 @@ description: Review Java source or generated Java for correctness, API compatibi
 | --- | --- |
 | [Language and API review](references/quality-rubric.md) | Reviewing source behavior, JavaDoc or public contracts. |
 | [Module and framework boundaries](references/boundaries.md) | Investigating generated code, proxies or class loading. |
+| [Concurrency](references/concurrency.md) | Tracing a race, stale read, deadlock, executor failure, or cancellation bug. |
+| [JVM diagnostics](references/runtime-diagnostics.md) | Investigating heap growth, GC pauses, thread starvation, native memory, or class-loader retention. |
 | [Static analysis](references/static-analysis.md) | Choosing checks or investigating analyzer diagnostics. |
 | [Minimal-change examples](references/anti-overengineering.md) | Evaluating duplication or cleanup findings with competing fixes. |
 
