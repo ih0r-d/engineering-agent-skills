@@ -34,5 +34,16 @@
     "avoid_skills": [
       "release-engineering"
     ]
+  },
+  {
+    "id": "git-workflow-validator-resource",
+    "skill": "git-workflow",
+    "fixture": null,
+    "prompt": "Validate the proposed message \"feat: ENG-123: add checkout endpoint\" using the bundled utility. Do not create a commit or install a hook.",
+    "expected": [
+      "Select scripts/validate-commit.py and supply the message explicitly or through a message file.",
+      "Treat its result as validation only; do not modify Git state or install hooks."
+    ],
+    "avoid_skills": []
   }
 ]
