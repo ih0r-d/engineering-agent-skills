@@ -18,6 +18,9 @@ description: Design, review, or repair continuous integration and delivery pipel
 | Reference | Load when |
 | --- | --- |
 | [Detailed guidance](references/pipeline-checklist.md) | Task-specific decisions require additional guidance. |
+| [GitHub Actions](references/github-actions.md) | `.github/workflows/` or GitHub-hosted workflow behavior is in scope. |
+| [GitLab CI/CD](references/gitlab-ci.md) | `.gitlab-ci.yml`, GitLab runners, or GitLab environment behavior is in scope. |
+| [Jenkins Pipeline](references/jenkins-pipeline.md) | `Jenkinsfile`, shared libraries, Jenkins agents, or credential binding is in scope. |
 
 ## Constraints
 

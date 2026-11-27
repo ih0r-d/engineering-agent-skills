@@ -18,6 +18,7 @@ description: Plan or perform scoped Git workflows, atomic commits, Conventional 
 | Reference | Load when |
 | --- | --- |
 | [Detailed guidance](references/commit-conventions.md) | Task-specific decisions require additional guidance. |
+| [Branching and history](references/branching-and-history.md) | Selecting or reviewing branch, merge, rebase, revert, cherry-pick, or pull request workflows. |
 
 ## Constraints
 

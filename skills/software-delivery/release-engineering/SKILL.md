@@ -32,6 +32,8 @@ Default to review or preparation.
 | --- | --- |
 | [Readiness and authorization](references/release-checklist.md) | Preparing versions, release notes, gates or rollback plans. |
 | [Artifact verification](references/artifact-verification.md) | Verifying artifacts for the relevant Maven, Python or container channel. |
+| [Release lifecycle](references/release-lifecycle.md) | Establishing a release candidate, applying a version policy, or promoting an immutable artifact. |
+| [Hotfixes and backports](references/hotfix-and-backport.md) | Releasing an urgent correction or maintaining the fix across supported release lines. |
 
 ## Authorization
 
