@@ -62,6 +62,21 @@ class InstallerTests(unittest.TestCase):
                 self.assertEqual(0, removed.returncode, removed.stderr)
                 self.assertFalse(any(os.path.lexists(target) for target in targets))
 
+    def test_skill_authoring_copy_is_self_contained_and_valid(self) -> None:
+        args = ("--agent", "codex", "--target", str(self.project), "--skill", "skill-authoring", "--mode", "copy")
+        installed = run_cli("install", *args)
+        self.assertEqual(0, installed.returncode, installed.stderr)
+        target = self.project / ".agents/skills/skill-authoring"
+        self.assertTrue(target.is_dir())
+        self.assertFalse(target.is_symlink())
+        standalone = self.project / "standalone-skill-authoring"
+        shutil.copytree(target, standalone)
+        (standalone / skills.MARKER).unlink()
+        self.assertEqual([], skills.validate_skill(standalone))
+        removed = run_cli("uninstall", "--agent", "codex", "--target", str(self.project),
+                          "--skill", "skill-authoring")
+        self.assertEqual(0, removed.returncode, removed.stderr)
+
     def test_legacy_python_entrypoint_matches_current_cli(self) -> None:
         legacy = [sys.executable, str(ROOT / "scripts/skills.py")]
         for args, status in (
