@@ -20,6 +20,8 @@ description: Plan or perform scoped Git workflows, atomic commits, Conventional 
 | [Detailed guidance](references/commit-conventions.md) | Task-specific decisions require additional guidance. |
 | [Branching and history](references/branching-and-history.md) | Selecting or reviewing branch, merge, rebase, revert, cherry-pick, or pull request workflows. |
 
+When preparing or reviewing a commit message, run [the read-only validator](scripts/validate-commit.py) with the proposed message (`--message`) or Git's message-file path. It checks structure; configure project-specific types or task IDs only when the repository requires them. It never creates commits or installs hooks.
+
 ## Constraints
 
 - Never stage, commit, switch branches, merge, rebase, push, tag, or change remotes without authorization for the relevant operation.
