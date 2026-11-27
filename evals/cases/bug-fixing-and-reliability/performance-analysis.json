@@ -24,5 +24,19 @@
       "Avoid claiming proven improvement."
     ],
     "avoid_skills": []
+  },
+  {
+    "id": "performance-analysis-slo-no-target",
+    "skill": "performance-analysis",
+    "fixture": null,
+    "prompt": "A service team wants a latency alert. There is no documented SLO, error budget, or representative baseline, but someone proposed 99.99% availability. Plan the evidence needed without inventing a target.",
+    "expected": [
+      "Define a consumer-relevant SLI with population, good-event rule, and measurement window.",
+      "Defer target and error-budget selection to service owners and requirements; do not treat the proposed number as approved.",
+      "Use latency distributions with sample counts and bounded metric dimensions, and define an actionable alert only after the objective is agreed."
+    ],
+    "avoid_skills": [
+      "system-design"
+    ]
   }
 ]

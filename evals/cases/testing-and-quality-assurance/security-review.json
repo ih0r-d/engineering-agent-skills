@@ -35,5 +35,19 @@
     "avoid_skills": [
       "dependency-management"
     ]
+  },
+  {
+    "id": "security-review-ssrf-user-url-fetch",
+    "skill": "security-review",
+    "fixture": null,
+    "prompt": "An image-preview endpoint fetches a user-supplied URL from the server and follows redirects. Perform a defensive SSRF review and recommend safe verification boundaries.",
+    "expected": [
+      "Trace URL parsing, allowed schemes/hosts/ports, DNS resolution, redirects, and the actual connected destination.",
+      "Recommend narrow allowlists and network egress controls where available; do not rely on hostname validation alone.",
+      "Keep testing authorized and isolated, and avoid probing internal production addresses."
+    ],
+    "avoid_skills": [
+      "bug-investigation"
+    ]
   }
 ]
