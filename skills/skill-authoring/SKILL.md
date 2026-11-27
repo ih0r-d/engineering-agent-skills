@@ -1,30 +1,31 @@
 ---
 name: skill-authoring
-description: Create or improve portable Agent Skills definitions, descriptions, workflows, and resources. Use for skill scope, activation boundaries, progressive disclosure, and specification compliance.
+description: Create, review, or refactor portable Agent Skills. Use when defining skill scope, activation conditions, workflows, references, scripts, or specification compliance; combine with domain skills when their expertise is relevant.
 ---
 
 # Skill Authoring
 
 ## Workflow
 
-1. Inspect the requested task, existing skills, consumer constraints, and official specification. Identify a recurring failure or missing expertise before introducing a skill.
-2. Choose one coherent responsibility and define positive and near-miss requests. Preserve existing identifiers and contracts when revising a skill.
-3. Write a task-specific description and concise operational instructions. Include concrete defaults, failure modes, authorization boundaries, and verification.
-4. Move substantial specialist guidance into directly linked resources; explain when each is needed. Load the authoring reference when deciding resource or script boundaries.
-5. Run the existing specification and repository checks. Record behavioral tests needed to demonstrate improvement; use the skill evaluation workflow for live comparisons.
+1. Classify the request as review, planning, or implementation. Inspect only relevant skills, instructions, and source evidence; expand scope when findings justify it.
+2. Define one recurring capability, its positive triggers, near misses, and boundaries with adjacent skills. Preserve identifiers and existing contracts when revising.
+3. Write a user-intent description and a concise common-path workflow with defaults, risk-specific constraints, practical gotchas, authorization, verification, and expected output.
+4. Add focused references only for specialized detail; link them directly and state a task or symptom that should trigger loading. Keep critical common-path gotchas here.
+5. Validate format, resources, links, and catalog/evaluation consistency. Add targeted regression cases and separate structural checks from behavior evaluation.
 
-## Reference Selection
+## Reference selection
 
-| Reference | Load when |
-| --- | --- |
-| [Detailed guidance](references/authoring-checklist.md) | Deciding scope, resource structure, or script boundaries. |
+- Read the [authoring checklist](references/authoring-checklist.md) when assessing scope, context budget, disclosure, resource design, or quality.
+- For toolkit maintenance or the official/repository requirement distinction, consult `docs/skill-authoring.md` from the repository root.
+- For behavioral and routing cases in this toolkit, consult `evals/README.md` from the repository root.
 
-## Constraints
+## Constraints and gotchas
 
-- Do not impose proprietary mandatory fields or headings, copy unlicensed content, or introduce agent-specific dependencies into portable instructions.
-- Do not create empty resources, repeat generic model knowledge, or add scripts without a concrete repeatable task.
-- Do not edit existing skills outside the authorized scope or claim that syntax validation proves activation quality.
+- Apply official frontmatter and naming constraints; do not invent mandatory headings or client-specific fields.
+- Advisory size targets are not gates. Preserve necessary expertise and never claim behavioral effectiveness from syntax checks alone.
+- Prefer existing tools. Add scripts only for reusable deterministic tasks, document side effects and dependencies, and test them. Do not add empty resources or unnecessary dependencies.
+- Preserve consumer policy, unrelated changes, and explicit authorization boundaries. Do not investigate or modify other skills without task scope requiring it.
 
-## Expected Output
+## Verification and output
 
-Report the responsibility, activation boundaries, files changed, validation results, and remaining behavioral evidence.
+Run the narrowest relevant checks, then required repository gates. For routing changes, cover positive activation, near misses, and composition boundaries. Compare equivalent runs with and without the skill before claiming behavioral improvement. Report responsibility, trigger boundaries, changed files, checks and results, and unresolved behavioral evidence.
