@@ -663,7 +663,7 @@
       "Map risks to test levels and define observable acceptance criteria.",
       "Leave files unchanged."
     ],
-    "avoid_skills": []
+    "avoid_skills": ["unit-testing"]
   },
   {
     "id": "test-strategy-coverage-evidence",
@@ -686,6 +686,40 @@
     ],
     "avoid_skills": [
       "test-strategy"
+    ]
+  },
+  {
+    "id": "unit-testing-boundary-cases",
+    "skill": "unit-testing",
+    "fixture": null,
+    "prompt": "Propose unit tests for a function that returns the first N matching items, preserving input order and returning an empty list for nonpositive N.",
+    "expected": [
+      "Cover sparse matches, ordering, duplicates, and nonpositive limits.",
+      "Assert public behavior rather than implementation details."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "unit-testing-mock-boundary",
+    "skill": "unit-testing",
+    "fixture": null,
+    "prompt": "Review a proposed unit test for a pure discount calculation that mocks every internal helper. No edits.",
+    "expected": [
+      "Recommend observable result assertions and justify any test doubles.",
+      "Keep review read-only."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "unit-testing-near-miss-strategy",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Plan risk-based test coverage and CI gates for an entire payment platform without writing tests.",
+    "expected": [
+      "Produce a risk-based strategy instead of individual unit tests."
+    ],
+    "avoid_skills": [
+      "unit-testing"
     ]
   }
 ]
