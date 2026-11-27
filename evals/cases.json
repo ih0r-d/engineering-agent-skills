@@ -1032,5 +1032,39 @@
     "avoid_skills": [
       "task-decomposition"
     ]
+  },
+  {
+    "id": "engineering-handoff-partial-work",
+    "skill": "engineering-handoff",
+    "fixture": null,
+    "prompt": "Prepare a handoff: local commit exists, unit tests passed, hosted CI was not run and deployment is not authorized.",
+    "expected": [
+      "Distinguish local completion from hosted verification.",
+      "Record safe next actions without deployment."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "engineering-handoff-missing-evidence",
+    "skill": "engineering-handoff",
+    "fixture": null,
+    "prompt": "Draft a handoff from a claim that a fix is complete, with no revision or test logs available.",
+    "expected": [
+      "Label the claim unverified and identify missing evidence.",
+      "Do not invent hashes or test outcomes."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "engineering-handoff-near-miss",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Revise an existing consumer quick start against the actual CLI, not a work handoff.",
+    "expected": [
+      "Use the documentation workflow."
+    ],
+    "avoid_skills": [
+      "engineering-handoff"
+    ]
   }
 ]
