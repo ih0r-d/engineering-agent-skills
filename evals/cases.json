@@ -1202,5 +1202,39 @@
     "avoid_skills": [
       "context-engineering"
     ]
+  },
+  {
+    "id": "token-optimization-measured-efficiency",
+    "skill": "token-optimization",
+    "fixture": null,
+    "prompt": "Reduce repeated tool output in an agent workflow without losing failure evidence. No token metrics are available.",
+    "expected": [
+      "Propose targeted log handling and comparable measurement.",
+      "Do not invent savings or discard causal diagnostics."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "token-optimization-quality-regression",
+    "skill": "token-optimization",
+    "fixture": null,
+    "prompt": "An optimizer returns half as many output tokens but omits required review findings. Assess whether to adopt it.",
+    "expected": [
+      "Prioritize correctness and recommend revision or rejection.",
+      "Separate measured usage from quality and cost claims."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "token-optimization-near-miss",
+    "skill": "skill-evaluation",
+    "fixture": null,
+    "prompt": "Design a behavioral benchmark for routing correctness. Token efficiency is explicitly outside scope.",
+    "expected": [
+      "Use skill evaluation for the correctness benchmark."
+    ],
+    "avoid_skills": [
+      "token-optimization"
+    ]
   }
 ]
