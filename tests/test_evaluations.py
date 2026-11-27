@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / ".scripts"))
 
+import evaluation_cases
 import skills
 EVALS = Path(__file__).resolve().parents[1] / "evals"
 FIXTURES = EVALS / "fixtures"
@@ -26,7 +27,7 @@ def run_fixture(fixture: str, *command: str) -> subprocess.CompletedProcess[str]
 
 class EvaluationTests(unittest.TestCase):
     def test_routing_cases_cover_catalog_and_resolve_fixtures(self) -> None:
-        cases = json.loads((EVALS / "cases.json").read_text(encoding="utf-8"))
+        cases = evaluation_cases.load_cases()
         catalog = set(skills.available_skills())
         names = {case["skill"] for case in cases}
         self.assertEqual(catalog | {None}, names)
@@ -36,21 +37,47 @@ class EvaluationTests(unittest.TestCase):
         for case in cases:
             with self.subTest(case=case["id"]):
                 self.assertTrue(case["prompt"].strip())
-                self.assertTrue(case["expected"])
-                self.assertTrue(all(check.strip() for check in case["expected"]))
                 avoided = case["avoid_skills"]
-                self.assertIsInstance(avoided, list)
-                self.assertEqual(len(set(avoided)), len(avoided))
-                self.assertTrue(set(avoided) <= catalog)
-                self.assertNotIn(case["skill"], avoided)
                 if case["skill"] is not None:
                     near_miss_skills.update(avoided)
-                if case["fixture"] is not None:
-                    fixture = FIXTURES / case["fixture"]
-                    self.assertEqual(FIXTURES, fixture.resolve().parent)
-                    self.assertTrue(fixture.is_dir())
-                    self.assertTrue(any(fixture.iterdir()))
         self.assertEqual(catalog, near_miss_skills)
+        self.assertEqual([], evaluation_cases.validate_cases(catalog))
+
+    def test_loader_selects_skill_avoided_and_unrelated_cases(self) -> None:
+        java = evaluation_cases.load_cases("java-quality")
+        self.assertTrue(java)
+        self.assertTrue(all(case["skill"] == "java-quality" for case in java))
+        self.assertEqual(
+            [case for case in evaluation_cases.load_cases() if "java-quality" in case["avoid_skills"]],
+            evaluation_cases.cases_avoiding("java-quality"),
+        )
+        unrelated = evaluation_cases.load_unrelated_cases()
+        self.assertTrue(unrelated)
+        self.assertTrue(all(case["skill"] is None for case in unrelated))
+        self.assertEqual(
+            java + evaluation_cases.cases_avoiding("java-quality") + unrelated,
+            evaluation_cases.relevant_cases("java-quality"),
+        )
+
+    def test_validation_reports_case_and_filename_for_malformed_case(self) -> None:
+        original_dir = evaluation_cases.CASE_DIR
+        try:
+            evaluation_cases.CASE_DIR = EVALS / "cases"
+            cases = json.loads((evaluation_cases.CASE_DIR / "java-quality.json").read_text())
+            cases[0]["prompt"] = " "
+            # The validator operates on the real catalog and files. Exercise its diagnostic
+            # formatting through a copied temporary case tree, without changing repository data.
+            import tempfile
+            with tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                for path in evaluation_cases.CASE_DIR.glob("*.json"):
+                    (root / path.name).write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+                (root / "java-quality.json").write_text(json.dumps(cases), encoding="utf-8")
+                evaluation_cases.CASE_DIR = root
+                issues = evaluation_cases.validate_cases()
+                self.assertTrue(any("java-quality.json case '" in issue and "prompt" in issue for issue in issues), issues)
+        finally:
+            evaluation_cases.CASE_DIR = original_dir
 
     def test_python_default_shares_state_and_explicit_mutation_is_scoped(self) -> None:
         program = """

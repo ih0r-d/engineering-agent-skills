@@ -1,0 +1,27 @@
+[
+  {
+    "id": "incident-analysis-postmortem",
+    "skill": "incident-analysis",
+    "fixture": null,
+    "prompt": "Draft a postmortem for an outage. An alert fired, a rollback was performed, and error rates declined. Exact times and customer impact are unavailable.",
+    "expected": [
+      "Separate observed facts from missing timeline and impact.",
+      "Distinguish mitigation from verified recovery.",
+      "Provide blameless follow-up actions and verification."
+    ],
+    "avoid_skills": [
+      "bug-fixing"
+    ]
+  },
+  {
+    "id": "incident-analysis-incomplete-recovery",
+    "skill": "incident-analysis",
+    "fixture": null,
+    "prompt": "Analyze an incident where alerts stopped but consumer success rates have not been checked.",
+    "expected": [
+      "Do not declare recovery solely from alert absence.",
+      "Identify consumer-facing verification and remaining uncertainty."
+    ],
+    "avoid_skills": []
+  }
+]

@@ -1,10 +1,10 @@
 # Skill evaluations
 
-[cases.json](cases.json) records prompts, the expected primary Skill, nearby Skills to avoid, and observable acceptance criteria. Each non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
+[cases](cases/) stores one JSON array per catalog Skill plus [unrelated.json](cases/unrelated.json) for requests with no primary Skill. Each case records its prompt, expected primary Skill, nearby Skills to avoid, optional fixture, and observable acceptance criteria. Every non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
 
 ## Deterministic checks
 
-Run `python3 -B -m unittest discover -s tests -v` from the repository root. The suite verifies case IDs, fixture paths, and that every skill has an in-scope case and a named near-miss. It exercises the Python, shell, Make, documentation, code review, and refactoring fixtures. The review checks show how passing tests can miss a regression and compare a clean candidate with the baseline. The refactoring fixture tests establish return values and error behavior for the public functions. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
+Run `task eval:check` from the repository root. The standard-library loader in `.scripts/evaluation_cases.py` loads all cases, selects a skill's positive cases, finds cases that avoid a named skill, and provides the unrelated subset. Validation checks per-skill files, schema, global IDs, catalog references, fixture paths, positive coverage, and near-miss coverage. The full offline suite exercises the Python, shell, Make, documentation, code review, and refactoring fixtures. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
 
 Additional local checks are optional.
 
@@ -15,7 +15,7 @@ Additional local checks are optional.
 ## Run live evaluations
 
 1. Pick the changed Skill's positive case and the cases that name it under `avoid_skills`. Include the unrelated-request case for changes to descriptions or discovery. A null `skill` expects no toolkit Skill. A null `fixture` means the prompt can stand on its own.
-2. Create a fresh disposable project per run and copy only the case's fixture. Keep `cases.json` and the scoring criteria outside the project. Use synthetic inputs and keep publishing, deployment, credentials, and real registries unavailable.
+2. Create a fresh disposable project per run and copy only the case's fixture. Keep case files and scoring criteria outside the project. Use synthetic inputs and keep publishing, deployment, credentials, and real registries unavailable.
 3. Install all skills from the revision under test. Check discovery from the project root, then send the prompt without a skill name in a fresh session. Record the primary skill, any observable supporting skills, and any named skill that should have been avoided. For positive cases, run a separate fresh session with explicit invocation to measure whether the agent follows the skill.
 4. Grade the evidence, proposed or actual change scope, and the verification result. Compare the tree before and after read-only runs and mark unauthorized edits or external actions as failures. Record loaded reference paths and token counts when the client exposes them. Check whether reference reads served the task and flag unrelated reads. Use `UNOBSERVED` for client signals you cannot inspect.
 5. Repeat against a known baseline revision with the same prompts, fixtures, client, model, permissions, and tool access. Change only the installed Skill revision. Use fresh sessions for each run, compare the per-case outcomes, and repeat inconsistent results before calling a regression.

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "security-review-tenant-access",
+    "skill": "security-review",
+    "fixture": null,
+    "prompt": "Review an API that retrieves invoices by ID after authentication but does not check tenant ownership. Provide defensive findings only.",
+    "expected": [
+      "Identify the missing resource authorization and affected trust boundary.",
+      "Recommend scoped ownership checks and cross-tenant regression tests.",
+      "Do not probe external systems."
+    ],
+    "avoid_skills": [
+      "architecture-review"
+    ]
+  },
+  {
+    "id": "security-review-scanner-evidence",
+    "skill": "security-review",
+    "fixture": null,
+    "prompt": "A dependency scanner reports a vulnerability but the affected version and reachable feature are unknown. Assess the evidence.",
+    "expected": [
+      "Distinguish an alert from confirmed exposure.",
+      "Identify version and applicability evidence and avoid unsupported severity claims."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "dependency-management-near-miss",
+    "skill": "security-review",
+    "fixture": null,
+    "prompt": "Assess missing resource authorization in an invoice endpoint. No dependency changes are requested.",
+    "expected": [
+      "Use defensive security review rather than dependency updates."
+    ],
+    "avoid_skills": [
+      "dependency-management"
+    ]
+  }
+]

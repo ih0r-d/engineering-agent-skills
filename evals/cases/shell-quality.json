@@ -1,0 +1,14 @@
+[
+  {
+    "id": "shell-argument-boundaries",
+    "skill": "shell-quality",
+    "fixture": "shell",
+    "prompt": "Review this POSIX sh script for argument safety using a path with spaces. Report findings and leave files untouched.",
+    "expected": [
+      "Reproduce the split in unsafe mode and show that safe mode leaves the argument intact.",
+      "Recommend a targeted quote fix valid in POSIX sh.",
+      "Avoid adding Bash arrays or changing the interpreter."
+    ],
+    "avoid_skills": []
+  }
+]

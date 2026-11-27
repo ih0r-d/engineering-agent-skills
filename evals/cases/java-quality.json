@@ -1,0 +1,39 @@
+[
+  {
+    "id": "java-ignored-return",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "Review the Java class for correctness on Java 11. Keep the review read-only.",
+    "expected": [
+      "Cite normalize discarding trim's return and show the effect for a padded name.",
+      "Treat the discarded boolean from Set.add as intentional for the observed call contract.",
+      "Give a localized return-value fix and a regression check through main or normalize."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "maven-source-routing",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "The README mentions Maven. Review the Java class only for why normalization has no effect. Leave files untouched.",
+    "expected": [
+      "Route to Java source review and cite the ignored string return.",
+      "Keep the review on source behavior. A README mention of Maven does not warrant a docs or build audit."
+    ],
+    "avoid_skills": [
+      "build-automation-quality",
+      "documentation-quality"
+    ]
+  },
+  {
+    "id": "java-local-fix",
+    "skill": "java-quality",
+    "fixture": "java",
+    "prompt": "Fix the Java 11 normalization defect in Names.java and verify the corrected behavior. Preserve the membership tracking.",
+    "expected": [
+      "Change the normalization result at its source without adding an API or changing membership tracking.",
+      "Compile and run Names with a suitable local JDK and report the command and result, or report what prevented the check."
+    ],
+    "avoid_skills": []
+  }
+]

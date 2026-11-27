@@ -1,0 +1,53 @@
+[
+  {
+    "id": "quickstart-option-drift",
+    "skill": "documentation-quality",
+    "fixture": "docs",
+    "prompt": "Verify the quick start against the actual CLI. Review only and report the smallest correction.",
+    "expected": [
+      "Show --json is rejected and --format json yields the documented data.",
+      "Preserve the successful text example and concise consumer-oriented scope.",
+      "Avoid editing the CLI or returning an architecture guide."
+    ],
+    "avoid_skills": [
+      "python-quality"
+    ]
+  },
+  {
+    "id": "java-docs-routing",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Revise the JavaDoc for this method to state whether the caller owns the returned stream. Leave code unchanged. /** Returns file lines. */ public Stream<String> lines(Path path) throws IOException { return Files.lines(path); }",
+    "expected": [
+      "Use the API documentation workflow for the deliverable.",
+      "Explain the caller's obligation to close the returned stream and preserve the existing method signature and implementation."
+    ],
+    "avoid_skills": [
+      "java-quality"
+    ]
+  },
+  {
+    "id": "engineering-handoff-near-miss",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Revise an existing consumer quick start against the actual CLI, not a work handoff.",
+    "expected": [
+      "Use the documentation workflow."
+    ],
+    "avoid_skills": [
+      "engineering-handoff"
+    ]
+  },
+  {
+    "id": "skill-authoring-near-miss",
+    "skill": "documentation-quality",
+    "fixture": null,
+    "prompt": "Update a consumer README quick start to match the actual CLI. No skill definition changes are requested.",
+    "expected": [
+      "Use documentation verification rather than skill authoring."
+    ],
+    "avoid_skills": [
+      "skill-authoring"
+    ]
+  }
+]

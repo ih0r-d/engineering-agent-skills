@@ -1,0 +1,51 @@
+[
+  {
+    "id": "release-preparation-only",
+    "skill": "release-engineering",
+    "fixture": "release",
+    "prompt": "Assess whether 1.4.3 is ready and draft release notes in your reply. Include verification options. Leave repository and release state untouched.",
+    "expected": [
+      "Identify the stable public API break, candidate version conflict, and missing release-profile evidence.",
+      "Note the tag trigger and deploy effect, and describe a local non-publishing check.",
+      "Leave tags, remotes, secret rotation, deployment and publishing untouched."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "container-promotion-routing",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Review whether our existing container release can be promoted. The test job ran digest A and the promotion job references digest B of the same image tag. Draft a read-only release recommendation.",
+    "expected": [
+      "Identify the mismatched image digests as the release blocker and ask for matching test evidence tied to the candidate digest.",
+      "Reuse the existing promotion pipeline and leave image construction, registry state and deployment untouched."
+    ],
+    "avoid_skills": [
+      "container-quality"
+    ]
+  },
+  {
+    "id": "git-workflow-near-miss",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Assess whether a candidate release is ready and draft release notes. Do not perform Git operations.",
+    "expected": [
+      "Use release readiness guidance without committing or tagging."
+    ],
+    "avoid_skills": [
+      "git-workflow"
+    ]
+  },
+  {
+    "id": "deployment-near-miss",
+    "skill": "release-engineering",
+    "fixture": null,
+    "prompt": "Review artifact signing and publication readiness for a library. No runtime rollout is involved.",
+    "expected": [
+      "Use release engineering rather than deployment planning."
+    ],
+    "avoid_skills": [
+      "deployment"
+    ]
+  }
+]

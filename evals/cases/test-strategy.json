@@ -1,0 +1,39 @@
+[
+  {
+    "id": "test-strategy-payment-plan",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Plan tests for a checkout flow with payment retries and inventory reservation. No implementation is requested.",
+    "expected": [
+      "Prioritize duplicate charges and inventory consistency.",
+      "Map risks to test levels and define observable acceptance criteria.",
+      "Leave files unchanged."
+    ],
+    "avoid_skills": [
+      "unit-testing"
+    ]
+  },
+  {
+    "id": "test-strategy-coverage-evidence",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Our suite reports 90 percent line coverage but no failure-path tests. Define a test strategy.",
+    "expected": [
+      "Distinguish line coverage from behavioral coverage.",
+      "Prioritize failure paths and define verification gates without inventing measurements."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "unit-testing-near-miss-strategy",
+    "skill": "test-strategy",
+    "fixture": null,
+    "prompt": "Plan risk-based test coverage and CI gates for an entire payment platform without writing tests.",
+    "expected": [
+      "Produce a risk-based strategy instead of individual unit tests."
+    ],
+    "avoid_skills": [
+      "unit-testing"
+    ]
+  }
+]

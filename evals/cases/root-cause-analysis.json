@@ -1,0 +1,39 @@
+[
+  {
+    "id": "root-cause-analysis-recurring-timeouts",
+    "skill": "root-cause-analysis",
+    "fixture": null,
+    "prompt": "Analyze recurring timeouts after retry storms. Logs show retries increased queue depth, but the first dependency slowdown is unexplained. Identify causal links and preventive actions.",
+    "expected": [
+      "Separate trigger, mechanism and contributing factors.",
+      "Mark the original slowdown as unknown.",
+      "Tie prevention and verification to supported links."
+    ],
+    "avoid_skills": [
+      "bug-fixing"
+    ]
+  },
+  {
+    "id": "root-cause-analysis-correlation",
+    "skill": "root-cause-analysis",
+    "fixture": null,
+    "prompt": "Errors started after a deployment, but no comparison or trace is available. Establish what causal conclusions can be drawn.",
+    "expected": [
+      "Distinguish chronology from causation.",
+      "Identify alternative explanations and needed evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "incident-analysis-near-miss-causal",
+    "skill": "root-cause-analysis",
+    "fixture": null,
+    "prompt": "Analyze why a recurring data consistency failure occurs and identify systemic causes. No incident response or postmortem is requested.",
+    "expected": [
+      "Focus on causal mechanisms and evidence rather than incident reporting."
+    ],
+    "avoid_skills": [
+      "incident-analysis"
+    ]
+  }
+]
