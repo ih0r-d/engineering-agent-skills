@@ -28,7 +28,7 @@
     {
       "id": "engineering-productivity",
       "name": "Engineering Productivity",
-      "skills": ["documentation-quality", "implementation-planning", "requirements-analysis", "task-decomposition"]
+      "skills": ["documentation-quality", "engineering-handoff", "implementation-planning", "requirements-analysis", "task-decomposition"]
     },
     {
       "id": "ai-engineering",
