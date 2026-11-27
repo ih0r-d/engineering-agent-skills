@@ -19,6 +19,9 @@ description: Write, review, or verify focused unit tests for software behavior. 
 | Reference | Load when |
 | --- | --- |
 | [Detailed guidance](references/unit-test-checklist.md) | Additional guidance on test or review decisions is needed. |
+| [JUnit Jupiter](references/junit-jupiter.md) | JUnit Jupiter annotations, extensions, test discovery, or lifecycle callbacks are involved. |
+| [Mockito](references/mockito.md) | Mockito stubs, spies, matchers, captors, or interaction assertions are involved. |
+| [pytest](references/pytest.md) | pytest fixtures, parametrization, plugins, or monkeypatching are involved. |
 
 ## Constraints
 

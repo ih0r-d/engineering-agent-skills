@@ -19,6 +19,7 @@ description: Write, review, or verify integration and contract tests across soft
 | Reference | Load when |
 | --- | --- |
 | [Detailed guidance](references/integration-checklist.md) | Additional guidance on test or review decisions is needed. |
+| [Testcontainers](references/testcontainers.md) | Tests use Testcontainers or depend on a containerized real service. |
 
 ## Constraints
 
