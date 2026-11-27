@@ -14,6 +14,10 @@ The repository holds reusable engineering workflows for coding agents. A skill's
 | `templates/` | Reusable authoring templates excluded from skill discovery and installation |
 | `.github/` and `Taskfile.yml` | Hosted and local quality gates |
 
+## Context boundaries
+
+See the [context engineering architecture](context-architecture.md) for the separation of runtime instructions, consumer policy, reusable skills and project evidence. The project instruction templates are opt-in examples, not installer-managed resources.
+
 ## Categories
 
 The catalog registers these categories. Each skill belongs to one primary category. Empty categories are valid. The validator compares membership with the discovered skill directories, and installers discover skills directly from the filesystem. [Catalog and current mappings](../catalog.json)

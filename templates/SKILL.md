@@ -33,7 +33,7 @@ Briefly describe the skill's purpose and intended outcome.
 
 | Reference | Load when |
 | --- | --- |
-| [Topic guidance](references/topic.md) | Additional domain-specific guidance is required |
+| `references/topic.md` (replace with an actual resource link) | Additional domain-specific guidance is required |
 
 ## Constraints
 

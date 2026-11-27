@@ -30,6 +30,8 @@ Designed for personal, commercial, and open-source projects, the toolkit follows
 - **Portable tooling:** reuse available project analyzers; do not force dependencies or build-file changes.
 - **Installation choice:** install directly from GitHub or from a local checkout without network access.
 
+For project-specific rules and agent instruction templates, see the [Context Engineering Architecture](docs/context-architecture.md).
+
 ## Skill Catalog
 
 | Skill | Engineering focus |
