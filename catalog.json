@@ -3,37 +3,68 @@
     {
       "id": "software-engineering",
       "name": "Software Engineering",
-      "skills": ["code-review", "java-quality", "python-quality", "refactoring", "shell-quality"]
+      "skills": [
+        "implement",
+        "review-code"
+      ]
     },
     {
       "id": "software-architecture",
       "name": "Software Architecture",
-      "skills": ["api-design", "architecture-decision", "architecture-review", "system-design"]
+      "skills": [
+        "design-system"
+      ]
     },
     {
       "id": "bug-fixing-and-reliability",
       "name": "Bug Fixing and Reliability",
-      "skills": ["bug-fixing", "bug-investigation", "incident-analysis", "performance-analysis", "root-cause-analysis"]
+      "skills": [
+        "debug",
+        "incident-analysis",
+        "performance-analysis"
+      ]
     },
     {
       "id": "testing-and-quality-assurance",
       "name": "Testing and Quality Assurance",
-      "skills": ["integration-testing", "security-review", "test-strategy", "unit-testing"]
+      "skills": [
+        "security-review",
+        "test-code"
+      ]
     },
     {
       "id": "software-delivery",
       "name": "Software Delivery",
-      "skills": ["build-automation-quality", "ci-cd", "container-quality", "dependency-management", "deployment", "git-workflow", "release-engineering"]
+      "skills": [
+        "container-quality",
+        "deploy",
+        "git-workflow",
+        "maintain-build",
+        "manage-ci-cd",
+        "release-engineering"
+      ]
     },
     {
       "id": "engineering-productivity",
       "name": "Engineering Productivity",
-      "skills": ["documentation-quality", "engineering-handoff", "implementation-planning", "requirements-analysis", "task-decomposition"]
+      "skills": [
+        "documentation-quality",
+        "engineering-handoff",
+        "implementation-planning",
+        "requirements-analysis",
+        "task-decomposition"
+      ]
     },
     {
       "id": "ai-engineering",
       "name": "AI Engineering",
-      "skills": ["context-engineering", "prompt-engineering", "skill-authoring", "skill-evaluation", "token-optimization"]
+      "skills": [
+        "context-engineering",
+        "prompt-engineering",
+        "skill-authoring",
+        "skill-evaluation",
+        "token-optimization"
+      ]
     }
   ]
 }

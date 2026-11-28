@@ -45,7 +45,7 @@
       "Use release engineering rather than deployment planning."
     ],
     "avoid_skills": [
-      "deployment"
+      "deploy"
     ]
   },
   {
@@ -59,7 +59,7 @@
       "Distinguish mitigation, artifact release, and deployment, and preserve authorization boundaries."
     ],
     "avoid_skills": [
-      "bug-investigation"
+      "debug"
     ]
   },
   {
@@ -73,7 +73,7 @@
       "Report partial release state and require authorization for additional tags, publication, or production actions."
     ],
     "avoid_skills": [
-      "deployment"
+      "deploy"
     ]
   },
   {
@@ -87,7 +87,7 @@
       "Do not publish or deploy."
     ],
     "avoid_skills": [
-      "deployment"
+      "deploy"
     ]
   }
 ]

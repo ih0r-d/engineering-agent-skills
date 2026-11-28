@@ -32,17 +32,49 @@ class InstallerTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.project = Path(self.directory.name).resolve() / "project with spaces"
         self.project.mkdir()
-        self.target = self.project / ".agents/skills/java-quality"
+        self.target = self.project / ".agents/skills/review-code"
 
     def args(self, *args: str) -> tuple[str, ...]:
-        return ("--agent", "codex", "--target", str(self.project), "--skill", "java-quality", *args)
+        return ("--agent", "codex", "--target", str(self.project), "--skill", "review-code", *args)
 
     def test_skill_validation(self) -> None:
         completed = run_cli("validate")
         self.assertEqual(0, completed.returncode, completed.stderr)
 
+    def test_each_skill_installs_alone_with_complete_resources_in_both_modes(self) -> None:
+        for name in skills.available_skills():
+            source = skills.skill_path(name)
+            expected = {path.relative_to(source): path for path in source.rglob("*")}
+            for mode in ("copy", "symlink"):
+                with self.subTest(skill=name, mode=mode):
+                    args = ("--agent", "all", "--target", str(self.project), "--skill", name)
+                    result = run_cli("install", *args, "--mode", mode)
+                    self.assertEqual(0, result.returncode, result.stderr)
+                    for agent in (".agents", ".claude"):
+                        target = self.project / agent / "skills" / name
+                        self.assertEqual([name], sorted(path.name for path in target.parent.iterdir()))
+                        self.assertEqual(mode == "symlink", target.is_symlink())
+                        if mode == "symlink":
+                            self.assertEqual(os.path.relpath(source, target.parent), os.readlink(target))
+                        self.assertEqual(set(expected), {path.relative_to(target) for path in target.rglob("*")
+                                                         if path != target / skills.MARKER})
+                        for relative, original in expected.items():
+                            installed = target / relative
+                            if original.is_file():
+                                self.assertEqual(original.read_bytes(), installed.read_bytes(), str(relative))
+                            else:
+                                self.assertTrue(installed.is_dir(), str(relative))
+
+                    if mode == "copy":
+                        standalone = self.project / "standalone" / name
+                        standalone.parent.mkdir(exist_ok=True)
+                        shutil.copytree(target, standalone, ignore=shutil.ignore_patterns(skills.MARKER))
+                        self.assertEqual([], skills.validate_skill(standalone))
+                    removed = run_cli("uninstall", *args)
+                    self.assertEqual(0, removed.returncode, removed.stderr)
+
     def test_general_engineering_skills_install_and_uninstall_for_both_agents(self) -> None:
-        names = ("code-review", "refactoring")
+        names = ("review-code", "implement")
         listing = run_cli("list")
         self.assertEqual(0, listing.returncode, listing.stderr)
         self.assertTrue(set(names) <= set(listing.stdout.splitlines()))
@@ -97,18 +129,18 @@ class InstallerTests(unittest.TestCase):
                 uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "git-workflow")
                 self.assertEqual(0, run_cli("uninstall", *uninstall).returncode)
 
-        args = ("--agent", "codex", "--target", str(self.project), "--skill", "architecture-decision",
+        args = ("--agent", "codex", "--target", str(self.project), "--skill", "design-system",
                 "--mode", "copy")
         installed = run_cli("install", *args)
         self.assertEqual(0, installed.returncode, installed.stderr)
-        asset = self.project / ".agents/skills/architecture-decision/assets/adr-template.md"
+        asset = self.project / ".agents/skills/design-system/assets/adr-template.md"
         self.assertTrue(asset.is_file())
-        uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "architecture-decision")
+        uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "design-system")
         self.assertEqual(0, run_cli("uninstall", *uninstall).returncode)
 
     def test_migrates_legacy_flat_symlinks_and_removes_dangling_legacy_link(self) -> None:
-        source = skills.skill_path("java-quality")
-        legacy_source = skills.SKILLS / "java-quality"
+        source = skills.skill_path("review-code")
+        legacy_source = skills.SKILLS / "review-code"
         legacy_target = os.path.relpath(legacy_source, start=self.target.parent)
         self.target.parent.mkdir(parents=True, exist_ok=True)
         self.target.symlink_to(legacy_target, target_is_directory=True)
@@ -184,7 +216,7 @@ class InstallerTests(unittest.TestCase):
     def test_symlink_installation_is_relative_and_reversible(self) -> None:
         installed = run_cli("install", *self.args())
         self.assertEqual(0, installed.returncode, installed.stderr)
-        link = self.project / ".agents/skills/java-quality"
+        link = self.project / ".agents/skills/review-code"
         self.assertTrue(link.is_symlink())
         self.assertFalse(link.readlink().is_absolute())
         self.assertTrue((link / "SKILL.md").is_file())
@@ -195,13 +227,13 @@ class InstallerTests(unittest.TestCase):
     def test_copy_installation_is_reversible(self) -> None:
         result = run_cli("install", *self.args("--mode", "copy"))
         self.assertEqual(0, result.returncode, result.stderr)
-        target = self.project / ".agents/skills/java-quality"
+        target = self.project / ".agents/skills/review-code"
         self.assertTrue(target.is_dir())
         self.assertFalse(target.is_symlink())
         marker = json.loads((target / ".engineering-agent-skills.json").read_text())
-        self.assertEqual("java-quality", marker["skill"])
+        self.assertEqual("review-code", marker["skill"])
         self.assertEqual(1, marker["format"])
-        self.assertTrue((target / "references/boundaries.md").is_file())
+        self.assertTrue((target / "references/java/boundaries.md").is_file())
         repeated = run_cli("install", *self.args("--mode", "copy"))
         self.assertEqual(0, repeated.returncode, repeated.stderr)
         self.assertIn("SKIP", repeated.stdout)
@@ -234,7 +266,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse(target.exists())
 
     def test_unmanaged_files_are_never_overwritten_or_deleted(self) -> None:
-        target = self.project / ".agents/skills/java-quality"
+        target = self.project / ".agents/skills/review-code"
         target.mkdir(parents=True)
         (target / "SKILL.md").write_text("User content\n", encoding="utf-8")
         self.assertNotEqual(0, run_cli("install", *self.args()).returncode)
@@ -258,16 +290,16 @@ class InstallerTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(content)
 
-        manifest = skills.skill_path("java-quality").joinpath("SKILL.md").read_bytes()
-        args = ("--agent", "all", "--target", str(self.project), "--skill", "java-quality")
+        manifest = skills.skill_path("review-code").joinpath("SKILL.md").read_bytes()
+        args = ("--agent", "all", "--target", str(self.project), "--skill", "review-code")
         for mode in ("symlink", "copy"):
             with self.subTest(mode=mode):
                 installed = run_cli("install", *args, "--mode", mode)
                 self.assertEqual(0, installed.returncode, installed.stderr)
                 for relative in (".agents/skills", ".claude/skills"):
                     directory = self.project / relative
-                    self.assertEqual(["java-quality"], sorted(entry.name for entry in directory.iterdir()))
-                    skill = directory / "java-quality"
+                    self.assertEqual(["review-code"], sorted(entry.name for entry in directory.iterdir()))
+                    skill = directory / "review-code"
                     self.assertEqual(mode == "symlink", skill.is_symlink())
                     self.assertEqual(manifest, (skill / "SKILL.md").read_bytes())
                 for relative, content in consumer_files.items():
@@ -284,25 +316,25 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.project / ".agents").exists())
 
     def test_conflict_preflights_both_agents_and_all_selected_skills(self) -> None:
-        conflict = self.project / ".claude/skills/python-quality"
+        conflict = self.project / ".claude/skills/implement"
         conflict.parent.mkdir(parents=True)
         conflict.write_text("unrelated file")
         args = ("--agent", "all", "--target", str(self.project),
-                "--skill", "python-quality,java-quality", "--skill", "java-quality")
+                "--skill", "implement,review-code", "--skill", "review-code")
         for options in ((), ("--dry-run",)):
             with self.subTest(options=options):
                 result = run_cli("install", *args, *options)
                 self.assertEqual(2, result.returncode, result.stderr)
                 self.assertIn(str(conflict.resolve()), result.stderr)
                 self.assertFalse(self.target.parent.exists())
-                self.assertFalse((conflict.parent / "java-quality").exists())
+                self.assertFalse((conflict.parent / "review-code").exists())
                 self.assertEqual("unrelated file", conflict.read_text())
 
     def test_uninstall_preflights_all_paths_before_removing_any(self) -> None:
         args = ("--agent", "all", "--target", str(self.project), "--all")
         installed = run_cli("install", *args, "--mode", "copy")
         self.assertEqual(0, installed.returncode, installed.stderr)
-        edited = self.project / ".claude/skills/shell-quality/references/local.md"
+        edited = self.project / ".claude/skills/implement/references/local.md"
         edited.write_text("Keep this.")
         refused = run_cli("uninstall", *args)
         self.assertEqual(2, refused.returncode, refused.stderr)
@@ -363,14 +395,14 @@ class InstallerTests(unittest.TestCase):
     def test_user_scope_uses_agent_homes(self) -> None:
         simulated_user = self.project.parent / "user"
         simulated_user.mkdir()
-        args = ["--agent", "all", "--scope", "user", "--skill", "shell-quality"]
+        args = ["--agent", "all", "--scope", "user", "--skill", "implement"]
         with patch.object(Path, "home", return_value=simulated_user), redirect_stdout(io.StringIO()):
             skills.apply_selection(skills.create_parser().parse_args(["install", *args, "--mode", "copy"]))
             for agent_path in (".agents/skills", ".claude/skills"):
-                self.assertTrue((simulated_user / agent_path / "shell-quality/SKILL.md").is_file())
+                self.assertTrue((simulated_user / agent_path / "implement/SKILL.md").is_file())
             skills.apply_selection(skills.create_parser().parse_args(["uninstall", *args]))
-        self.assertFalse((simulated_user / ".agents/skills/shell-quality").exists())
-        self.assertFalse((simulated_user / ".claude/skills/shell-quality").exists())
+        self.assertFalse((simulated_user / ".agents/skills/implement").exists())
+        self.assertFalse((simulated_user / ".claude/skills/implement").exists())
         self.assertFalse((self.project / ".agents").exists())
 
     def test_rejects_user_scope_target(self) -> None:
@@ -381,15 +413,15 @@ class InstallerTests(unittest.TestCase):
     def test_exact_relative_link_survives_project_relocation_and_dangling_source(self) -> None:
         checkout_path = Path(".tooling/engineering-agent-skills")
         checkout = self.project / checkout_path
-        skill_path = checkout_path / "skills/software-engineering/java-quality"
-        targets = (".agents/skills/java-quality", ".claude/skills/java-quality")
-        shutil.copytree(skills.skill_path("java-quality"), self.project / skill_path)
+        skill_path = checkout_path / "skills/software-engineering/review-code"
+        targets = (".agents/skills/review-code", ".claude/skills/review-code")
+        shutil.copytree(skills.skill_path("review-code"), self.project / skill_path)
         shutil.copy2(ROOT / "catalog.json", checkout / "catalog.json")
         installer = checkout / ".scripts/skills.py"
         installer.parent.mkdir()
         shutil.copy2(ROOT / ".scripts/skills.py", installer)
         command = [sys.executable, str(installer)]
-        options = ["--agent", "all", "--skill", "java-quality"]
+        options = ["--agent", "all", "--skill", "review-code"]
         installed = subprocess.run(
             command + ["install", *options],
             cwd=self.project,
@@ -422,7 +454,7 @@ class InstallerTests(unittest.TestCase):
             self.assertFalse(os.path.lexists(moved / target))
 
     def test_legacy_copy_requires_matching_content(self) -> None:
-        source = skills.skill_path("java-quality")
+        source = skills.skill_path("review-code")
         shutil.copytree(source, self.target)
         marker = self.target / skills.MARKER
         marker.write_text(json.dumps({"source": str(source), "skill": source.name}))
@@ -458,11 +490,11 @@ class InstallerTests(unittest.TestCase):
 
     def test_prevents_installation_inside_skill_source(self) -> None:
         catalog = self.project / "catalog"
-        source = catalog / "software-engineering/java-quality"
-        shutil.copytree(skills.skill_path("java-quality"), source)
+        source = catalog / "software-engineering/review-code"
+        shutil.copytree(skills.skill_path("review-code"), source)
         with patch.object(skills, "SKILLS", catalog):
             args = skills.create_parser().parse_args([
-                "install", "--agent", "codex", "--target", str(source), "--skill", "java-quality",
+                "install", "--agent", "codex", "--target", str(source), "--skill", "review-code",
             ])
             with self.assertRaisesRegex(skills.SkillError, "outside the source catalog"):
                 skills.apply_selection(args)
@@ -470,8 +502,8 @@ class InstallerTests(unittest.TestCase):
 
     def test_copies_from_read_only_source_with_removable_directory_modes(self) -> None:
         catalog = self.project / "catalog"
-        source = catalog / "software-engineering/java-quality"
-        shutil.copytree(skills.skill_path("java-quality"), source)
+        source = catalog / "software-engineering/review-code"
+        shutil.copytree(skills.skill_path("review-code"), source)
         directories = [source, source / "references"]
         for directory in directories:
             directory.chmod(0o555)

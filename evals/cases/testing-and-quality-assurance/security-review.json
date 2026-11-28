@@ -10,7 +10,7 @@
       "Do not probe external systems."
     ],
     "avoid_skills": [
-      "architecture-review"
+      "design-system"
     ]
   },
   {
@@ -33,7 +33,7 @@
       "Use defensive security review rather than dependency updates."
     ],
     "avoid_skills": [
-      "dependency-management"
+      "maintain-build"
     ]
   },
   {
@@ -47,7 +47,7 @@
       "Keep testing authorized and isolated, and avoid probing internal production addresses."
     ],
     "avoid_skills": [
-      "bug-investigation"
+      "debug"
     ]
   },
   {

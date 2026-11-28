@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Code"
+  short_description: "Evidence-backed code review and regression findings"
+  default_prompt: "Use $review-code to review the current changes for correctness and compatibility and report findings with file locations and verification."

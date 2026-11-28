@@ -1,0 +1,67 @@
+[
+  {
+    "id": "ci-cd-pipeline-trust",
+    "skill": "manage-ci-cd",
+    "fixture": null,
+    "prompt": "A pull request workflow interpolates a PR title into a shell command and has write permissions. Review the pipeline without editing.",
+    "expected": [
+      "Identify untrusted input and unnecessary permissions.",
+      "Recommend scoped mitigation and safe verification."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "ci-cd-pipeline-speed",
+    "skill": "manage-ci-cd",
+    "fixture": null,
+    "prompt": "CI is slow but no timing data is available. Propose a pipeline optimization plan.",
+    "expected": [
+      "Request critical-path evidence and preserve quality gates.",
+      "Do not invent speedups."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "ci-cd-gitlab-needs-artifact-flow",
+    "skill": "manage-ci-cd",
+    "fixture": null,
+    "prompt": "In a .gitlab-ci.yml pipeline, a deploy job starts after needs was added but cannot find the package produced in an earlier stage. Review the likely artifact-flow issue without editing the pipeline.",
+    "expected": [
+      "Load GitLab CI guidance because the provider is identified by the repository file.",
+      "Inspect needs and artifact download configuration together; a scheduling edge does not guarantee every prior artifact is fetched.",
+      "Keep deploy and publish credentials outside untrusted pipeline paths and preserve artifact identity.",
+      "Select references/gitlab-ci/gitlab-ci.md and skip GitHub Actions and Jenkins guidance."
+    ],
+    "avoid_skills": [
+      "maintain-build"
+    ]
+  },
+  {
+    "id": "ci-cd-jenkins-retry-side-effect",
+    "skill": "manage-ci-cd",
+    "fixture": null,
+    "prompt": "A Jenkinsfile retries an entire release stage after a timeout, and the stage may already have uploaded an artifact. Review the failure semantics without triggering Jenkins.",
+    "expected": [
+      "Load Jenkins Pipeline guidance and inspect retry scope, agent/workspace behavior, and post conditions.",
+      "Establish whether the upload already occurred and whether the step is idempotent before retrying.",
+      "Preserve artifact identity and release authorization; distinguish local inspection from hosted execution."
+    ],
+    "avoid_skills": [
+      "release-engineering"
+    ]
+  },
+  {
+    "id": "manage-ci-cd-review-without-hosted-actions",
+    "skill": "manage-ci-cd",
+    "fixture": "release",
+    "prompt": "Review the existing release workflow excerpt and suggest how to verify its artifact handoff. Leave all files alone, even if a change is obvious. Do not trigger the workflow or publish anything.",
+    "expected": [
+      "Identify that the excerpt contains a publish job but no artifact producer or transfer step. Explain what configuration or local evidence would verify a handoff. Do not run the publish command.",
+      "Report any hosted verification as unexecuted. Leave files and remote state unchanged."
+    ],
+    "avoid_skills": [
+      "deploy",
+      "release-engineering"
+    ]
+  }
+]

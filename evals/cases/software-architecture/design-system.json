@@ -1,0 +1,240 @@
+[
+  {
+    "id": "api-design-order-contract",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design an HTTP API for creating and retrieving orders. Clients may retry creation after a timeout. Define schemas, errors, and duplicate-request handling without implementing it.",
+    "expected": [
+      "Define operations and appropriate HTTP semantics.",
+      "Address retry safety and duplicate side effects.",
+      "Define validation, authorization, and contract verification without edits.",
+      "Deliver the consumer-facing interface contract and leave system architecture outside this request."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "api-design-backward-compatibility",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Evolve a public API by renaming a response field and adding a required request field. Existing clients cannot upgrade immediately. Propose a migration.",
+    "expected": [
+      "Identify both compatibility risks.",
+      "Preserve existing consumers during migration and define compatibility checks.",
+      "Avoid assuming additive changes are always compatible."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "architecture-decision-storage-choice",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Draft a proposed ADR comparing relational and document storage for a service requiring multi-record transactions. Workload measurements are unavailable. Return the draft only.",
+    "expected": [
+      "Compare options against transaction requirements and other explicit drivers.",
+      "Record trade-offs, unknown evidence, recommendation, proposed status, and validation criteria.",
+      "Do not invent benchmarks or approval or edit files.",
+      "Produce a bounded decision record without expanding into a full system design."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-decision-superseding",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Revisit an accepted ADR choosing synchronous delivery because a new requirement permits deferred processing. Propose a replacement without rewriting history.",
+    "expected": [
+      "Identify changed drivers and compare retaining the decision with alternatives.",
+      "Keep prior rationale and propose a linked superseding ADR.",
+      "Do not mark the replacement accepted without approval."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-decision-template-resource",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Draft a proposed ADR comparing a managed queue with database polling. Include decision drivers, alternatives, trade-offs, validation, and revisit conditions; do not edit repository files.",
+    "expected": [
+      "Select assets/adr-template.md for the ADR structure.",
+      "Keep status proposed and distinguish evidence from assumptions.",
+      "Do not edit files or claim approval."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-review-data-ownership",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Review an existing order processing architecture where the order service and payment service independently update the same order status in a shared database. Payment retries may execute concurrently. Assess architectural risks without modifying the system.",
+    "expected": [
+      "Identify shared state ownership and concurrency risks.",
+      "Explain affected business invariants and possible failure scenarios.",
+      "Distinguish established architectural concerns from unverified runtime behavior.",
+      "Recommend proportionate mitigations and verification criteria.",
+      "Avoid unauthorized implementation changes.",
+      "Assess the existing architecture before proposing mitigations. Leave a replacement design outside scope."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "architecture-review-unjustified-migration",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Review an existing modular monolith with explicit module boundaries, one deployment, and stable operational behavior. The team proposes migrating to microservices, but no independent scaling or deployment requirements have been established.",
+    "expected": [
+      "Evaluate the existing architecture against actual requirements.",
+      "Avoid treating the modular monolith as an architectural defect.",
+      "Identify evidence needed to justify a migration.",
+      "Explain operational complexity and migration trade-offs.",
+      "Avoid inventing performance or scalability problems.",
+      "Use architecture assessment mode and leave redesign and implementation outside scope."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-review-insufficient-evidence",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Assess the reliability of an existing distributed system. The only available information is that it contains five services.",
+    "expected": [
+      "Identify missing architecture, dependency, and operational evidence.",
+      "Distinguish potential risks from confirmed findings.",
+      "Avoid inventing failure scenarios as observed incidents.",
+      "Report review limitations and evidence required for further assessment."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "architecture-decision-near-miss-review",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Audit existing service boundaries and shared state for architectural risks. Do not choose a replacement architecture or draft an ADR.",
+    "expected": [
+      "Use architecture review and distinguish findings from unverified risks.",
+      "Do not turn the assessment into a decision record."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "system-design-order-processing",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design an order processing system for a small online store. It must accept orders, reserve inventory, process payments, and recover from payment failures. Traffic estimates are unavailable. Provide a design proposal without implementing it.",
+    "expected": [
+      "Identify requirements, assumptions, and system boundaries.",
+      "Define component responsibilities, data ownership, and order processing flows.",
+      "Evaluate payment failures, consistency, duplicate processing, and recovery.",
+      "Justify architectural complexity without inventing workload measurements.",
+      "Provide alternatives, trade-offs, and validation criteria without editing files."
+    ],
+    "avoid_skills": [
+      "review-code",
+      "implement"
+    ]
+  },
+  {
+    "id": "system-design-notification-service",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design an internal notification system supporting email and webhook delivery. Compare synchronous and asynchronous approaches, considering retries and duplicate delivery.",
+    "expected": [
+      "Identify delivery requirements and communication alternatives.",
+      "Explain component boundaries and data flows.",
+      "Address retry safety, duplicate delivery, and dependency failures.",
+      "Compare alternatives against stated requirements.",
+      "Distinguish confirmed requirements from assumptions."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "architecture-review-near-miss-system-design",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design a new inventory management system from scratch. Define component boundaries, data ownership, and integration flows. There is no existing implementation.",
+    "expected": [
+      "Use the system design workflow.",
+      "Establish requirements, constraints, and assumptions.",
+      "Propose component boundaries and architectural alternatives.",
+      "Avoid presenting findings about a nonexistent architecture."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "api-design-near-miss-system-design",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design an inventory platform focusing on component boundaries, ownership, deployment, and recovery. Detailed API contracts are outside scope.",
+    "expected": [
+      "Use system design and define component interactions.",
+      "Keep detailed API contracts outside scope."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "performance-analysis-near-miss-design",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design a new service with a latency requirement but no existing implementation. Focus on architecture and validation plans.",
+    "expected": [
+      "Use system design and mark performance estimates as assumptions."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
+  },
+  {
+    "id": "test-strategy-near-miss-system-design",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design a new order system with component boundaries and data ownership. Test planning is outside scope.",
+    "expected": [
+      "Provide an architectural proposal rather than a test plan."
+    ],
+    "avoid_skills": [
+      "test-code"
+    ]
+  },
+  {
+    "id": "requirements-analysis-near-miss",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Design the component boundaries of a new service from already approved requirements.",
+    "expected": [
+      "Use system design rather than eliciting requirements again."
+    ],
+    "avoid_skills": [
+      "requirements-analysis"
+    ]
+  },
+  {
+    "id": "system-design-dual-write-outbox-tradeoffs",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "A service commits an order and then publishes an event; intermittent broker errors leave orders invisible downstream. Assess consistency options without assuming a microservice split.",
+    "expected": [
+      "Identify the database/message dual-write failure window and the invariant that must hold.",
+      "Consider an outbox or another justified transaction mechanism, including relay operations, duplicate delivery, ordering, and idempotent consumers.",
+      "Compare with a simpler in-process or modular-monolith option against ownership and failure requirements; do not prescribe distributed services by default.",
+      "Evaluate system-level consistency and ownership without drafting a separate API specification."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "system-design-template-resource",
+    "skill": "design-system",
+    "fixture": null,
+    "prompt": "Provide a reusable system design deliverable for a webhook service, including security boundaries, failure handling, deployment, and open questions.",
+    "expected": [
+      "Select assets/system-design-template.md and adapt it to the request.",
+      "Address component responsibilities, contracts, failure handling, and operational concerns.",
+      "Do not implement the design."
+    ],
+    "avoid_skills": []
+  }
+]

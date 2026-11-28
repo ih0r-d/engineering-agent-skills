@@ -1,0 +1,79 @@
+[
+  {
+    "id": "make-recipe-directory",
+    "skill": "maintain-build",
+    "fixture": "build",
+    "prompt": "The offline command RELEASE_VERSION=1.4.3 make bad cannot find fixture.txt while make good passes. Review Make's recipe execution and leave files untouched.",
+    "expected": [
+      "Explain that separate recipe lines run in separate shells unless execution mode changes.",
+      "Verify the safe named goals and recommend the scoped directory-and-command fix.",
+      "Avoid imposing a repository-wide shell setting or treating the version variable as a release request.",
+      "Select references/make/make.md. Skip shell review because the failing boundary is the runner's recipe execution."
+    ],
+    "avoid_skills": [
+      "review-code",
+      "release-engineering"
+    ]
+  },
+  {
+    "id": "ci-cd-near-miss",
+    "skill": "maintain-build",
+    "fixture": null,
+    "prompt": "Review why a Make recipe loses its working directory between lines. CI workflow changes are outside scope.",
+    "expected": [
+      "Use build automation guidance for recipe execution."
+    ],
+    "avoid_skills": [
+      "manage-ci-cd"
+    ]
+  },
+  {
+    "id": "dependency-management-transitive-conflict",
+    "skill": "maintain-build",
+    "fixture": null,
+    "prompt": "Two Maven dependencies request different versions of a library. Propose a minimal resolution without editing.",
+    "expected": [
+      "Inspect resolved dependency paths and compatibility before selecting a change.",
+      "Avoid blanket upgrades."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "dependency-management-lockfile-drift",
+    "skill": "maintain-build",
+    "fixture": null,
+    "prompt": "An authorized targeted dependency update changes dozens of unrelated lockfile entries. Review the diff before proceeding.",
+    "expected": [
+      "Distinguish necessary transitive changes from unrelated drift.",
+      "Preserve reproducibility and report verification limits."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "maintain-build-unconfirmed-tool",
+    "skill": "maintain-build",
+    "fixture": null,
+    "prompt": "An incremental build leaves old data in a generated artifact after its input changes. No build files, commands, or tool versions are available. Plan a read-only investigation.",
+    "expected": [
+      "Use the generic build workflow and compare clean, unchanged, and input-mutated runs.",
+      "The reproducibility checklist is relevant. Skip Maven, Gradle, Make, Taskfile and Python-specific references until evidence warrants one."
+    ],
+    "avoid_skills": [
+      "manage-ci-cd"
+    ]
+  },
+  {
+    "id": "maintain-build-verify-without-edits",
+    "skill": "maintain-build",
+    "fixture": "build",
+    "prompt": "Check why the existing Make target fails. Run only safe local verification and leave the Makefile and dependencies unchanged, even if the fix is obvious.",
+    "expected": [
+      "Use references/make/make.md to explain the recipe working-directory boundary and compare the existing failure and success targets.",
+      "Propose the localized correction in the reply. Leave build configuration, manifests and locks unchanged."
+    ],
+    "avoid_skills": [
+      "implement",
+      "manage-ci-cd"
+    ]
+  }
+]

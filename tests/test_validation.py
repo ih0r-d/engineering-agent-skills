@@ -40,10 +40,10 @@ class SkillValidationTests(unittest.TestCase):
         self.assertEqual([], skills.validate_skill(self.directory))
 
     def test_validates_links_and_anchors_in_bundled_references(self) -> None:
-        reference = self.directory / "references/rules.md"
-        reference.parent.mkdir()
-        reference.write_text("# Running checks\n\nSee [entrypoint](../SKILL.md#instructions).\n", encoding="utf-8")
-        self.write_skill(body="# Instructions\n\nRead [the rules](references/rules.md#running-checks).\n")
+        reference = self.directory / "references/sample-runtime/rules.md"
+        reference.parent.mkdir(parents=True)
+        reference.write_text("# Running checks\n\nSee [entrypoint](../../SKILL.md#instructions).\n", encoding="utf-8")
+        self.write_skill(body="# Instructions\n\nRead [the rules](references/sample-runtime/rules.md#running-checks).\n")
         self.assertEqual([], skills.validate_skill(self.directory))
 
         reference.write_text("[Missing](missing.md#unknown)\n", encoding="utf-8")

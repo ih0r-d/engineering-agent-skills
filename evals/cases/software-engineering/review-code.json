@@ -1,0 +1,258 @@
+[
+  {
+    "id": "code-review-selection-regression",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Review the proposed pull request from before.py to after.py. The author describes it as cleanup and reports that the tests pass. Report actionable findings and leave files untouched.",
+    "expected": [
+      "Lead with the underfilled-result regression at after.py and give an input with a nonmatch before a later match and a positive limit.",
+      "Show how the baseline and candidate differ, and explain why the existing tests miss the failure.",
+      "Recommend applying the cap to matches and adding a sparse-match test. Leave the fixture unchanged and report only executed checks."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "code-review-clean-scope",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Review only the change from before.py to clean.py. Keep the review findings-first and leave the files untouched.",
+    "expected": [
+      "Recognize that the guard-clause rewrite preserves selection order, limit handling, and early termination.",
+      "Report no actionable findings for that change and accurately state any verification limits.",
+      "Keep after.py and its tests outside the requested change scope."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "code-review-python-composition",
+    "skill": "review-code",
+    "fixture": "python",
+    "prompt": "Treat the two functions in tags.py as a proposed PR. Review caller-visible behavior and test coverage. Use Python-specific guidance where helpful and leave the implementation untouched.",
+    "expected": [
+      "Use the change-review workflow as primary and Python default-argument semantics as supporting evidence.",
+      "Give the caller-visible state leak across omitted-argument calls and leave intentional caller-owned list mutation out of the findings.",
+      "Suggest a focused regression test and report verification honestly without editing the functions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "code-review-missing-contract",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "Review a proposed change that replaces a billing calculation with an unspecified rounding helper. The summary is all I can provide. Tell me which findings the available evidence supports.",
+    "expected": [
+      "Identify the missing diff, rounding contract, and representative inputs as review limits.",
+      "Report that no actionable finding can be established from the available evidence. Treat possible changes in rounding as unverified.",
+      "Avoid inventing an implementation, source location, test result, or financial outcome."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "system-design-near-miss-code-review",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Review the proposed change from before.py to after.py for correctness regressions. Do not redesign the system or modify files.",
+    "expected": [
+      "Use the scoped code review workflow.",
+      "Identify the selection regression from the available evidence.",
+      "Report actionable findings without proposing an unrelated system redesign.",
+      "Leave files unchanged."
+    ],
+    "avoid_skills": [
+      "design-system"
+    ]
+  },
+  {
+    "id": "bug-investigation-near-miss-review",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "Review a proposed patch for actionable regressions. Do not investigate an unrelated reported defect.",
+    "expected": [
+      "Use scoped code review and report evidence."
+    ],
+    "avoid_skills": [
+      "debug"
+    ]
+  },
+  {
+    "id": "security-review-near-miss-code-review",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "Review a small change to a sorting function for correctness regressions. No dedicated security assessment is requested.",
+    "expected": [
+      "Use scoped change review and avoid unrelated security audit."
+    ],
+    "avoid_skills": [
+      "security-review"
+    ]
+  },
+  {
+    "id": "java-ignored-return",
+    "skill": "review-code",
+    "fixture": "java",
+    "prompt": "Review the Java class for correctness on Java 11. Keep the review read-only.",
+    "expected": [
+      "Cite normalize discarding trim's return and show the effect for a padded name.",
+      "Treat the discarded boolean from Set.add as intentional for the observed call contract.",
+      "Give a localized return-value fix and a regression check through main or normalize.",
+      "Select references/java/quality-rubric.md from the code review skill. Skip build and framework references without task evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "maven-source-routing",
+    "skill": "review-code",
+    "fixture": "java",
+    "prompt": "The README mentions Maven. Review the Java class only for why normalization has no effect. Leave files untouched.",
+    "expected": [
+      "Route to Java source review and cite the ignored string return.",
+      "Keep the review on source behavior. A README mention of Maven does not warrant a docs or build audit.",
+      "Use Java review guidance. The README's Maven mention does not justify Maven build guidance or a build workflow."
+    ],
+    "avoid_skills": [
+      "maintain-build",
+      "documentation-quality"
+    ]
+  },
+  {
+    "id": "java-quality-quarkus-event-loop-blocking",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "A Quarkus REST handler uses a synchronous database client from an event-loop request path. Review the risk and verification approach without changing the execution model yet.",
+    "expected": [
+      "Use the Quarkus dependency and endpoint annotations/configuration to confirm the execution thread and version-specific dispatch behavior.",
+      "Explain why blocking work on an event loop can delay unrelated requests and choose the supported blocking boundary or async client based on the actual call.",
+      "Verify through the real Quarkus runtime with bounded representative concurrency; do not infer safety from a unit test alone.",
+      "Select references/quarkus/review.md. Skip FastAPI and GraalVM guidance without matching evidence."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
+  },
+  {
+    "id": "python-shared-default",
+    "skill": "review-code",
+    "fixture": "python",
+    "prompt": "Review the Python tag API for state leakage. Cite a reproducible failure and recommend a minimal fix. Keep the review read-only.",
+    "expected": [
+      "Demonstrate that two default calls share the same list.",
+      "Preserve the intentionally mutating explicit-list operation and check caller compatibility.",
+      "Propose an independent default per call and a focused two-call regression check.",
+      "Use references/python/quality-rubric.md. Skip FastAPI and other framework references absent from the fixture."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "python-quality-fastapi-blocking-dependency",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "A FastAPI async endpoint awaits a dependency that calls a synchronous database client and creates a session that is never closed on exceptions. Review the execution and ownership boundaries without changing public routes.",
+    "expected": [
+      "Use the asyncio and resource-ownership criteria in references/fastapi/review.md for the evidenced async request path.",
+      "Trace whether the synchronous call runs directly on the event loop and define a bounded, supported blocking boundary.",
+      "Give the session one clear request or unit-of-work owner and verify cleanup on success and failure.",
+      "Select references/fastapi/review.md. Do not infer SQLAlchemy from the word session."
+    ],
+    "avoid_skills": [
+      "test-code"
+    ]
+  },
+  {
+    "id": "shell-argument-boundaries",
+    "skill": "review-code",
+    "fixture": "shell",
+    "prompt": "Review this POSIX sh script for argument safety using a path with spaces. Report findings and leave files untouched.",
+    "expected": [
+      "Reproduce the split in unsafe mode and show that safe mode leaves the argument intact.",
+      "Recommend a targeted quote fix valid in POSIX sh.",
+      "Avoid adding Bash arrays or changing the interpreter.",
+      "Use references/shell/shell-review.md and the actual POSIX sh invocation."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "shell-quality-posix-process-substitution",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "A script is invoked with sh but contains Bash process substitution and pipefail. Review portability and propose a minimal compatible correction without changing the required interpreter.",
+    "expected": [
+      "Identify process substitution and pipefail as Bash-specific rather than portable POSIX sh behavior.",
+      "Check the actual supported interpreter and avoid assuming macOS system Bash matches a newer developer Bash.",
+      "Preserve producer failure status using a construct supported by the required shell and test arguments containing whitespace."
+    ],
+    "avoid_skills": [
+      "maintain-build"
+    ]
+  },
+  {
+    "id": "review-code-unsupported-language",
+    "skill": "review-code",
+    "fixture": null,
+    "prompt": "Review this Go change without edits. The old function returned the first two positive items; the new loop increments the limit counter on every input, including negatives. Go 1.22 is the required baseline.",
+    "expected": [
+      "Use the generic code review workflow and reproduce the mismatch with a mixed-sign input.",
+      "Do not read Java, Python, shell, or framework references and do not claim bundled Go expertise."
+    ],
+    "avoid_skills": [
+      "implement",
+      "debug"
+    ]
+  },
+  {
+    "id": "review-code-user-scope-over-repository",
+    "skill": "review-code",
+    "fixture": "java",
+    "prompt": "The checkout contains a Java example. Ignore it for this review and review only this POSIX sh function: copy_one() { cp $1 out/; }. Report the effect of a source path with spaces and leave files unchanged.",
+    "expected": [
+      "Use references/shell/shell-review.md for the explicit POSIX sh task and preserve one intended operand.",
+      "Skip Java references and leave the checkout unchanged."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "review-code-specification-and-standards",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Review the proposed change from before.py to after.py. The approved specification requires up to limit matches from the full input in input order. Our standards require observable coverage for changed boundary behavior. Review code smells and maintainability where you can identify a concrete consequence. Leave the files untouched.",
+    "expected": [
+      "Use references/review-criteria.md. Reproduce or trace a sparse-match input that violates the specification despite the existing tests.",
+      "Tie the coverage finding to the stated standard and identify the changed behavior it misses.",
+      "Keep coding standards, maintainability and code-smell conclusions evidence-based. Leave the checkout unchanged."
+    ],
+    "avoid_skills": [
+      "implement",
+      "test-code"
+    ]
+  },
+  {
+    "id": "review-code-delegation-and-fallback",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Perform a read-only review of before.py to after.py. Check the code contract and whether the existing tests would catch changed behavior. If native subagents are available, have one review the coverage independently while you check the code. Do not apply fixes.",
+    "expected": [
+      "When native delegation is available, provide a bounded read-only brief for the coverage pass. Verify and combine evidence in the primary review.",
+      "When delegation is unavailable, complete both review passes sequentially.",
+      "In either mode identify the sparse-match regression, avoid duplicate findings, and leave files unchanged."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "review-code-delegation-forbidden",
+    "skill": "review-code",
+    "fixture": "code-review",
+    "prompt": "Review before.py to after.py for correctness and coverage. Keep this work in the current session. Do not delegate or edit.",
+    "expected": [
+      "Perform both review concerns sequentially and produce a verified sparse-match finding.",
+      "Make zero subagent calls and leave files unchanged."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  }
+]

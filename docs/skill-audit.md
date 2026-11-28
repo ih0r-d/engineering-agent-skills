@@ -1,5 +1,7 @@
 # Phase 2.8 catalog audit
 
+This audit records the pre-v2 baseline. [Current scope and workflow mapping](../SCOPE.md)
+
 This record tracks the Phase 2.8 inspection and the changes made so far. All 35 entrypoints were reviewed for frontmatter, trigger clarity, scope, workflow, authorization, reference selection, and verification. Existing workflows were retained when they already gave task-specific steps and boundaries; the audit did not impose shared headings or blanket rewrites.
 
 | Category | Skills reviewed | Findings and decisions |

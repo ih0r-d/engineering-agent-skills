@@ -12,6 +12,19 @@ Agent Skills is an open format, not a guarantee that every client implements the
 
 The offline CLI is `.scripts/skills.py`, with Bash wrappers for installation, removal, and validation. Historical `scripts/` paths forward to the same implementation. `--agent all` selects Codex and Claude Code. Vercel's Skills CLI tracks installations separately. Use the installation method that owns the installed instance when updating or removing it. [Consumer installation and updates](../README.md#installation-modes)
 
+## Migrating to v2
+
+1. With the pre-v2 revision still at the original toolkit path, identify the installed IDs you are replacing. Use the migration map to choose their v2 successors. [V2 migration map](../SCOPE.md#workflow-boundaries-and-v2-migration)
+2. Preview uninstall for those IDs with the original installer, agent, and scope. Re-run without `--dry-run` after checking the selected paths. For example, for a Codex project with `java-quality` and `code-review` installed, run the command below from that project.
+3. Update the toolkit revision, install the selected v2 IDs, and update explicit skill invocations. Reinstall copied skills with retained IDs when you want to refresh their contents.
+
+```bash
+python3 /path/to/pre-v2-toolkit/.scripts/skills.py uninstall \
+  --agent codex --target "$PWD" --skill java-quality,code-review --dry-run
+```
+
+If the checkout was already upgraded and a retired symlink is now dangling, use the earlier revision at the original toolkit path so the installer can verify its target. Preserve local edits and inspect ownership conflicts before retrying removal.
+
 ## Recovering from a partial operation
 
 Install and uninstall check known ownership conflicts for the full selection before they begin applying changes. A later failure can leave earlier destinations installed or removed. Review the reported paths, fix the underlying error, and preview the same selection and mode with `--dry-run` before retrying. An install skips verified destinations already installed in the requested mode, and an uninstall skips absent destinations.

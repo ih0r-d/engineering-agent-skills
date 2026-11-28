@@ -1,6 +1,6 @@
 ---
 name: container-quality
-description: Review or fix Dockerfiles, build contexts, container runtime settings, and Docker Compose projects. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior.
+description: Review or fix container image builds, runtime settings, and local service orchestration. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior.
 ---
 
 # Container Quality
@@ -11,13 +11,13 @@ description: Review or fix Dockerfiles, build contexts, container runtime settin
 | --- | --- |
 | Review | Inspect and report findings without changing files, building images or starting services. |
 | Fix | Change the smallest affected stage or service setting when authorized. |
-| Verification | Prefer configured lint and quiet Compose validation with the expected files and safe fixture values. |
+| Verification | Prefer configured lint and read-only configuration validation with the expected files and safe fixture values. |
 
 ## Workflow
 
-1. Identify the actual Dockerfile, context root, target stage and platform, Compose file order, profiles and production or development contract.
+1. Identify the image definition, build context, target platform, runtime contract, and active configuration. Follow user tool requirements first, then inspect the build and runtime manifests, dependencies and CI for the engine, orchestration tool, profiles and supported versions.
 2. Start with changed services or stages and trace their build inputs and runtime dependencies. Inventory other images only for a full audit.
-3. Load relevant references according to the task.
+3. Load only references matching the evidenced tool and behavior. Use the generic workflow and project conventions when evidence or specialized guidance is missing.
 4. Inspect pulls, network calls, credentials, volumes and daemon effects before running builds or services.
 5. Perform applicable checks or authorized fixes within the selected operating mode. Use an isolated project for authorized runtime probes.
 6. Establish correctness and security before considering image-size or cache optimizations.
@@ -27,9 +27,9 @@ description: Review or fix Dockerfiles, build contexts, container runtime settin
 
 | Reference | Load when |
 | --- | --- |
-| [Image builds](references/container-review.md) | Reviewing Dockerfiles, build contexts or image-size issues. |
-| [Compose and runtime](references/compose-runtime.md) | Investigating lifecycle, storage, privileges or local development workflows. |
-| [Cache and platform builds](references/cache-and-platforms.md) | Investigating cache behavior, multi-platform output, or reproducibility. |
+| [Image builds](references/docker/container-review.md) | Reviewing evidenced Dockerfile builds, build contexts or image-size issues. |
+| [Compose and runtime](references/compose/compose-runtime.md) | Investigating Compose lifecycle, storage, privileges or local development workflows. |
+| [Cache and platform builds](references/docker/cache-and-platforms.md) | Investigating Docker build cache behavior, multi-platform output, or reproducibility. |
 
 ## Constraints
 

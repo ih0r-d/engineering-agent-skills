@@ -19,7 +19,7 @@ Default to review or preparation.
 
 1. Identify the intended commit, last shipped release for the channel, version policy, distribution targets and existing CI release workflow.
 2. Check local evidence first and record missing or stale release information.
-3. Load relevant references according to the release task and distribution channel.
+3. Follow explicit user requirements for technology and distribution first, then identify the channel, tools and versions from release manifests, dependencies, artifact metadata and pipeline configuration. Load only references matching the task and channel. Use the generic workflow and project conventions when no specialized guidance applies.
 4. Inspect changes, artifacts and release gates within the selected operating mode.
 5. Use existing release automation and scoped fixes.
 6. Before authorized release execution, confirm the commit, version, channel, approved effects and existing pipeline.
