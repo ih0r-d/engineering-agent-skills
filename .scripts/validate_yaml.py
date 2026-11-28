@@ -124,7 +124,9 @@ def main() -> int:
         print(f"ERROR: Could not enumerate repository YAML files: {error}", file=sys.stderr)
         return 1
 
-    paths = {Path(os.fsdecode(entry)) for entry in result.stdout.split(b"\0") if entry}
+    candidates = (Path(os.fsdecode(entry)) for entry in result.stdout.split(b"\0") if entry)
+    # Git's cached listing includes unstaged deletions and pre-move paths.
+    paths = {path for path in candidates if path.is_symlink() or path.exists()}
     paths.update(path.relative_to(skills.REPOSITORY) for path in manifests)
     failures = []
     for path in sorted(paths):
