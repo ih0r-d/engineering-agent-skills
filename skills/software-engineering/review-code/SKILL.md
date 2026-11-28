@@ -22,7 +22,6 @@ description: Review a pull request, patch, or scoped code change for actionable 
 | [Java correctness and compatibility](references/java/quality-rubric.md) | Java language behavior, JavaDoc, concurrency, or caller compatibility affects the change. |
 | [Java module and framework boundaries](references/java/boundaries.md) | Generated code, framework proxies, class loading, or module boundaries affect a finding. |
 | [Java static analysis](references/java/static-analysis.md) | A Java analyzer result or project gate needs verification. |
-| [Java minimal changes](references/java/anti-overengineering.md) | Judging duplication, cohesion, or a proposed cleanup in Java. |
 | [Python correctness and compatibility](references/python/quality-rubric.md) | A Python change affects object ownership, exceptions, imports, or public contracts. |
 | [FastAPI review](references/fastapi/review.md) | A FastAPI change affects request dependencies, resource ownership, or blocking operations. |
 | [Quarkus review](references/quarkus/review.md) | A Quarkus change affects REST dispatch, CDI scope, or configuration phase. |
@@ -30,7 +29,7 @@ description: Review a pull request, patch, or scoped code change for actionable 
 
 ## Constraints
 
-- Review without editing. A finding or proposed fix does not authorize remediation. Use the implementation workflow only when edits are explicitly requested.
+- Review without editing. A finding or proposed fix does not authorize remediation. When edits are explicitly requested, choose the workflow for defect correction, new behavior, or behavior-preserving refactoring as appropriate.
 - Keep architecture assessments, dedicated security audits, incident investigation, and standalone formatting in their own workflows.
 - Report maintainability issues when they have a concrete cost or make a defect more likely.
 - Keep stylistic preferences subordinate to defects.

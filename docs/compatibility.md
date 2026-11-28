@@ -14,12 +14,12 @@ The offline CLI is `.scripts/skills.py`, with Bash wrappers for installation, re
 
 ## Migrating to v2
 
-1. With the pre-v2 revision still at the original toolkit path, identify the installed IDs you are replacing. Use the migration map to choose their v2 successors. [V2 migration map](../SCOPE.md#workflow-boundaries-and-v2-migration)
+1. With the installed revision still at the original toolkit path, identify the IDs you are replacing. Use the migration map and the approved catalog to choose their successors. [V2 migration map](../SCOPE.md#workflow-boundaries-and-v2-migration)
 2. Preview uninstall for those IDs with the original installer, agent, and scope. Re-run without `--dry-run` after checking the selected paths. For example, for a Codex project with `java-quality` and `code-review` installed, run the command below from that project.
 3. Update the toolkit revision, install the selected v2 IDs, and update explicit skill invocations. Reinstall copied skills with retained IDs when you want to refresh their contents.
 
 ```bash
-python3 /path/to/pre-v2-toolkit/.scripts/skills.py uninstall \
+python3 /path/to/current-toolkit/.scripts/skills.py uninstall \
   --agent codex --target "$PWD" --skill java-quality,code-review --dry-run
 ```
 

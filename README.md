@@ -87,7 +87,7 @@ python3 /tmp/engineering-agent-skills/.scripts/skills.py uninstall \
   --agent codex --target "$PWD" --skill review-code --dry-run
 ```
 
-When upgrading from a pre-v2 revision, uninstall replaced IDs before updating the toolkit checkout. Then install the v2 IDs and update explicit invocations. [Upgrade steps and recovery](docs/compatibility.md#migrating-to-v2)
+When upgrading from a revision with replaced skill IDs, uninstall them before updating the toolkit checkout. Then install the v2 IDs and update explicit invocations. [Upgrade steps and recovery](docs/compatibility.md#migrating-to-v2)
 
 ### Pin a checkout with a Git submodule
 
@@ -110,12 +110,15 @@ Review the preview, then rerun without `--dry-run`. The installer creates relati
 
 Prompts describe user intent; they do not guarantee that a specific client will select a particular skill automatically. Skills can be invoked explicitly where the client supports it.
 
-- “Draft a specification for checkout retries with observable acceptance criteria for duplicates and partial failures.” — `requirements-analysis`.
+- “Draft a specification for checkout retries with observable acceptance criteria for duplicates and partial failures.” — `write-spec`.
+- “Clarify which checkout failures can be retried and who decides the duplicate-charge policy.” — `clarify-requirements`.
+- “Simplify repeated parsing without changing which inputs are accepted.” — `refactor-code`.
+- “Assess the existing order service's data ownership and failure propagation.” — `review-architecture`.
 - “Implement the approved checkout retry contract and verify the acceptance criteria.” — `implement`.
 - “Review this Java change for data races, `CompletableFuture` cancellation, and binary API compatibility.” — `review-code` with its Java review guidance.
 - “Investigate this `OutOfMemoryError: Metaspace`; compare classloader activity and available JVM evidence before suggesting tuning.” — `debug` with its JVM diagnostics guidance.
 - “Diagnose why the GitHub Actions deploy job cannot retrieve an artifact produced by an earlier job.” — `manage-ci-cd`.
-- “Prepare a production hotfix and backport plan. Identify the target release lines and tests; do not push, tag, publish, or deploy.” — `debug`, `implement`, `git-workflow`, and `release-engineering` as relevant.
+- “Prepare a production hotfix and backport plan. Identify the target release lines and tests; do not push, tag, publish, or deploy.” — `debug`, `manage-git`, and `release-software` as relevant.
 - “Design a Spring Boot service and draft an ADR for the selected persistence boundary. Do not implement it.” — `design-system`.
 - “Create a risk-based test strategy for a Spring Boot service that reserves inventory and charges cards.” — `test-code`.
 
@@ -133,60 +136,60 @@ The catalog below is generated from `catalog.json` and each skill’s YAML front
 
 | Skill | Purpose |
 | --- | --- |
-| [`implement`](skills/software-engineering/implement/SKILL.md) | Implement a scoped software change, fix a confirmed defect, or refactor existing code with a behavior baseline. Use for concrete source edits and verification of affected callers and contracts. |
+| [`implement`](skills/software-engineering/implement/SKILL.md) | Implement an approved feature or intentional change to software behavior. Use for scoped source changes against requirements, acceptance criteria, and existing caller contracts. |
 | [`review-code`](skills/software-engineering/review-code/SKILL.md) | Review a pull request, patch, or scoped code change for actionable defects, regressions, and missing verification. Use for a findings-first review of proposed or existing changes. |
+| [`refactor-code`](skills/software-engineering/refactor-code/SKILL.md) | Improve existing code structure while preserving observable behavior. Use for scoped simplification, consolidation, or separation of responsibilities with a behavior baseline. |
 
 ### Software Architecture
 
 | Skill | Purpose |
 | --- | --- |
-| [`design-system`](skills/software-architecture/design-system/SKILL.md) | Design or assess software architecture, define API contracts, or evaluate and record an architecture decision. Use for component boundaries, data ownership, system trade-offs, consumer compatibility, and ADRs. |
+| [`design-system`](skills/software-architecture/design-system/SKILL.md) | Design software architecture, define API contracts, or evaluate and record an architecture decision. Use for proposed component boundaries, data ownership, system trade-offs, consumer compatibility, and ADRs. |
+| [`review-architecture`](skills/software-architecture/review-architecture/SKILL.md) | Assess existing software architecture against requirements, quality attributes, and operational constraints. Use for architecture audits, component boundaries, coupling, data ownership, scalability, reliability, and architectural risk assessment. |
 
 ### Bug Fixing and Reliability
 
 | Skill | Purpose |
 | --- | --- |
-| [`debug`](skills/bug-fixing-and-reliability/debug/SKILL.md) | Diagnose software failures and explain supported causes. Use for reproducible or intermittent defects, runtime diagnostics, environment differences, and analysis of recurring failure mechanisms. |
-| [`incident-analysis`](skills/bug-fixing-and-reliability/incident-analysis/SKILL.md) | Analyze an operational incident and prepare an evidence-based incident report or blameless postmortem. Use for impact, incident timelines, response effectiveness, recovery, and follow-up actions. |
-| [`performance-analysis`](skills/bug-fixing-and-reliability/performance-analysis/SKILL.md) | Analyze software performance using measurements, profiling, workload characteristics, and resource usage. Use for latency, throughput, CPU, memory, I/O, contention, and scalability bottlenecks. |
+| [`debug`](skills/bug-fixing-and-reliability/debug/SKILL.md) | Diagnose software failures, analyze recurring causes, or apply an authorized defect fix. Use for intermittent failures, runtime diagnostics, environment differences, and verified corrections that restore expected behavior. |
+| [`analyze-performance`](skills/bug-fixing-and-reliability/analyze-performance/SKILL.md) | Analyze software performance using measurements, profiling, workload characteristics, and resource usage. Use for latency, throughput, CPU, memory, I/O, contention, and scalability bottlenecks. |
+| [`analyze-incident`](skills/bug-fixing-and-reliability/analyze-incident/SKILL.md) | Analyze an operational incident and prepare an evidence-based incident report or blameless postmortem. Use for impact, incident timelines, response effectiveness, recovery, and follow-up actions. |
 
 ### Testing and Quality Assurance
 
 | Skill | Purpose |
 | --- | --- |
-| [`security-review`](skills/testing-and-quality-assurance/security-review/SKILL.md) | Review software changes, architecture boundaries, and configuration for security vulnerabilities and exposure risks. Use for authorized defensive assessments, access control, sensitive data handling, and evidence-based remediation advice. |
 | [`test-code`](skills/testing-and-quality-assurance/test-code/SKILL.md) | Plan risk-based verification or write, review, and run unit, integration, and contract tests. Use for coverage decisions, test isolation, regression checks, and cross-component behavior. |
+| [`review-security`](skills/testing-and-quality-assurance/review-security/SKILL.md) | Review software changes, architecture boundaries, and configuration for security vulnerabilities and exposure risks. Use for authorized defensive assessments, access control, sensitive data handling, and evidence-based remediation advice. |
 
 ### Software Delivery
 
 | Skill | Purpose |
 | --- | --- |
-| [`container-quality`](skills/software-delivery/container-quality/SKILL.md) | Review or fix container image builds, runtime settings, and local service orchestration. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior. |
-| [`deploy`](skills/software-delivery/deploy/SKILL.md) | Plan, review, or verify software deployment and rollout procedures. Use for environment promotion, rollout strategies, runtime readiness, migrations, rollback, and deployment verification. |
-| [`git-workflow`](skills/software-delivery/git-workflow/SKILL.md) | Plan or perform scoped Git workflows, atomic commits, Conventional Commits, task identifiers, branches, pull requests, and conflict resolution. Use for repository history and change organization. |
 | [`maintain-build`](skills/software-delivery/maintain-build/SKILL.md) | Review, repair, or verify build automation and dependency resolution. Use for build graphs, task runners, reproducibility, package manifests, lockfiles, and scoped dependency upgrades. |
+| [`maintain-containers`](skills/software-delivery/maintain-containers/SKILL.md) | Review or fix container image builds, runtime settings, and local service orchestration. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior. |
 | [`manage-ci-cd`](skills/software-delivery/manage-ci-cd/SKILL.md) | Design, review, or repair continuous integration and delivery pipelines. Use for workflow triggers, job dependencies, quality gates, caching, permissions, and pipeline reliability. |
-| [`release-engineering`](skills/software-delivery/release-engineering/SKILL.md) | Audit release readiness or prepare versions, changelogs, release notes, and artifact and CI validation. Use for compatibility, publishing checks, provenance, or rollback planning before a release. |
+| [`manage-git`](skills/software-delivery/manage-git/SKILL.md) | Plan or perform scoped Git workflows, atomic commits, Conventional Commits, task identifiers, branches, pull requests, and conflict resolution. Use for repository history and change organization. |
+| [`release-software`](skills/software-delivery/release-software/SKILL.md) | Audit release readiness or prepare versions, changelogs, release notes, and artifact and CI validation. Use for compatibility, publishing checks, provenance, or rollback planning before a release. |
+| [`deploy`](skills/software-delivery/deploy/SKILL.md) | Plan, review, or verify software deployment and rollout procedures. Use for environment promotion, rollout strategies, runtime readiness, migrations, rollback, and deployment verification. |
 
 ### Engineering Productivity
 
 | Skill | Purpose |
 | --- | --- |
-| [`documentation-quality`](skills/engineering-productivity/documentation-quality/SKILL.md) | Write, review, or verify READMEs, quick starts, consumer guides, architecture and contributor docs, API reference, JavaDoc, Python docstrings, and examples. Use to investigate documentation drift or broken instructions. |
-| [`engineering-handoff`](skills/engineering-productivity/engineering-handoff/SKILL.md) | Prepare or review engineering handoffs using verified repository state, completed work, decisions, checks, risks, and next actions. Use for transferring ownership or resuming interrupted technical work. |
-| [`implementation-planning`](skills/engineering-productivity/implementation-planning/SKILL.md) | Plan scoped software changes against established requirements and existing repository contracts. Use for implementation sequencing, affected components, verification, migration, and risk planning. |
-| [`requirements-analysis`](skills/engineering-productivity/requirements-analysis/SKILL.md) | Clarify requirements and draft, review, or update a software specification. Use for stakeholder needs, business rules, scope, constraints, and verifiable acceptance criteria. |
-| [`task-decomposition`](skills/engineering-productivity/task-decomposition/SKILL.md) | Break an established engineering objective into independently verifiable work items with dependencies, scope, and acceptance criteria. Use for backlog slicing, milestones, and sequencing deliverables. |
+| [`clarify-requirements`](skills/engineering-productivity/clarify-requirements/SKILL.md) | Clarify stakeholder needs, business rules, constraints, and acceptance criteria. Use for ambiguous scope, conflicting requirements, and decisions that block agreement on expected behavior. |
+| [`write-spec`](skills/engineering-productivity/write-spec/SKILL.md) | Draft, review, or update a software specification. Use for durable requirements documents, observable acceptance criteria, traceability, and specification changes with recorded decision status. |
+| [`plan-work`](skills/engineering-productivity/plan-work/SKILL.md) | Plan implementation or decompose an approved engineering objective into verifiable work items. Use for sequencing a scoped change, delivery slices, backlog dependencies, migration, and verification planning. |
+| [`write-docs`](skills/engineering-productivity/write-docs/SKILL.md) | Write, review, or verify READMEs, quick starts, consumer guides, architecture and contributor docs, API reference, JavaDoc, Python docstrings, and examples. Use to investigate documentation drift or broken instructions. |
+| [`handoff`](skills/engineering-productivity/handoff/SKILL.md) | Prepare or review engineering handoffs using verified repository state, completed work, decisions, checks, risks, and next actions. Use for transferring ownership or resuming interrupted technical work. |
 
 ### AI Engineering
 
 | Skill | Purpose |
 | --- | --- |
-| [`context-engineering`](skills/ai-engineering/context-engineering/SKILL.md) | Design or improve the context supplied to AI agents. Use for context selection, instruction placement, retrieval scope, handoff summaries, context limits, and evidence preservation. |
-| [`prompt-engineering`](skills/ai-engineering/prompt-engineering/SKILL.md) | Design or refine prompts for AI tasks. Use for instruction hierarchy, task framing, examples, output contracts, ambiguity reduction, and prompt failure diagnosis. |
-| [`skill-authoring`](skills/ai-engineering/skill-authoring/SKILL.md) | Create, review, or refactor portable Agent Skills. Use when defining skill scope, activation conditions, workflows, references, scripts, or specification compliance; combine with domain skills when their expertise is relevant. |
-| [`skill-evaluation`](skills/ai-engineering/skill-evaluation/SKILL.md) | Design or run behavioral evaluations of agent skills. Use for routing, instruction following, task correctness, baseline comparisons, regression analysis, and evaluation rubrics. |
-| [`token-optimization`](skills/ai-engineering/token-optimization/SKILL.md) | Measure and reduce avoidable token consumption in AI engineering workflows while preserving task correctness. Use for verbose instructions, repetitive context, tool output, and response efficiency. |
+| [`author-skills`](skills/ai-engineering/author-skills/SKILL.md) | Create, review, or refactor portable Agent Skills. Use when defining skill scope, activation conditions, workflows, references, scripts, or specification compliance; combine with domain skills when their expertise is relevant. |
+| [`evaluate-skills`](skills/ai-engineering/evaluate-skills/SKILL.md) | Design or run behavioral evaluations of agent skills. Use for routing, instruction following, task correctness, baseline comparisons, regression analysis, and evaluation rubrics. |
+| [`manage-agent-context`](skills/ai-engineering/manage-agent-context/SKILL.md) | Select and preserve task context, design or refine agent prompts, or measure token efficiency. Use for instruction placement, retrieval scope, output contracts, handoff summaries, and reducing redundant context or tool output. |
 
 <!-- END GENERATED SKILL CATALOG -->
 
@@ -196,15 +199,15 @@ The catalog covers each lifecycle stage through focused, composable skills. A pr
 
 ```mermaid
 flowchart LR
-    R["Requirements<br/>requirements-analysis"] --> A["Architecture<br/>design-system"]
-    A --> P["Planning<br/>implementation-planning · task-decomposition"]
-    P --> I["Implementation<br/>implement"]
+    R["Requirements<br/>clarify-requirements · write-spec"] --> A["Architecture<br/>design-system · review-architecture"]
+    A --> P["Planning<br/>plan-work"]
+    P --> I["Implementation<br/>implement · refactor-code"]
     I --> T["Testing<br/>test-code"]
-    T --> C["Review<br/>review-code · security-review"]
+    T --> C["Review<br/>review-code · review-security"]
     C --> CI["CI<br/>manage-ci-cd · maintain-build"]
-    CI --> Rel["Release<br/>release-engineering"]
+    CI --> Rel["Release<br/>release-software"]
     Rel --> D["Deployment<br/>deploy"]
-    D --> M["Maintenance<br/>incident-analysis · debug"]
+    D --> M["Maintenance<br/>analyze-incident · analyze-performance · debug"]
     M --> R
 ```
 
@@ -232,7 +235,7 @@ flowchart LR
 
 Project instructions supply repository-specific policy; the skill supplies a reusable workflow; references contain deeper subject expertise; scripts perform deterministic operations; assets provide reusable output structures. Project documentation, code, and tests supply the evidence. Select references using the requested outcome and the relevant technology, framework, and version. Explicit user requirements take precedence over inferred choices. Use the generic workflow and project conventions when no relevant reference applies. [V2 scope and extension policy](SCOPE.md)
 
-Implementation and code review can use native subagents for independent tasks when available and authorized. The primary agent verifies combined results and follows the same workflow sequentially when delegation does not apply.
+Implementation, refactoring, debugging, and code review can use native subagents for independent tasks when available and authorized. The primary agent verifies combined results and follows the same workflow sequentially when delegation does not apply.
 
 ### Skill package anatomy
 

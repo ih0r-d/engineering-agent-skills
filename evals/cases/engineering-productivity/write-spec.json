@@ -1,0 +1,47 @@
+[
+  {
+    "id": "requirements-analysis-draft-specification",
+    "skill": "write-spec",
+    "fixture": null,
+    "prompt": "Draft a software specification in your reply for adding optional order notes without breaking existing clients. Omitted notes must preserve existing behavior. Notes longer than 200 characters must be rejected. Rules for editing a shipped order are undecided. Do not edit or pick an implementation.",
+    "expected": [
+      "Draft scope, rules, compatibility, normal and boundary acceptance criteria, and the unresolved shipped-order decision.",
+      "Mark proposed and unresolved decisions clearly. Leave source and specification files unchanged."
+    ],
+    "avoid_skills": [
+      "plan-work",
+      "implement",
+      "design-system"
+    ]
+  },
+  {
+    "id": "requirements-analysis-review-specification",
+    "skill": "write-spec",
+    "fixture": null,
+    "prompt": "Review this draft specification without updating it. The requirements say a repeated checkout request with the same key returns the original decision, but the acceptance example charges again after a timeout. The latency target lists no load or measurement window.",
+    "expected": [
+      "Identify the contract/example conflict and the missing measurement conditions. Propose acceptance checks tied to the stated requirements.",
+      "Leave the draft and implementation untouched, and do not treat proposed corrections as approved."
+    ],
+    "avoid_skills": [
+      "review-code",
+      "implement",
+      "clarify-requirements"
+    ]
+  },
+  {
+    "id": "requirements-analysis-update-approved-rule",
+    "skill": "write-spec",
+    "fixture": "specification",
+    "prompt": "Update order-notes.md only. The owner approved a change to NOTE-2: a shipped order's note is immutable. Update that rule and its acceptance criterion. Keep NOTE-1 and leave implementation outside scope.",
+    "expected": [
+      "Edit the requested specification, preserving requirement IDs and NOTE-1.",
+      "Update both the NOTE-2 rule and its observable criterion for a rejected edit with the original note preserved.",
+      "Check the revised specification for consistency and leave other files untouched."
+    ],
+    "avoid_skills": [
+      "implement",
+      "plan-work"
+    ]
+  }
+]

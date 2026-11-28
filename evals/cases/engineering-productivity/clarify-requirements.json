@@ -1,0 +1,28 @@
+[
+  {
+    "id": "requirements-analysis-ambiguous-checkout",
+    "skill": "clarify-requirements",
+    "fixture": null,
+    "prompt": "Clarify requirements for checkout retries and inventory reservation. The payment retry policy is unknown. Do not design the system.",
+    "expected": [
+      "Separate confirmed behavior from unknown policy.",
+      "Define verifiable acceptance criteria and ask about duplicate charge behavior."
+    ],
+    "avoid_skills": [
+      "write-spec"
+    ]
+  },
+  {
+    "id": "requirements-analysis-conflicting-rules",
+    "skill": "clarify-requirements",
+    "fixture": null,
+    "prompt": "Analyze two requirements: all orders are editable and shipped orders are immutable. No stakeholder decision exists.",
+    "expected": [
+      "Identify the conflict and decision required.",
+      "Do not invent approval or implementation."
+    ],
+    "avoid_skills": [
+      "write-spec"
+    ]
+  }
+]

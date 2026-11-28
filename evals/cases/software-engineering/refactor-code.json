@@ -1,0 +1,67 @@
+[
+  {
+    "id": "refactoring-summary-duplication",
+    "skill": "refactor-code",
+    "fixture": "refactoring",
+    "prompt": "Reduce the repeated record parsing in summary.py. Keep both public functions and their current behavior. Run the existing tests and use Python-specific guidance where helpful.",
+    "expected": [
+      "Establish a baseline with test_summary.py before editing and identify the shared status parsing and selection.",
+      "Consolidate that responsibility locally while preserving both public names, parameters, results, and errors. Keep integer conversion in the total calculation.",
+      "Rerun the same tests and report the executed commands, results, and preserved contracts."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "refactoring-preserve-error-contract",
+    "skill": "refactor-code",
+    "fixture": "refactoring",
+    "prompt": "Simplify the shared selection in summary.py. A teammate suggested skipping malformed records and validating every minute field, but this change is approved for structure only. Keep public behavior intact.",
+    "expected": [
+      "Preserve the missing-separator error in both functions, the lack of numeric conversion in the count, and the total's skip of inactive minute fields.",
+      "Keep the teammate's proposed behavior changes separate from the authorized edit.",
+      "Verify before and after with the existing tests and report the scoped change."
+    ],
+    "avoid_skills": [
+      "review-code"
+    ]
+  },
+  {
+    "id": "refactoring-insufficient-evidence",
+    "skill": "refactor-code",
+    "fixture": null,
+    "prompt": "Consolidate two existing public plugin handlers named process and convert while preserving their behavior. I can only share their names. The implementation, caller contracts, and tests are unavailable.",
+    "expected": [
+      "Pause before editing because behavior preservation cannot be established.",
+      "Name the missing source, caller expectations, and representative checks needed to establish the baseline.",
+      "Avoid inventing a shared implementation or reporting verification that did not run."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "implementation-planning-near-miss",
+    "skill": "refactor-code",
+    "fixture": null,
+    "prompt": "Perform a scoped refactoring of existing code while preserving behavior.",
+    "expected": [
+      "Use the authorized refactoring workflow rather than returning only a plan."
+    ],
+    "avoid_skills": [
+      "plan-work"
+    ]
+  },
+  {
+    "id": "implement-shared-file-sequential",
+    "skill": "refactor-code",
+    "fixture": "refactoring",
+    "prompt": "Implement a behavior-preserving cleanup of the two functions in summary.py. They share a file and parsing rule. Subagents are unavailable in this session. Reuse existing tests and verify both functions.",
+    "expected": [
+      "Use one sequential edit path and preserve both public contracts.",
+      "Run existing checks covering signed minutes, malformed records, and the distinct parsing behavior.",
+      "Report executed checks without claiming delegation.",
+      "Use refactoring and keep observable behavior unchanged."
+    ],
+    "avoid_skills": [
+      "plan-work"
+    ]
+  }
+]

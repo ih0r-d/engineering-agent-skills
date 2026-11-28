@@ -5,14 +5,16 @@
       "name": "Software Engineering",
       "skills": [
         "implement",
-        "review-code"
+        "review-code",
+        "refactor-code"
       ]
     },
     {
       "id": "software-architecture",
       "name": "Software Architecture",
       "skills": [
-        "design-system"
+        "design-system",
+        "review-architecture"
       ]
     },
     {
@@ -20,50 +22,48 @@
       "name": "Bug Fixing and Reliability",
       "skills": [
         "debug",
-        "incident-analysis",
-        "performance-analysis"
+        "analyze-performance",
+        "analyze-incident"
       ]
     },
     {
       "id": "testing-and-quality-assurance",
       "name": "Testing and Quality Assurance",
       "skills": [
-        "security-review",
-        "test-code"
+        "test-code",
+        "review-security"
       ]
     },
     {
       "id": "software-delivery",
       "name": "Software Delivery",
       "skills": [
-        "container-quality",
-        "deploy",
-        "git-workflow",
         "maintain-build",
+        "maintain-containers",
         "manage-ci-cd",
-        "release-engineering"
+        "manage-git",
+        "release-software",
+        "deploy"
       ]
     },
     {
       "id": "engineering-productivity",
       "name": "Engineering Productivity",
       "skills": [
-        "documentation-quality",
-        "engineering-handoff",
-        "implementation-planning",
-        "requirements-analysis",
-        "task-decomposition"
+        "clarify-requirements",
+        "write-spec",
+        "plan-work",
+        "write-docs",
+        "handoff"
       ]
     },
     {
       "id": "ai-engineering",
       "name": "AI Engineering",
       "skills": [
-        "context-engineering",
-        "prompt-engineering",
-        "skill-authoring",
-        "skill-evaluation",
-        "token-optimization"
+        "author-skills",
+        "evaluate-skills",
+        "manage-agent-context"
       ]
     }
   ]

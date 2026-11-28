@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills/software-delivery/git-workflow/scripts/validate-commit.py"
+SCRIPT = ROOT / "skills/software-delivery/manage-git/scripts/validate-commit.py"
 
 
 class CommitMessageScriptTests(unittest.TestCase):
@@ -85,7 +85,7 @@ class CommitMessageScriptTests(unittest.TestCase):
 
     def test_script_runs_from_a_copied_standalone_skill(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            copied_script = Path(temporary) / "git-workflow/scripts/validate-commit.py"
+            copied_script = Path(temporary) / "manage-git/scripts/validate-commit.py"
             copied_script.parent.mkdir(parents=True)
             copied_script.write_bytes(SCRIPT.read_bytes())
             copied_script.chmod(SCRIPT.stat().st_mode)

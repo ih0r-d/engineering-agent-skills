@@ -33,7 +33,7 @@
       "Select references/helm/helm-releases.md for partial release state and references/kubernetes/kubernetes-rollouts.md for the reported unhealthy workload."
     ],
     "avoid_skills": [
-      "release-engineering"
+      "release-software"
     ]
   },
   {
@@ -47,7 +47,7 @@
       "Avoid a readiness or liveness change without defining recovery behavior and rollout verification; do not touch the cluster."
     ],
     "avoid_skills": [
-      "performance-analysis"
+      "analyze-performance"
     ]
   }
 ]

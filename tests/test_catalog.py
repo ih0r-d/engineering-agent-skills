@@ -11,8 +11,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".scripts"))
 
 import skills
 
+APPROVED_V2_CATALOG = {
+    "software-engineering": {"implement", "review-code", "refactor-code"},
+    "software-architecture": {"design-system", "review-architecture"},
+    "bug-fixing-and-reliability": {"debug", "analyze-performance", "analyze-incident"},
+    "testing-and-quality-assurance": {"test-code", "review-security"},
+    "software-delivery": {
+        "maintain-build", "maintain-containers", "manage-ci-cd", "manage-git", "release-software", "deploy",
+    },
+    "engineering-productivity": {"clarify-requirements", "write-spec", "plan-work", "write-docs", "handoff"},
+    "ai-engineering": {"author-skills", "evaluate-skills", "manage-agent-context"},
+}
+
 
 class CatalogTests(unittest.TestCase):
+    def test_repository_catalog_matches_approved_v2_assignments(self) -> None:
+        catalog = json.loads(skills.CATALOG.read_text(encoding="utf-8"))
+        self.assertEqual(APPROVED_V2_CATALOG, {
+            category["id"]: set(category["skills"]) for category in catalog["categories"]
+        })
+
     def test_repository_catalog_covers_filesystem(self) -> None:
         self.assertEqual(24, len(skills.available_skills()))
         self.assertEqual([], skills.validate_catalog(

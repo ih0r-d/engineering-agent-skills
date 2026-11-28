@@ -1,0 +1,42 @@
+[
+  {
+    "id": "performance-analysis-latency",
+    "skill": "analyze-performance",
+    "fixture": null,
+    "prompt": "Investigate increased p99 latency under load. CPU is low and no traces or queue measurements are available. Propose a measurement plan.",
+    "expected": [
+      "Define workload and comparable baseline.",
+      "Consider I/O, contention and dependencies without asserting a bottleneck.",
+      "Propose safe profiling and verification."
+    ],
+    "avoid_skills": [
+      "debug"
+    ]
+  },
+  {
+    "id": "performance-analysis-benchmark",
+    "skill": "analyze-performance",
+    "fixture": null,
+    "prompt": "Compare two implementations. One run took 40 ms and the other 35 ms, with unspecified warmup and inputs. Assess the evidence.",
+    "expected": [
+      "Identify uncontrolled conditions and insufficient repetitions.",
+      "Define repeatable equivalent benchmarks.",
+      "Avoid claiming proven improvement."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "performance-analysis-slo-no-target",
+    "skill": "analyze-performance",
+    "fixture": null,
+    "prompt": "A service team wants a latency alert. There is no documented SLO, error budget, or representative baseline, but someone proposed 99.99% availability. Plan the evidence needed without inventing a target.",
+    "expected": [
+      "Define a consumer-relevant SLI with population, good-event rule, and measurement window.",
+      "Defer target and error-budget selection to service owners and requirements; do not treat the proposed number as approved.",
+      "Use latency distributions with sample counts and bounded metric dimensions, and define an actionable alert only after the objective is agreed."
+    ],
+    "avoid_skills": [
+      "design-system"
+    ]
+  }
+]
