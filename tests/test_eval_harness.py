@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".scripts"))
 
+import eval_auth
 import eval_harness as harness
 import eval_observations as observations
 import eval_pilot
@@ -25,6 +26,13 @@ import evaluation_cases
 
 def strings(*events: dict) -> list[str]:
     return [json.dumps(event) for event in events]
+
+
+def fake_oauth(path: Path, access: str = "old-access-token", mode: str = "chatgpt") -> None:
+    path.write_text(json.dumps({"auth_mode": mode, "OPENAI_API_KEY": None, "tokens": {
+        "access_token": access, "refresh_token": "test-refresh-token", "id_token": "test-id-token",
+    }}))
+    path.chmod(0o600)
 
 
 class EventTests(unittest.TestCase):
@@ -110,7 +118,7 @@ class HarnessTests(unittest.TestCase):
         stdout = io.StringIO()
         with patch.object(harness.subprocess, "Popen", side_effect=AssertionError("unexpected subprocess")):
             with redirect_stdout(stdout):
-                status = harness.main(["run", "--output", str(output)])
+                status = harness.main(["run", "--auth", "chatgpt", "--output", str(output)])
         self.assertEqual(0, status)
         self.assertIn("12 / 12", stdout.getvalue())
         self.assertFalse(output.exists())
@@ -171,16 +179,14 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(["before.py", "extra.txt"], harness.violations(
             case, self.root, {"extra.txt": {}}, {"patch_paths": [str(self.root / "before.py")]}))
 
-    def test_process_timeout_keeps_partial_output(self) -> None:
-        out = self.root / "output"
-        with out.open("wb") as stdout:
-            execution = harness.run_process(
-                [sys.executable, "-c", "import time; print('started', flush=True); time.sleep(20)"],
-                cwd=self.root, env={}, timeout=1, stdout=stdout, stderr=subprocess.DEVNULL,
-            )
+    def test_process_timeout_keeps_partial_output_for_redaction(self) -> None:
+        execution = harness.run_process(
+            [sys.executable, "-c", "import time; print('started', flush=True); time.sleep(20)"],
+            cwd=self.root, env={}, timeout=1, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        )
         self.assertTrue(execution["timed_out"])
         self.assertLess(execution["wall_seconds"], 5)
-        self.assertEqual(b"started\n", out.read_bytes())
+        self.assertEqual(b"started\n", execution["stdout"])
 
     def test_python_hidden_grades_fail_before_fix_and_preserve_regressions(self) -> None:
         case = self.cases["code-review-near-miss-python-fix"]
@@ -236,15 +242,18 @@ class HarnessTests(unittest.TestCase):
             self.assertEqual(scenario.prompt, prompt)
             self.assertFalse((cwd / ".agents").exists())
             self.assertNotIn("synthetic-token", " ".join(command))
-            stdout.write("\n".join(event_lines).encode())
-            stderr.write(b"synthetic-token")
-            return {"exit_status": 0, "timed_out": False, "interrupted": False, "wall_seconds": 1}
+            self.assertIn('forced_login_method="api"', command)
+            self.assertEqual(subprocess.PIPE, stdout)
+            self.assertEqual(subprocess.PIPE, stderr)
+            self.assertFalse((folder / "stderr.log").exists())
+            return {"exit_status": 0, "timed_out": False, "interrupted": False, "wall_seconds": 1,
+                    "stdout": "\n".join(event_lines).encode(), "stderr": b"synthetic-token"}
 
         with (patch.object(harness, "verify_local_discovery"),
               patch.object(harness, "sandbox_probe"),
               patch.object(harness, "run_process", side_effect=fake_process)):
             result = harness.run_one("/fake-codex", scenario, {"configuration": "A"}, args, folder,
-                                     scratch, "synthetic-token", private)
+                                     scratch, eval_auth.Authentication("api-key", key="synthetic-token"), private)
         self.assertEqual(b"[REDACTED]", (folder / "stderr.log").read_bytes())
         self.assertEqual("Evidence in a synthetic response", (folder / "response.txt").read_text())
         self.assertEqual("manual_review_required", result["status"])
@@ -266,7 +275,8 @@ class HarnessTests(unittest.TestCase):
               patch.object(harness, "run_one", side_effect=fake_run) as run,
               redirect_stdout(stdout)):
             status = harness.main(["run", "--live", "--output", str(output), "--scenario", "java-feature",
-                                   "--model", "test", "--reasoning-effort", "low", "--max-runs", "2"])
+                                   "--model", "test", "--reasoning-effort", "low", "--max-runs", "2",
+                                   "--auth", "api-key"])
         self.assertEqual(1, status)
         self.assertEqual(1, run.call_count)
         self.assertIn("unstarted", stdout.getvalue())
@@ -279,6 +289,117 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual("failed", harness.result_status({"status": "failed"}, self.root))
         self.assertEqual("passed", harness.result_status({"status": "manual_review_required"}, self.root))
         self.assertEqual("timeout", harness.outcome([{"status": "passed"}], "timeout"))
+
+    def test_live_auth_must_be_explicit_and_api_mode_has_no_global_fallback(self) -> None:
+        args = ["run", "--live", "--scenario", "java-feature", "--model", "test",
+                "--reasoning-effort", "medium", "--max-runs", "2"]
+        errors = io.StringIO()
+        with (patch.dict(os.environ, {"OPENAI_API_KEY": "unrelated"}, clear=True),
+              patch.object(harness.shutil, "which", side_effect=AssertionError("no CLI allowed")),
+              redirect_stdout(io.StringIO()), redirect_stderr(errors)):
+            self.assertEqual(2, harness.main(args))
+            self.assertEqual(2, harness.main([*args, "--auth", "api-key"]))
+        self.assertIn("explicit --auth", errors.getvalue())
+        self.assertIn("requires CODEX_API_KEY", errors.getvalue())
+        self.assertNotIn("unrelated", errors.getvalue())
+
+    def test_chatgpt_login_uses_native_device_auth_and_separate_home(self) -> None:
+        auth = eval_auth.Authentication("chatgpt")
+        global_config = self.root / "global-config.toml"
+        global_config.write_text("unchanged")
+        with patch.dict(os.environ, {"CODEX_HOME": str(self.root), "CODEX_API_KEY": "unrelated"}):
+            isolated = harness.process_environment(self.root / "isolated")
+
+        def login(command, *, cwd, env, **kwargs):
+            self.assertIn("--device-auth", command)
+            self.assertIn('forced_login_method="chatgpt"', command)
+            self.assertIn('cli_auth_credentials_store="file"', command)
+            self.assertNotIn("CODEX_API_KEY", env)
+            self.assertEqual(isolated["HOME"], cwd)
+            fake_oauth(Path(env["CODEX_HOME"]) / "auth.json")
+            return subprocess.CompletedProcess(command, 0)
+
+        with (patch.object(eval_auth.sys.stdin, "isatty", return_value=True),
+              patch.object(eval_auth.sys.stderr, "isatty", return_value=True),
+              patch.object(eval_auth.subprocess, "run", side_effect=login),
+              redirect_stdout(io.StringIO())):
+            auth.login("/fake-codex", isolated)
+        self.assertEqual(Path(isolated["CODEX_HOME"]) / "auth.json", auth.cache)
+        self.assertEqual("unchanged", global_config.read_text())
+        self.assertFalse((self.root / "auth.json").exists())
+
+    def test_chatgpt_cache_is_relayed_with_refresh_but_no_other_state(self) -> None:
+        login = harness.process_environment(self.root / "login")
+        login_home = Path(login["CODEX_HOME"])
+        cache = login_home / "auth.json"
+        fake_oauth(cache)
+        (login_home / "config.toml").write_text("unrelated configuration")
+        auth = eval_auth.Authentication("chatgpt", cache=cache)
+        for arm, expected_access in (("A", b"old-access-token"), ("B", b"refreshed-access-token")):
+            env = harness.process_environment(self.root / arm)
+            with auth.for_run(env) as (child, secrets, local):
+                self.assertNotIn("CODEX_API_KEY", child)
+                self.assertEqual({"auth.json"}, {path.name for path in local.parent.iterdir()})
+                self.assertFalse(cache.exists())
+                self.assertIn(expected_access, secrets)
+                fake_oauth(local, access="refreshed-access-token")
+                secrets.update(eval_auth.chatgpt_secrets(local))
+                self.assertEqual(b"[REDACTED] [REDACTED]", eval_auth.redact(
+                    b"old-access-token refreshed-access-token" if arm == "A" else
+                    b"refreshed-access-token refreshed-access-token", secrets))
+            self.assertFalse(local.exists())
+            self.assertTrue(cache.exists())
+        self.assertEqual("unrelated configuration", (login_home / "config.toml").read_text())
+
+    def test_chatgpt_rejects_other_modes_and_nonprivate_caches(self) -> None:
+        cache = self.root / "auth.json"
+        fake_oauth(cache, mode="apikey")
+        with self.assertRaisesRegex(eval_auth.AuthenticationError, "native ChatGPT"):
+            eval_auth.chatgpt_secrets(cache)
+        fake_oauth(cache)
+        cache.chmod(0o644)
+        with self.assertRaisesRegex(eval_auth.AuthenticationError, "private Codex OAuth cache"):
+            eval_auth.chatgpt_secrets(cache)
+
+    def test_chatgpt_run_redacts_both_token_versions_before_writing_outputs(self) -> None:
+        scenario = self.cases["code-review-selection-regression"]
+        login = harness.process_environment(self.root / "login")
+        cache = Path(login["CODEX_HOME"]) / "auth.json"
+        fake_oauth(cache)
+        batch = self.root / "outputs" / "batch"
+        folder = batch / "run"
+        folder.mkdir(parents=True)
+        scratch = self.root / "scratch"
+        scratch.mkdir()
+        args = SimpleNamespace(model="synthetic", reasoning_effort="medium", timeout=20)
+
+        def fake_process(command, *, env, **kwargs):
+            self.assertIn('forced_login_method="chatgpt"', command)
+            self.assertNotIn("CODEX_API_KEY", env)
+            self.assertNotIn("OPENAI_API_KEY", env)
+            self.assertIn(str(cache.parent), " ".join(command))
+            self.assertFalse((folder / "events.jsonl").exists())
+            self.assertFalse(cache.exists())
+            fake_oauth(Path(env["CODEX_HOME"]) / "auth.json", access="refreshed-access-token")
+            return {"exit_status": 0, "timed_out": False, "interrupted": False, "wall_seconds": 1,
+                    "stdout": "\n".join(strings(
+                        {"type": "thread.started", "thread_id": "synthetic"},
+                        {"type": "item.completed", "item": {"id": "a", "type": "agent_message",
+                                                           "text": "old-access-token refreshed-access-token"}},
+                        {"type": "turn.completed"},
+                    )).encode(), "stderr": b"test-refresh-token"}
+
+        auth = eval_auth.Authentication("chatgpt", cache=cache)
+        with (patch.dict(os.environ, {"CODEX_API_KEY": "unused", "OPENAI_API_KEY": "unused"}),
+              patch.object(harness, "verify_local_discovery"),
+              patch.object(harness, "sandbox_probe"),
+              patch.object(harness, "run_process", side_effect=fake_process)):
+            result = harness.run_one("/fake-codex", scenario, {"configuration": "A"}, args, folder,
+                                     scratch, auth, batch / "manifest.json")
+        self.assertEqual("completed", result["execution"])
+        self.assertEqual("[REDACTED] [REDACTED]", (folder / "response.txt").read_text())
+        self.assertEqual(b"[REDACTED]", (folder / "stderr.log").read_bytes())
+        self.assertIn(b"refreshed-access-token", eval_auth.chatgpt_secrets(cache))
 
 
 if __name__ == "__main__":

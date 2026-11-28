@@ -17,6 +17,7 @@ import sys
 import tempfile
 import time
 
+import eval_auth
 import eval_observations as events
 import eval_pilot
 import evaluation_cases
@@ -57,23 +58,35 @@ def write_json(path: Path, data) -> None:
 def run_process(command: list[str], *, cwd: Path, env: dict, timeout: int,
                 stdout, stderr, prompt: str | None = None) -> dict:
     started = time.monotonic()
+    output = error_output = None
     with subprocess.Popen(command, cwd=cwd, env=env, start_new_session=True,
                           stdin=subprocess.PIPE if prompt is not None else subprocess.DEVNULL,
                           stdout=stdout, stderr=stderr) as process:
         timed_out = False
         interrupted = False
         try:
-            process.communicate(prompt.encode("utf-8") if prompt is not None else None, timeout=timeout)
-        except (subprocess.TimeoutExpired, KeyboardInterrupt) as error:
-            timed_out = isinstance(error, subprocess.TimeoutExpired)
-            interrupted = not timed_out
+            output, error_output = process.communicate(
+                prompt.encode("utf-8") if prompt is not None else None, timeout=timeout)
+        except subprocess.TimeoutExpired as error:
+            timed_out = True
+            output, error_output = error.output, error.stderr
+        except KeyboardInterrupt:
+            interrupted = True
         finally:
             # Reap the primary process and stop children left in its process group.
             with suppress(ProcessLookupError):
                 os.killpg(process.pid, signal.SIGKILL)
             process.wait()
-    return {"exit_status": process.returncode, "timed_out": timed_out, "interrupted": interrupted,
-            "wall_seconds": round(time.monotonic() - started, 4)}
+        if (timed_out or interrupted) and (stdout == subprocess.PIPE or stderr == subprocess.PIPE):
+            with suppress(subprocess.TimeoutExpired):
+                output, error_output = process.communicate(timeout=2)
+    result = {"exit_status": process.returncode, "timed_out": timed_out, "interrupted": interrupted,
+              "wall_seconds": round(time.monotonic() - started, 4)}
+    if stdout == subprocess.PIPE:
+        result["stdout"] = output or b""
+    if stderr == subprocess.PIPE:
+        result["stderr"] = error_output or b""
+    return result
 
 
 def snapshot(root: Path) -> dict[str, dict]:
@@ -171,7 +184,8 @@ def process_environment(home: Path, jdk: Path | None = None) -> dict[str, str]:
 
 
 def config_arguments(workspace: Path, *, writable: bool, private: Path | None = None,
-                     jdk: Path | None = None, temp: Path | None = None) -> list[str]:
+                     jdk: Path | None = None, temp: Path | None = None,
+                     auth_directory: Path | None = None) -> list[str]:
     def quoted(value: str) -> str:
         return json.dumps(value, ensure_ascii=False)
 
@@ -183,6 +197,8 @@ def config_arguments(workspace: Path, *, writable: bool, private: Path | None = 
         paths[str(Path(os.environ["CODEX_HOME"]).expanduser().resolve())] = "deny"
     if private is not None:
         paths[str(private)] = "deny"
+    if auth_directory is not None:
+        paths[str(auth_directory)] = "deny"
     # macOS developer tools and Homebrew may resolve outside the minimal runtime paths.
     if sys.platform == "darwin":
         for path in ("/Library/Java/JavaVirtualMachines", "/Library/Developer/CommandLineTools",
@@ -239,14 +255,14 @@ def sandbox_probe(binary: str, workspace: Path, options: list[str], env: dict,
     script = """
 set -eu
 cat AGENTS.md >/dev/null
-for private in "$1" "$2"; do
+for private in "$1" "$2" "$3"; do
     if cat "$private" >/dev/null 2>&1; then
         printf '%s\n' "Sandbox can read a private input" >&2
         exit 1
     fi
 done
-test -z "${CODEX_API_KEY-}${OPENAI_API_KEY-}"
-if [ "$3" = write ]; then
+test -z "${CODEX_API_KEY-}${OPENAI_API_KEY-}${CODEX_ACCESS_TOKEN-}"
+if [ "$4" = write ]; then
     : > .eval-write-probe
     rm .eval-write-probe
 else
@@ -255,7 +271,7 @@ else
         exit 1
     fi
 fi
-shift 3
+shift 4
 for tool do
     if ! command -v "$tool" >/dev/null; then
         printf '%s\n' "Required tool unavailable: $tool" >&2
@@ -269,11 +285,16 @@ for tool do
     esac
 done
 """
-    command = ["/bin/sh", "-c", script, "eval-probe", str(ROOT / "catalog.json"), str(private_file),
-               "write" if writable else "read", *scenario.tools]
-    with log.open("wb") as output:
-        result = run_process(sandbox_command(binary, workspace, options, command),
-                             cwd=workspace, env=env, timeout=15, stdout=output, stderr=output)
+    sentinel = Path(env["CODEX_HOME"]) / "sandbox-sentinel"
+    sentinel.write_text("private\n", encoding="utf-8")
+    try:
+        command = ["/bin/sh", "-c", script, "eval-probe", str(ROOT / "catalog.json"), str(private_file),
+                   str(sentinel), "write" if writable else "read", *scenario.tools]
+        with log.open("wb") as output:
+            result = run_process(sandbox_command(binary, workspace, options, command),
+                                 cwd=workspace, env=env, timeout=15, stdout=output, stderr=output)
+    finally:
+        sentinel.unlink()
     if result["exit_status"] != 0:
         raise EvalError("Native isolation or tool preflight failed. See sandbox-probe.log.")
 
@@ -285,7 +306,7 @@ def violations(scenario: eval_pilot.Scenario, workspace: Path, changes: dict, ob
     return sorted(path for path in paths if path != scenario.editable)
 
 
-def preserve_changes(workspace: Path, after: dict, changes: dict, path: Path) -> None:
+def preserve_changes(workspace: Path, after: dict, changes: dict, path: Path, secrets: set[bytes]) -> None:
     budget = 1024 * 1024
     for name in changes:
         entry = after.get(name, {})
@@ -294,7 +315,7 @@ def preserve_changes(workspace: Path, after: dict, changes: dict, path: Path) ->
         source = workspace / name
         target = path / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source, target)
+        target.write_bytes(eval_auth.redact(source.read_bytes(), secrets))
         budget -= entry["size"]
 
 
@@ -333,7 +354,8 @@ def execution_failure(observations: dict, stderr: str) -> str:
 
 
 def run_one(binary: str, scenario: eval_pilot.Scenario, record: dict, args, folder: Path,
-            scratch: Path, key: str, private_file: Path, expected_digest: str | None = None) -> dict:
+            scratch: Path, auth: eval_auth.Authentication, private_file: Path,
+            expected_digest: str | None = None) -> dict:
     workspace = scratch / "workspace"
     jdk = jdk_home() if "java" in scenario.tools else None
     env = process_environment(scratch / "home", jdk)
@@ -344,8 +366,10 @@ def run_one(binary: str, scenario: eval_pilot.Scenario, record: dict, args, fold
     temp = scratch / "command-tmp" if scenario.editable else None
     if temp is not None:
         temp.mkdir()
+    auth_directory = auth.cache.parent if auth.cache is not None else None
     options = config_arguments(workspace, writable=scenario.editable is not None,
-                               private=private_file.parent.parent, jdk=jdk, temp=temp)
+                               private=private_file.parent.parent, jdk=jdk, temp=temp,
+                               auth_directory=auth_directory)
     sandbox_probe(binary, workspace, options, env, private_file, scenario, folder / "sandbox-probe.log")
     if snapshot(workspace) != before:
         raise EvalError("Isolation probe changed fixture inputs.")
@@ -357,17 +381,17 @@ def run_one(binary: str, scenario: eval_pilot.Scenario, record: dict, args, fold
     command = [
         binary, "exec", "--json", "--color", "never", "--ephemeral", "--ignore-user-config",
         "--ignore-rules", "--strict-config", "--skip-git-repo-check", "-C", str(workspace),
-        "-m", args.model, "-c", "model_reasoning_effort=" + json.dumps(args.reasoning_effort), *options, "-",
+        "-m", args.model, "-c", "model_reasoning_effort=" + json.dumps(args.reasoning_effort),
+        *options, *auth.options, "-",
     ]
     trace, stderr = folder / "events.jsonl", folder / "stderr.log"
-    with trace.open("wb") as out, stderr.open("wb") as err:
-        process = run_process(command, cwd=workspace, env={**env, "CODEX_API_KEY": key}, timeout=args.timeout,
-                              stdout=out, stderr=err, prompt=scenario.prompt)
-    for path in (trace, stderr):
-        raw = path.read_bytes()
-        redacted = raw.replace(key.encode("utf-8"), b"[REDACTED]")
-        if raw != redacted:
-            path.write_bytes(redacted)
+    with auth.for_run(env) as (cli_env, secrets, cache):
+        process = run_process(command, cwd=workspace, env=cli_env, timeout=args.timeout,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, prompt=scenario.prompt)
+        if cache is not None:
+            secrets.update(eval_auth.chatgpt_secrets(cache))
+        trace.write_bytes(eval_auth.redact(process.pop("stdout"), secrets))
+        stderr.write_bytes(eval_auth.redact(process.pop("stderr"), secrets))
     with trace.open(encoding="utf-8", errors="replace") as lines:
         observations = events.parse_events(lines, workspace, {path for path in before if path.startswith(".agents/skills/")})
     record.update(process, observations=observations)
@@ -378,8 +402,11 @@ def run_one(binary: str, scenario: eval_pilot.Scenario, record: dict, args, fold
     after = snapshot(workspace)
     changes = {name: {"before": before.get(name), "after": after.get(name)}
                for name in sorted(before.keys() | after.keys()) if before.get(name) != after.get(name)}
+    metadata = json.dumps(changes).encode("utf-8")
+    if eval_auth.redact(metadata, secrets) != metadata:
+        raise eval_auth.AuthenticationError("A workspace path contains credential material. Changes were withheld.")
     record["workspace_changes"] = changes
-    preserve_changes(workspace, after, changes, folder / "changed-files")
+    preserve_changes(workspace, after, changes, folder / "changed-files", secrets)
     unauthorized = violations(scenario, workspace, changes, observations)
     failed_patches = {events.workspace_path(path, workspace) or "[path outside workspace]"
                       for path in observations["failed_patch_paths"]}
@@ -417,12 +444,17 @@ def run_one(binary: str, scenario: eval_pilot.Scenario, record: dict, args, fold
         record.setdefault("reason", "Unexpected web, MCP, or delegation evidence invalidated isolation.")
     if execution == "completed" and not outside_scope:
         if scenario.editable:
+            artifact = workspace / scenario.editable
+            if not artifact.is_symlink() and artifact.is_file():
+                content = artifact.read_bytes()
+                if eval_auth.redact(content, secrets) != content:
+                    raise eval_auth.AuthenticationError("Source contains credential material. Grading was stopped.")
             grading = scratch / "grade"
             grading.mkdir()
             grade_temp = grading / "tmp"
             grade_temp.mkdir()
             grade_options = config_arguments(grading, writable=True, private=private_file.parent.parent,
-                                             jdk=jdk, temp=grade_temp)
+                                             jdk=jdk, temp=grade_temp, auth_directory=auth_directory)
             checks.extend(eval_pilot.grade_behavior(
                 scenario, workspace, grading,
                 lambda name, cmd, **kw: grade_command(binary, grading, grade_options, env, folder, name, cmd, **kw),
@@ -474,6 +506,8 @@ def selected_runs(args):
 def benchmark(args) -> int:
     plan = list(selected_runs(args))
     print(f"Planned model runs: {len(plan)} / {args.max_runs or DEFAULT_LIMIT}", flush=True)
+    if args.auth is not None:
+        print(f"Authentication: {args.auth}", flush=True)
     for scenario, config, index in plan:
         print(f"  {config}  repetition {index}  {scenario.id}", flush=True)
     if not args.live:
@@ -482,9 +516,12 @@ def benchmark(args) -> int:
         raise EvalError("Live mode requires an explicit --max-runs.")
     if not args.model or not args.reasoning_effort:
         raise EvalError("Live mode requires --model and --reasoning-effort.")
-    key = os.environ.get("CODEX_API_KEY")
-    if not key:
-        raise EvalError("Live mode requires CODEX_API_KEY in the environment. No stored credentials are used.")
+    if args.auth is None:
+        raise EvalError("Live mode requires an explicit --auth chatgpt or --auth api-key.")
+    key = os.environ.get("CODEX_API_KEY", "").strip() if args.auth == "api-key" else None
+    if args.auth == "api-key" and not key:
+        raise EvalError("API-key mode requires CODEX_API_KEY in the environment.")
+    auth = eval_auth.Authentication(args.auth, key=key)
     binary = shutil.which("codex")
     if not binary:
         raise EvalError("Codex CLI was not found.")
@@ -512,8 +549,12 @@ def benchmark(args) -> int:
             "schema_version": 1, "started_utc": datetime.now(timezone.utc).isoformat(),
             "revision": revision, "dirty": dirty, "codex": version, "model": args.model,
             "reasoning_effort": args.reasoning_effort, "timeout_seconds": args.timeout,
-            "max_runs": args.max_runs, "planned_runs": len(plan), "auth": "CODEX_API_KEY", "schedule": schedule,
+            "max_runs": args.max_runs, "planned_runs": len(plan), "auth": auth.mode, "schedule": schedule,
         })
+        if auth.mode == "chatgpt":
+            login_home = partition / "login"
+            verify_local_discovery(login_home)
+            auth.login(binary, process_environment(login_home))
         private_file = batch / "manifest.json"
         input_digests: dict[str, str] = {}
         for entry, (scenario, config, repeat) in zip(schedule, plan):
@@ -525,8 +566,11 @@ def benchmark(args) -> int:
                       "expected_technology": scenario.technology, "acceptance_criteria": scenario.expected}
             try:
                 with tempfile.TemporaryDirectory(prefix="run-", dir=partition) as temporary_run:
-                    record = run_one(binary, scenario, record, args, folder, Path(temporary_run), key,
+                    record = run_one(binary, scenario, record, args, folder, Path(temporary_run), auth,
                                      private_file, input_digests.get(scenario.id))
+            except eval_auth.AuthenticationError as error:
+                record.update(execution="execution_error", status="execution_error",
+                              failure_kind="authentication", reason=str(error))
             except (EvalError, OSError, subprocess.SubprocessError) as error:
                 record.update(execution="execution_error", status="execution_error", reason=str(error))
             write_json(folder / "result.json", record)
@@ -624,6 +668,7 @@ def main(argv: list[str] | None = None) -> int:
         command = subcommands.add_parser(action, help="Show budget and scenarios" if action == "plan" else "Plan or explicitly start the pilot")
         command.add_argument("--scenario", action="append", help="Pilot case ID (repeat for a subset)")
         command.add_argument("--configuration", choices=("A", "B", "AB"), default="AB")
+        command.add_argument("--auth", choices=("chatgpt", "api-key"), help="Required for live execution")
         command.add_argument("--model")
         command.add_argument("--reasoning-effort")
         command.add_argument("--repetitions", type=positive, default=1)
@@ -632,7 +677,7 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument("--timeout", type=positive, default=180, help="Maximum seconds per Codex invocation")
         command.add_argument("--output", type=Path, default=LOCAL_RESULTS)
         if action == "run":
-            command.add_argument("--live", action="store_true", help="Allow paid Codex CLI execution")
+            command.add_argument("--live", action="store_true", help="Authorize Codex execution and its usage")
         else:
             command.set_defaults(live=False)
     report = subcommands.add_parser("report", help="Summarize an existing private batch")
@@ -645,9 +690,12 @@ def main(argv: list[str] | None = None) -> int:
             print_report(args.output.resolve())
             return 0
         return benchmark(args)
-    except (EvalError, OSError, ValueError, subprocess.SubprocessError) as error:
+    except (EvalError, eval_auth.AuthenticationError, OSError, ValueError, subprocess.SubprocessError) as error:
         print(f"Evaluation stopped: {error}", file=sys.stderr)
         return 2
+    except KeyboardInterrupt:
+        print("Evaluation interrupted.", file=sys.stderr)
+        return 130
 
 
 if __name__ == "__main__":
