@@ -1,0 +1,57 @@
+[
+  {
+    "id": "implementation-planning-scoped-change",
+    "skill": "plan-work",
+    "fixture": null,
+    "prompt": "Plan adding an optional order note to an existing API without breaking clients. No source files are available. Do not implement.",
+    "expected": [
+      "Sequence contract, storage and verification changes conditionally.",
+      "Do not invent paths or claim tests ran."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "implementation-planning-migration-risk",
+    "skill": "plan-work",
+    "fixture": null,
+    "prompt": "Plan a compatible schema change during rolling deployment. Existing instances must continue working.",
+    "expected": [
+      "Identify mixed-version compatibility and staged verification.",
+      "Separate recovery risks from assumptions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "task-decomposition-near-miss",
+    "skill": "plan-work",
+    "fixture": null,
+    "prompt": "Plan the concrete code and verification sequence for one already defined work item. Do not edit.",
+    "expected": [
+      "Use implementation planning rather than splitting the backlog.",
+      "Use implementation sequencing mode within planning and leave backlog decomposition outside scope."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "task-decomposition-delivery-slices",
+    "skill": "plan-work",
+    "fixture": null,
+    "prompt": "Break an approved checkout enhancement into independently verifiable backlog items with dependencies. Do not create tickets.",
+    "expected": [
+      "Define coherent outcomes and integration checks.",
+      "Do not invent owners or ticket IDs."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "task-decomposition-unknown-dependency",
+    "skill": "plan-work",
+    "fixture": null,
+    "prompt": "Decompose a reporting feature whose upstream API contract is unknown.",
+    "expected": [
+      "Separate discovery from dependent implementation.",
+      "Identify prerequisites and avoid unsupported commitments."
+    ],
+    "avoid_skills": []
+  }
+]

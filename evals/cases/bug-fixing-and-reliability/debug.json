@@ -31,7 +31,8 @@
     "fixture": null,
     "prompt": "Investigate why a parser sometimes fails. Gather evidence only; do not change source.",
     "expected": [
-      "Use diagnostic workflow and preserve files."
+      "Use diagnostic workflow and preserve files.",
+      "Remain in diagnosis mode and leave source unchanged."
     ],
     "avoid_skills": [
       "implement"
@@ -45,7 +46,8 @@
     "expected": [
       "Separate trigger, mechanism and contributing factors.",
       "Mark the original slowdown as unknown.",
-      "Tie prevention and verification to supported links."
+      "Tie prevention and verification to supported links.",
+      "Use systemic causal analysis and leave source unchanged."
     ],
     "avoid_skills": [
       "implement"
@@ -71,7 +73,7 @@
       "Focus on causal mechanisms and evidence rather than incident reporting."
     ],
     "avoid_skills": [
-      "incident-analysis"
+      "analyze-incident"
     ]
   },
   {
@@ -85,7 +87,7 @@
       "Keep repository/build configuration changes out of scope unless explicitly requested."
     ],
     "avoid_skills": [
-      "performance-analysis"
+      "analyze-performance"
     ]
   },
   {
@@ -142,6 +144,112 @@
     ],
     "avoid_skills": [
       "maintain-build"
+    ]
+  },
+  {
+    "id": "bug-fixing-duplicate-processing",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Fix a confirmed defect where a retry creates duplicate records. Preserve successful single-request behavior and add a regression check.",
+    "expected": [
+      "Confirm the contract and isolate the supported cause.",
+      "Propose or apply a minimal correction within available source and authorization.",
+      "Verify duplicate and normal cases; report missing source if unavailable.",
+      "Choose defect correction mode. Preserve normal behavior and exclude unrelated refactoring."
+    ],
+    "avoid_skills": [
+      "refactor-code"
+    ]
+  },
+  {
+    "id": "bug-fixing-uncertain-contract",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Fix a rounding issue in a billing function, but the intended rounding rules and implementation are unavailable.",
+    "expected": [
+      "Identify missing contract and source.",
+      "Avoid speculative edits or invented verification."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "root-cause-analysis-near-miss-fix",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Apply the already diagnosed local null handling correction and verify it. No broader causal report is requested.",
+    "expected": [
+      "Use scoped correction and regression verification.",
+      "Select Fix mode and verify the already diagnosed cause without expanding into systemic causal analysis."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "bug-fixing-mitigation-vs-permanent-fix",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "A feature flag prevents a confirmed production data-loss defect from recurring, but the underlying defect remains. Plan the scoped permanent correction and verification without deploying.",
+    "expected": [
+      "Label the feature flag as a mitigation, not a confirmed permanent correction.",
+      "Establish the defect cause, regression case, compatibility boundary, and safe implementation scope before editing.",
+      "Keep deployment and flag removal separately gated; define evidence required before retiring the mitigation.",
+      "Plan a scoped correction without applying it or changing the feature flag."
+    ],
+    "avoid_skills": [
+      "analyze-incident"
+    ]
+  },
+  {
+    "id": "java-local-fix",
+    "skill": "debug",
+    "fixture": "java",
+    "prompt": "Fix the Java 11 normalization defect in Names.java and verify the corrected behavior. Preserve the membership tracking.",
+    "expected": [
+      "Change the normalization result at its source without adding an API or changing membership tracking.",
+      "Compile and run Names with a suitable local JDK and report the command and result, or report what prevented the check.",
+      "Use references/java/values-and-resources.md. Skip Java concurrency guidance for the normalization change."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "code-review-near-miss-python-fix",
+    "skill": "debug",
+    "fixture": "python",
+    "prompt": "Fix add_tag in tags.py so calls that omit a list no longer share state. Preserve the behavior for explicitly supplied lists and verify the fix.",
+    "expected": [
+      "Treat the request as an authorized Python defect fix and confirm the shared default as the cause.",
+      "Make omitted arguments independent while retaining explicit list mutation. Exercise both behaviors.",
+      "Use references/python/state-ownership.md for the edit and regression check."
+    ],
+    "avoid_skills": [
+      "review-code"
+    ]
+  },
+  {
+    "id": "refactoring-near-miss-bug-fix",
+    "skill": "debug",
+    "fixture": "python",
+    "prompt": "Refactor add_tag to eliminate the shared list between calls that omit the argument. Fix the leak while leaving explicitly provided lists mutable by the function.",
+    "expected": [
+      "Recognize the authorized behavioral fix despite the refactor wording and verify the mutable-default cause.",
+      "Check that separate omitted-argument calls get separate lists and that explicit list mutation is preserved.",
+      "Describe the behavioral fix and keep unrelated structure untouched."
+    ],
+    "avoid_skills": [
+      "refactor-code"
+    ]
+  },
+  {
+    "id": "implement-unknown-technology",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Fix the confirmed behavior where a list filter stops at the first rejected item. The module is unavailable and nobody has identified the language or runtime yet. State the correction and verification you can establish.",
+    "expected": [
+      "Use the generic defect workflow and describe a scoped correction and observable regression check.",
+      "Report missing source and technology without assuming a language, loading specialized references, or claiming edits or execution."
+    ],
+    "avoid_skills": [
+      "maintain-build",
+      "implement"
     ]
   }
 ]

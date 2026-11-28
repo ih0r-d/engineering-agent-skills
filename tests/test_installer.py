@@ -94,29 +94,29 @@ class InstallerTests(unittest.TestCase):
                 self.assertEqual(0, removed.returncode, removed.stderr)
                 self.assertFalse(any(os.path.lexists(target) for target in targets))
 
-    def test_skill_authoring_copy_is_self_contained_and_valid(self) -> None:
-        args = ("--agent", "codex", "--target", str(self.project), "--skill", "skill-authoring", "--mode", "copy")
+    def test_author_skills_copy_is_self_contained_and_valid(self) -> None:
+        args = ("--agent", "codex", "--target", str(self.project), "--skill", "author-skills", "--mode", "copy")
         installed = run_cli("install", *args)
         self.assertEqual(0, installed.returncode, installed.stderr)
-        target = self.project / ".agents/skills/skill-authoring"
+        target = self.project / ".agents/skills/author-skills"
         self.assertTrue(target.is_dir())
         self.assertFalse(target.is_symlink())
-        standalone = self.project / "standalone-skill-authoring"
+        standalone = self.project / "standalone-author-skills"
         shutil.copytree(target, standalone)
         (standalone / skills.MARKER).unlink()
         self.assertEqual([], skills.validate_skill(standalone))
         removed = run_cli("uninstall", "--agent", "codex", "--target", str(self.project),
-                          "--skill", "skill-authoring")
+                          "--skill", "author-skills")
         self.assertEqual(0, removed.returncode, removed.stderr)
 
     def test_bundled_script_and_asset_survive_copy_and_symlink_installation(self) -> None:
         for mode in ("symlink", "copy"):
             with self.subTest(mode=mode):
-                args = ("--agent", "codex", "--target", str(self.project), "--skill", "git-workflow",
+                args = ("--agent", "codex", "--target", str(self.project), "--skill", "manage-git",
                         "--mode", mode)
                 installed = run_cli("install", *args)
                 self.assertEqual(0, installed.returncode, installed.stderr)
-                target = self.project / ".agents/skills/git-workflow"
+                target = self.project / ".agents/skills/manage-git"
                 script = target / "scripts/validate-commit.py"
                 self.assertTrue(script.is_file())
                 self.assertTrue(script.stat().st_mode & 0o111)
@@ -126,7 +126,7 @@ class InstallerTests(unittest.TestCase):
                 )
                 self.assertEqual(0, check.returncode, check.stderr)
                 self.assertIn("valid", check.stdout)
-                uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "git-workflow")
+                uninstall = ("--agent", "codex", "--target", str(self.project), "--skill", "manage-git")
                 self.assertEqual(0, run_cli("uninstall", *uninstall).returncode)
 
         args = ("--agent", "codex", "--target", str(self.project), "--skill", "design-system",
@@ -173,7 +173,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.project / ".agents").exists())
 
     def test_legacy_symlink_migration_dry_run_leaves_link_untouched(self) -> None:
-        name = "skill-authoring"
+        name = "author-skills"
         link = self.project / ".agents/skills" / name
         legacy_target = os.path.relpath(skills.SKILLS / name, link.parent)
         link.parent.mkdir(parents=True)

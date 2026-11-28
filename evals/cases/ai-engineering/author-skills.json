@@ -1,0 +1,52 @@
+[
+  {
+    "id": "skill-authoring-portable-skill",
+    "skill": "author-skills",
+    "fixture": null,
+    "prompt": "Create a portable skill for recurring database migration reviews. Propose the skill instructions and resources without editing.",
+    "expected": [
+      "Define a coherent task and precise activation boundaries.",
+      "Use standard frontmatter and selective references; avoid unnecessary scripts.",
+      "Treat the repository's size targets as advisory and retain necessary instructions.",
+      "State observable verification without claiming behavioral effectiveness absent execution evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "skill-authoring-bloated-skill",
+    "skill": "author-skills",
+    "fixture": null,
+    "prompt": "Improve a skill that repeats its entire reference in SKILL.md and has vague activation text. Propose changes only.",
+    "expected": [
+      "Remove duplication while preserving task-critical instructions.",
+      "Define reference selection and positive and near-miss cases.",
+      "Keep critical gotchas in the entrypoint when reference triggers may be missed.",
+      "Recommend controlled with-skill and baseline runs for behavioral claims."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "skill-evaluation-near-miss",
+    "skill": "author-skills",
+    "fixture": null,
+    "prompt": "Write a new portable SKILL.md for a recurring engineering task. Live evaluation design is outside scope.",
+    "expected": [
+      "Use skill authoring and keep behavioral benchmarking separate."
+    ],
+    "avoid_skills": [
+      "evaluate-skills"
+    ]
+  },
+  {
+    "id": "prompt-engineering-near-miss",
+    "skill": "author-skills",
+    "fixture": null,
+    "prompt": "Package an existing engineering workflow as a portable SKILL.md with references and activation description.",
+    "expected": [
+      "Use skill authoring for the reusable artifact."
+    ],
+    "avoid_skills": [
+      "manage-agent-context"
+    ]
+  }
+]

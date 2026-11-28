@@ -1,156 +1,5 @@
 [
   {
-    "id": "bug-fixing-duplicate-processing",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Fix a confirmed defect where a retry creates duplicate records. Preserve successful single-request behavior and add a regression check.",
-    "expected": [
-      "Confirm the contract and isolate the supported cause.",
-      "Propose or apply a minimal correction within available source and authorization.",
-      "Verify duplicate and normal cases; report missing source if unavailable.",
-      "Choose defect correction mode. Preserve normal behavior and exclude unrelated refactoring."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "bug-fixing-uncertain-contract",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Fix a rounding issue in a billing function, but the intended rounding rules and implementation are unavailable.",
-    "expected": [
-      "Identify missing contract and source.",
-      "Avoid speculative edits or invented verification."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "root-cause-analysis-near-miss-fix",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Apply the already diagnosed local null handling correction and verify it. No broader causal report is requested.",
-    "expected": [
-      "Use scoped correction and regression verification."
-    ],
-    "avoid_skills": [
-      "debug"
-    ]
-  },
-  {
-    "id": "bug-fixing-mitigation-vs-permanent-fix",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "A feature flag prevents a confirmed production data-loss defect from recurring, but the underlying defect remains. Plan the scoped permanent correction and verification without deploying.",
-    "expected": [
-      "Label the feature flag as a mitigation, not a confirmed permanent correction.",
-      "Establish the defect cause, regression case, compatibility boundary, and safe implementation scope before editing.",
-      "Keep deployment and flag removal separately gated; define evidence required before retiring the mitigation."
-    ],
-    "avoid_skills": [
-      "incident-analysis"
-    ]
-  },
-  {
-    "id": "java-local-fix",
-    "skill": "implement",
-    "fixture": "java",
-    "prompt": "Fix the Java 11 normalization defect in Names.java and verify the corrected behavior. Preserve the membership tracking.",
-    "expected": [
-      "Change the normalization result at its source without adding an API or changing membership tracking.",
-      "Compile and run Names with a suitable local JDK and report the command and result, or report what prevented the check.",
-      "Use references/java/values-and-resources.md. Skip Java concurrency guidance for the normalization change."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "code-review-near-miss-python-fix",
-    "skill": "implement",
-    "fixture": "python",
-    "prompt": "Fix add_tag in tags.py so calls that omit a list no longer share state. Preserve the behavior for explicitly supplied lists and verify the fix.",
-    "expected": [
-      "Treat the request as an authorized Python defect fix and confirm the shared default as the cause.",
-      "Make omitted arguments independent while retaining explicit list mutation. Exercise both behaviors.",
-      "Use references/python/state-ownership.md for the edit and regression check."
-    ],
-    "avoid_skills": [
-      "review-code"
-    ]
-  },
-  {
-    "id": "refactoring-near-miss-bug-fix",
-    "skill": "implement",
-    "fixture": "python",
-    "prompt": "Refactor add_tag to eliminate the shared list between calls that omit the argument. Fix the leak while leaving explicitly provided lists mutable by the function.",
-    "expected": [
-      "Recognize the authorized behavioral fix despite the refactor wording and verify the mutable-default cause.",
-      "Check that separate omitted-argument calls get separate lists and that explicit list mutation is preserved.",
-      "Describe the behavioral fix and keep unrelated structure untouched."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "refactoring-summary-duplication",
-    "skill": "implement",
-    "fixture": "refactoring",
-    "prompt": "Reduce the repeated record parsing in summary.py. Keep both public functions and their current behavior. Run the existing tests and use Python-specific guidance where helpful.",
-    "expected": [
-      "Establish a baseline with test_summary.py before editing and identify the shared status parsing and selection.",
-      "Consolidate that responsibility locally while preserving both public names, parameters, results, and errors. Keep integer conversion in the total calculation.",
-      "Rerun the same tests and report the executed commands, results, and preserved contracts."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "refactoring-preserve-error-contract",
-    "skill": "implement",
-    "fixture": "refactoring",
-    "prompt": "Simplify the shared selection in summary.py. A teammate suggested skipping malformed records and validating every minute field, but this change is approved for structure only. Keep public behavior intact.",
-    "expected": [
-      "Preserve the missing-separator error in both functions, the lack of numeric conversion in the count, and the total's skip of inactive minute fields.",
-      "Keep the teammate's proposed behavior changes separate from the authorized edit.",
-      "Verify before and after with the existing tests and report the scoped change."
-    ],
-    "avoid_skills": [
-      "review-code"
-    ]
-  },
-  {
-    "id": "refactoring-insufficient-evidence",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Consolidate two existing public plugin handlers named process and convert while preserving their behavior. I can only share their names. The implementation, caller contracts, and tests are unavailable.",
-    "expected": [
-      "Pause before editing because behavior preservation cannot be established.",
-      "Name the missing source, caller expectations, and representative checks needed to establish the baseline.",
-      "Avoid inventing a shared implementation or reporting verification that did not run."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "implementation-planning-near-miss",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Perform a scoped refactoring of existing code while preserving behavior.",
-    "expected": [
-      "Use the authorized refactoring workflow rather than returning only a plan."
-    ],
-    "avoid_skills": [
-      "implementation-planning"
-    ]
-  },
-  {
-    "id": "implement-unknown-technology",
-    "skill": "implement",
-    "fixture": null,
-    "prompt": "Fix the confirmed behavior where a list filter stops at the first rejected item. The module is unavailable and nobody has identified the language or runtime yet. State the correction and verification you can establish.",
-    "expected": [
-      "Use the generic implementation workflow and describe a scoped correction and observable regression check.",
-      "Report missing source and technology without assuming a language, loading specialized references, or claiming edits or execution."
-    ],
-    "avoid_skills": [
-      "maintain-build"
-    ]
-  },
-  {
     "id": "implement-feature-from-specification",
     "skill": "implement",
     "fixture": "refactoring",
@@ -161,22 +10,9 @@
       "Preserve the companion function and existing test file. Report only checks run."
     ],
     "avoid_skills": [
-      "implementation-planning",
-      "requirements-analysis"
-    ]
-  },
-  {
-    "id": "implement-shared-file-sequential",
-    "skill": "implement",
-    "fixture": "refactoring",
-    "prompt": "Implement a behavior-preserving cleanup of the two functions in summary.py. They share a file and parsing rule. Subagents are unavailable in this session. Reuse existing tests and verify both functions.",
-    "expected": [
-      "Use one sequential edit path and preserve both public contracts.",
-      "Run existing checks covering signed minutes, malformed records, and the distinct parsing behavior.",
-      "Report executed checks without claiming delegation."
-    ],
-    "avoid_skills": [
-      "implementation-planning"
+      "plan-work",
+      "clarify-requirements",
+      "write-spec"
     ]
   },
   {
@@ -190,7 +26,7 @@
       "Complete the same work sequentially if native delegation is unavailable."
     ],
     "avoid_skills": [
-      "implementation-planning"
+      "plan-work"
     ]
   }
 ]

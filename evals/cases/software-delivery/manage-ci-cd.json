@@ -47,7 +47,7 @@
       "Preserve artifact identity and release authorization; distinguish local inspection from hosted execution."
     ],
     "avoid_skills": [
-      "release-engineering"
+      "release-software"
     ]
   },
   {
@@ -61,7 +61,7 @@
     ],
     "avoid_skills": [
       "deploy",
-      "release-engineering"
+      "release-software"
     ]
   }
 ]

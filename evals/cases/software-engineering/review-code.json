@@ -10,7 +10,8 @@
       "Recommend applying the cap to matches and adding a sparse-match test. Leave the fixture unchanged and report only executed checks."
     ],
     "avoid_skills": [
-      "implement"
+      "implement",
+      "refactor-code"
     ]
   },
   {
@@ -85,7 +86,7 @@
       "Use scoped change review and avoid unrelated security audit."
     ],
     "avoid_skills": [
-      "security-review"
+      "review-security"
     ]
   },
   {
@@ -113,7 +114,7 @@
     ],
     "avoid_skills": [
       "maintain-build",
-      "documentation-quality"
+      "write-docs"
     ]
   },
   {
@@ -128,7 +129,7 @@
       "Select references/quarkus/review.md. Skip FastAPI and GraalVM guidance without matching evidence."
     ],
     "avoid_skills": [
-      "performance-analysis"
+      "analyze-performance"
     ]
   },
   {
@@ -252,7 +253,9 @@
       "Make zero subagent calls and leave files unchanged."
     ],
     "avoid_skills": [
-      "implement"
+      "implement",
+      "debug",
+      "refactor-code"
     ]
   }
 ]

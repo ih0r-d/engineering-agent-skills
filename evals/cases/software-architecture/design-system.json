@@ -23,7 +23,8 @@
       "Avoid assuming additive changes are always compatible."
     ],
     "avoid_skills": [
-      "implement"
+      "implement",
+      "refactor-code"
     ]
   },
   {
@@ -64,62 +65,6 @@
     "avoid_skills": []
   },
   {
-    "id": "architecture-review-data-ownership",
-    "skill": "design-system",
-    "fixture": null,
-    "prompt": "Review an existing order processing architecture where the order service and payment service independently update the same order status in a shared database. Payment retries may execute concurrently. Assess architectural risks without modifying the system.",
-    "expected": [
-      "Identify shared state ownership and concurrency risks.",
-      "Explain affected business invariants and possible failure scenarios.",
-      "Distinguish established architectural concerns from unverified runtime behavior.",
-      "Recommend proportionate mitigations and verification criteria.",
-      "Avoid unauthorized implementation changes.",
-      "Assess the existing architecture before proposing mitigations. Leave a replacement design outside scope."
-    ],
-    "avoid_skills": [
-      "implement"
-    ]
-  },
-  {
-    "id": "architecture-review-unjustified-migration",
-    "skill": "design-system",
-    "fixture": null,
-    "prompt": "Review an existing modular monolith with explicit module boundaries, one deployment, and stable operational behavior. The team proposes migrating to microservices, but no independent scaling or deployment requirements have been established.",
-    "expected": [
-      "Evaluate the existing architecture against actual requirements.",
-      "Avoid treating the modular monolith as an architectural defect.",
-      "Identify evidence needed to justify a migration.",
-      "Explain operational complexity and migration trade-offs.",
-      "Avoid inventing performance or scalability problems.",
-      "Use architecture assessment mode and leave redesign and implementation outside scope."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "architecture-review-insufficient-evidence",
-    "skill": "design-system",
-    "fixture": null,
-    "prompt": "Assess the reliability of an existing distributed system. The only available information is that it contains five services.",
-    "expected": [
-      "Identify missing architecture, dependency, and operational evidence.",
-      "Distinguish potential risks from confirmed findings.",
-      "Avoid inventing failure scenarios as observed incidents.",
-      "Report review limitations and evidence required for further assessment."
-    ],
-    "avoid_skills": []
-  },
-  {
-    "id": "architecture-decision-near-miss-review",
-    "skill": "design-system",
-    "fixture": null,
-    "prompt": "Audit existing service boundaries and shared state for architectural risks. Do not choose a replacement architecture or draft an ADR.",
-    "expected": [
-      "Use architecture review and distinguish findings from unverified risks.",
-      "Do not turn the assessment into a decision record."
-    ],
-    "avoid_skills": []
-  },
-  {
     "id": "system-design-order-processing",
     "skill": "design-system",
     "fixture": null,
@@ -133,7 +78,8 @@
     ],
     "avoid_skills": [
       "review-code",
-      "implement"
+      "implement",
+      "refactor-code"
     ]
   },
   {
@@ -149,7 +95,8 @@
       "Distinguish confirmed requirements from assumptions."
     ],
     "avoid_skills": [
-      "implement"
+      "implement",
+      "refactor-code"
     ]
   },
   {
@@ -163,7 +110,9 @@
       "Propose component boundaries and architectural alternatives.",
       "Avoid presenting findings about a nonexistent architecture."
     ],
-    "avoid_skills": []
+    "avoid_skills": [
+      "review-architecture"
+    ]
   },
   {
     "id": "api-design-near-miss-system-design",
@@ -185,7 +134,7 @@
       "Use system design and mark performance estimates as assumptions."
     ],
     "avoid_skills": [
-      "performance-analysis"
+      "analyze-performance"
     ]
   },
   {
@@ -209,7 +158,7 @@
       "Use system design rather than eliciting requirements again."
     ],
     "avoid_skills": [
-      "requirements-analysis"
+      "clarify-requirements"
     ]
   },
   {

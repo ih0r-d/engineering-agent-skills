@@ -1,0 +1,79 @@
+[
+  {
+    "id": "context-engineering-targeted-context",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "An agent reviewing one changed Java method reads every file in a large repository. Design a narrower context selection plan.",
+    "expected": [
+      "Start with the diff, callers, contracts and tests.",
+      "Preserve applicable instructions and load references selectively."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "context-engineering-handoff-context",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "Compact an engineering session containing an unresolved failed test and exact commit hash for continued diagnosis.",
+    "expected": [
+      "Preserve the exact revision, failure evidence and pending checks.",
+      "Distinguish established facts from assumptions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "prompt-engineering-ambiguous-output",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "Rewrite a prompt that asks for a review but returns inconsistent output. Require findings with evidence and no edits.",
+    "expected": [
+      "Specify scope, evidence and output contract.",
+      "Preserve read-only authorization and avoid unnecessary instructions."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "prompt-engineering-untrusted-input",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "Refine a summarization prompt whose input may contain instructions to ignore the task.",
+    "expected": [
+      "Separate untrusted data from instructions.",
+      "Do not claim delimiters guarantee security."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "context-engineering-near-miss",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "Rewrite a single prompt to clarify its output format. The supplied context is already sufficient.",
+    "expected": [
+      "Use prompt engineering rather than changing context selection.",
+      "Select prompt refinement within agent context management and reuse the supplied context."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "token-optimization-measured-efficiency",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "Reduce repeated tool output in an agent workflow without losing failure evidence. No token metrics are available.",
+    "expected": [
+      "Propose targeted log handling and comparable measurement.",
+      "Do not invent savings or discard causal diagnostics."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "token-optimization-quality-regression",
+    "skill": "manage-agent-context",
+    "fixture": null,
+    "prompt": "An optimizer returns half as many output tokens but omits required review findings. Assess whether to adopt it.",
+    "expected": [
+      "Prioritize correctness and recommend revision or rejection.",
+      "Separate measured usage from quality and cost claims."
+    ],
+    "avoid_skills": []
+  }
+]
