@@ -2,6 +2,8 @@
 
 [cases](cases/) stores one JSON array per catalog Skill at `cases/<category-id>/<skill-id>.json`, plus [unrelated.json](cases/unrelated.json) for requests with no primary Skill. `catalog.json` determines the category and path. Each case records its prompt, expected primary Skill, nearby Skills to avoid, optional fixture, and observable acceptance criteria. Every non-null fixture refers to a directory under [fixtures](fixtures/). The examples mix defects with legitimate decisions.
 
+The [native Codex pilot](behavioral-baseline.md) defines a reproducible A/B comparison for six scenarios. Planning and CI work offline. Running the pilot requires explicit opt-in.
+
 ## Deterministic checks
 
 Run `task eval:check` from the repository root. The standard-library loader in `.scripts/evaluation_cases.py` loads all cases, selects a skill's positive cases, finds cases that avoid a named skill, and provides the unrelated subset. Validation checks per-skill files, schema, global IDs, catalog references, fixture paths, positive coverage, and near-miss coverage. The full offline suite exercises the Python, shell, Make, documentation, code review, and refactoring fixtures. These tests establish fixture ground truth. Routing, instruction following, and reference use are evaluated in live sessions.
