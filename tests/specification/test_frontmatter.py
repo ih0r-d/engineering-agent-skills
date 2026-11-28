@@ -1,8 +1,14 @@
 """Exercise the maintainer gate with the pinned upstream validator."""
 
+import io
+import os
+import subprocess
 import sys
+import tempfile
 import unittest
+from contextlib import chdir, redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 import yaml
 
@@ -28,6 +34,32 @@ metadata:
   reviewed: '2026-01-01'
   enabled: 'true'
 allowed-tools: Bash(git:*) Read""")
+
+    def test_checks_new_yaml_after_an_unstaged_move(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = Path(directory) / "sample-skill" / "SKILL.md"
+            manifest.parent.mkdir()
+            manifest.write_text("---\nname: sample-skill\ndescription: Review code.\n---\n# Instructions\n",
+                                encoding="utf-8")
+            previous = Path("old.yaml")
+            replacement = Path("new.yaml")
+            (Path(directory) / replacement).write_text("invalid: [\n", encoding="utf-8")
+            listing = subprocess.CompletedProcess([], 0, b"\0".join(map(os.fsencode, (previous, replacement))))
+            errors = io.StringIO()
+            with (
+                chdir(directory),
+                patch.object(validate_yaml.skills, "REPOSITORY", Path(directory)),
+                patch.object(validate_yaml.skills, "skill_directories", return_value=[manifest.parent]),
+                patch.object(validate_yaml.subprocess, "run", return_value=listing),
+                patch.object(validate_yaml.sys, "argv", ["validate_yaml.py", "--spec"]),
+                redirect_stderr(errors),
+                redirect_stdout(io.StringIO()),
+            ):
+                self.assertEqual(1, validate_yaml.main())
+                replacement.write_text("valid: true\n", encoding="utf-8")
+                self.assertEqual(0, validate_yaml.main())
+            self.assertIn("FAIL: " + str(replacement), errors.getvalue())
+            self.assertNotIn(str(previous), errors.getvalue())
 
     def test_accepts_yaml_flow_quoted_keys_and_comments(self) -> None:
         self.manifest("""# Standard YAML mapping
