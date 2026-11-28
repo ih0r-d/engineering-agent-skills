@@ -20,7 +20,7 @@ State the useful outcome in one sentence.
 
 ## Reference selection
 
-Link only real resources, and say when each one is useful. Remove this section if no reference is needed.
+Link each relevant resource directly and state what task and technology evidence warrants reading it. Follow explicit user technology requirements first and use the generic workflow where specialized guidance is unavailable. Remove this section if no reference is needed.
 
 ## Reusable resources
 

@@ -10,7 +10,7 @@
       "Propose safe profiling and verification."
     ],
     "avoid_skills": [
-      "bug-fixing"
+      "implement"
     ]
   },
   {
@@ -36,7 +36,7 @@
       "Use latency distributions with sample counts and bounded metric dimensions, and define an actionable alert only after the objective is agreed."
     ],
     "avoid_skills": [
-      "system-design"
+      "design-system"
     ]
   }
 ]

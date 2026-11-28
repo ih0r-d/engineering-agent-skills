@@ -1,4 +1,0 @@
-interface:
-  display_name: "Java Quality"
-  short_description: "Java correctness, compatibility, and analyzer triage"
-  default_prompt: "Use $java-quality to review the current Java changes for correctness and compatibility and report findings with file locations and verification."

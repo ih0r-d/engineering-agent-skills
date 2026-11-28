@@ -10,7 +10,7 @@
       "Provide blameless follow-up actions and verification."
     ],
     "avoid_skills": [
-      "bug-fixing"
+      "implement"
     ]
   },
   {

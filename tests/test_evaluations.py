@@ -44,26 +44,26 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual([], evaluation_cases.validate_cases(catalog))
 
     def test_loader_selects_skill_avoided_and_unrelated_cases(self) -> None:
-        java = evaluation_cases.load_cases("java-quality")
-        self.assertTrue(java)
-        self.assertTrue(all(case["skill"] == "java-quality" for case in java))
+        review = evaluation_cases.load_cases("review-code")
+        self.assertTrue(review)
+        self.assertTrue(all(case["skill"] == "review-code" for case in review))
         self.assertEqual(
-            [case for case in evaluation_cases.load_cases() if "java-quality" in case["avoid_skills"]],
-            evaluation_cases.cases_avoiding("java-quality"),
+            [case for case in evaluation_cases.load_cases() if "review-code" in case["avoid_skills"]],
+            evaluation_cases.cases_avoiding("review-code"),
         )
         unrelated = evaluation_cases.load_unrelated_cases()
         self.assertTrue(unrelated)
         self.assertTrue(all(case["skill"] is None for case in unrelated))
         self.assertEqual(
-            java + evaluation_cases.cases_avoiding("java-quality") + unrelated,
-            evaluation_cases.relevant_cases("java-quality"),
+            review + evaluation_cases.cases_avoiding("review-code") + unrelated,
+            evaluation_cases.relevant_cases("review-code"),
         )
 
     def test_validation_reports_case_and_filename_for_malformed_case(self) -> None:
         original_dir = evaluation_cases.CASE_DIR
         try:
             evaluation_cases.CASE_DIR = EVALS / "cases"
-            case_file = evaluation_cases.catalog_case_paths()["java-quality"]
+            case_file = evaluation_cases.catalog_case_paths()["review-code"]
             cases = json.loads(case_file.read_text())
             cases[0]["prompt"] = " "
             # The validator operates on the real catalog and files. Exercise its diagnostic
@@ -79,7 +79,7 @@ class EvaluationTests(unittest.TestCase):
                 destination.write_text(json.dumps(cases), encoding="utf-8")
                 evaluation_cases.CASE_DIR = root
                 issues = evaluation_cases.validate_cases()
-                self.assertTrue(any("java-quality.json case '" in issue and "prompt" in issue for issue in issues), issues)
+                self.assertTrue(any("review-code.json case '" in issue and "prompt" in issue for issue in issues), issues)
         finally:
             evaluation_cases.CASE_DIR = original_dir
 

@@ -36,18 +36,18 @@ python3 /tmp/engineering-agent-skills/.scripts/skills.py list
 python3 /tmp/engineering-agent-skills/.scripts/skills.py install \
   --agent codex \
   --target "$PWD" \
-  --skill java-quality \
+  --skill review-code \
   --mode copy \
   --dry-run
 ```
 
-Review the preview, then repeat the install command without `--dry-run`. For example, install more than one skill with `--skill java-quality,unit-testing`, select both installer-supported clients with `--agent all`, or select the whole catalog with `--all`.
+Review the preview, then repeat the install command without `--dry-run`. For example, install more than one skill with `--skill review-code,test-code`, select both installer-supported clients with `--agent all`, or select the whole catalog with `--all`.
 
 Project installation paths are `.agents/skills/<skill-id>/` for Codex and `.claude/skills/<skill-id>/` for Claude Code. The installed package is flat even though source skills are grouped by category. Open or reload the project in the agent, then ask a task-specific question such as:
 
 > Review the changed Java code for concurrency and public API compatibility. Show evidence and verification steps; do not modify files.
 
-You can also explicitly invoke a skill using the client’s supported syntax, such as `$java-quality` in Codex or `/java-quality` in Claude Code. Invocation and automatic skill selection depend on the client and its configuration.
+You can also explicitly invoke a skill using the client’s supported syntax, such as `$review-code` in Codex or `/review-code` in Claude Code. Invocation and automatic skill selection depend on the client and its configuration.
 
 ## Agent support
 
@@ -80,14 +80,14 @@ To update an installation, use the same installer that created it. A symlink fol
 ```bash
 # Install for a user account (omit --target for user scope)
 python3 /tmp/engineering-agent-skills/.scripts/skills.py install \
-  --agent codex --scope user --skill java-quality --dry-run
+  --agent codex --scope user --skill review-code --dry-run
 
 # Remove a project installation after reviewing the preview
 python3 /tmp/engineering-agent-skills/.scripts/skills.py uninstall \
-  --agent codex --target "$PWD" --skill java-quality --dry-run
+  --agent codex --target "$PWD" --skill review-code --dry-run
 ```
 
-See [compatibility and recovery notes](docs/compatibility.md) for partial operations and ownership limitations.
+When upgrading from a pre-v2 revision, uninstall replaced IDs before updating the toolkit checkout. Then install the v2 IDs and update explicit invocations. [Upgrade steps and recovery](docs/compatibility.md#migrating-to-v2)
 
 ### Pin a checkout with a Git submodule
 
@@ -100,7 +100,7 @@ git submodule add \
 ./.tooling/engineering-agent-skills/.scripts/install.sh \
   --agent all \
   --target "$PWD" \
-  --skill java-quality,documentation-quality \
+  --skill review-code,documentation-quality \
   --dry-run
 ```
 
@@ -110,12 +110,14 @@ Review the preview, then rerun without `--dry-run`. The installer creates relati
 
 Prompts describe user intent; they do not guarantee that a specific client will select a particular skill automatically. Skills can be invoked explicitly where the client supports it.
 
-- “Review this Java change for data races, `CompletableFuture` cancellation, and binary API compatibility.” — `java-quality` with `code-review` as needed.
-- “Investigate this `OutOfMemoryError: Metaspace`; compare classloader activity and available JVM evidence before suggesting tuning.” — `java-quality`, with `performance-analysis` if measurement is needed.
-- “Diagnose why the GitHub Actions deploy job cannot retrieve an artifact produced by an earlier job.” — `ci-cd`.
-- “Prepare a production hotfix and backport plan. Identify the target release lines and tests; do not push, tag, publish, or deploy.” — `bug-investigation`, `bug-fixing`, `git-workflow`, and `release-engineering` as relevant.
-- “Design a Spring Boot service and draft an ADR for the selected persistence boundary. Do not implement it.” — `system-design`, `java-quality`, and `architecture-decision` as relevant.
-- “Create a risk-based test strategy for a Spring Boot service that reserves inventory and charges cards.” — `test-strategy`, with `integration-testing` or `unit-testing` if implementation is requested.
+- “Draft a specification for checkout retries with observable acceptance criteria for duplicates and partial failures.” — `requirements-analysis`.
+- “Implement the approved checkout retry contract and verify the acceptance criteria.” — `implement`.
+- “Review this Java change for data races, `CompletableFuture` cancellation, and binary API compatibility.” — `review-code` with its Java review guidance.
+- “Investigate this `OutOfMemoryError: Metaspace`; compare classloader activity and available JVM evidence before suggesting tuning.” — `debug` with its JVM diagnostics guidance.
+- “Diagnose why the GitHub Actions deploy job cannot retrieve an artifact produced by an earlier job.” — `manage-ci-cd`.
+- “Prepare a production hotfix and backport plan. Identify the target release lines and tests; do not push, tag, publish, or deploy.” — `debug`, `implement`, `git-workflow`, and `release-engineering` as relevant.
+- “Design a Spring Boot service and draft an ADR for the selected persistence boundary. Do not implement it.” — `design-system`.
+- “Create a risk-based test strategy for a Spring Boot service that reserves inventory and charges cards.” — `test-code`.
 
 Composition is task-dependent. The toolkit does not provide an orchestration runtime or mandatory multi-skill pipeline.
 
@@ -125,56 +127,45 @@ The catalog below is generated from `catalog.json` and each skill’s YAML front
 
 <!-- BEGIN GENERATED SKILL CATALOG -->
 
-**Inventory:** 35 skills · 7 categories · 77 references · 7 assets · 1 script · 132 evaluation cases.
+**Inventory:** 24 skills · 7 categories · 83 references · 7 assets · 1 script · 148 evaluation cases.
 
 ### Software Engineering
 
 | Skill | Purpose |
 | --- | --- |
-| [`code-review`](skills/software-engineering/code-review/SKILL.md) | Review a pull request, patch, or scoped code change for actionable defects, regressions, and missing verification. Use for a findings-first review of proposed or existing changes. |
-| [`java-quality`](skills/software-engineering/java-quality/SKILL.md) | Review Java source or generated Java for correctness, API compatibility, resource ownership, concurrency, or framework behavior. Use for Java code audits, targeted fixes, and triage of compiler or Java analyzer findings. |
-| [`python-quality`](skills/software-engineering/python-quality/SKILL.md) | Review Python code, imports, typing, packaging, and tests for runtime or API regressions. Use for focused Python fixes, pytest verification, or Ruff, Pyright and mypy diagnostic triage. |
-| [`refactoring`](skills/software-engineering/refactoring/SKILL.md) | Improve the structure of existing code while preserving observable behavior. Use for scoped simplification, consolidation, or separation of responsibilities with a behavior baseline. |
-| [`shell-quality`](skills/software-engineering/shell-quality/SKILL.md) | Review or fix Bash and POSIX sh scripts for unsafe expansions, exit-status handling, cleanup, destructive filesystem operations, and portability. Use for shell diagnostic triage or script verification. |
+| [`implement`](skills/software-engineering/implement/SKILL.md) | Implement a scoped software change, fix a confirmed defect, or refactor existing code with a behavior baseline. Use for concrete source edits and verification of affected callers and contracts. |
+| [`review-code`](skills/software-engineering/review-code/SKILL.md) | Review a pull request, patch, or scoped code change for actionable defects, regressions, and missing verification. Use for a findings-first review of proposed or existing changes. |
 
 ### Software Architecture
 
 | Skill | Purpose |
 | --- | --- |
-| [`api-design`](skills/software-architecture/api-design/SKILL.md) | Design and evolve API contracts for services and components. Use for REST, RPC, event interfaces, request and response schemas, error semantics, versioning, and backward compatibility. |
-| [`architecture-decision`](skills/software-architecture/architecture-decision/SKILL.md) | Evaluate architectural alternatives and document architecture decision records (ADRs). Use for explicit technical decisions, decision drivers, trade-offs, consequences, and superseding existing decisions. |
-| [`architecture-review`](skills/software-architecture/architecture-review/SKILL.md) | Assess existing software architecture against requirements, quality attributes, and operational constraints. Use for architecture audits, component boundaries, coupling, data ownership, scalability, reliability, and architectural risk assessment. |
-| [`system-design`](skills/software-architecture/system-design/SKILL.md) | Design software systems, services, and components from functional and non-functional requirements. Use for system boundaries, component responsibilities, data flows, scalability, reliability, and integration design. |
+| [`design-system`](skills/software-architecture/design-system/SKILL.md) | Design or assess software architecture, define API contracts, or evaluate and record an architecture decision. Use for component boundaries, data ownership, system trade-offs, consumer compatibility, and ADRs. |
 
 ### Bug Fixing and Reliability
 
 | Skill | Purpose |
 | --- | --- |
-| [`bug-fixing`](skills/bug-fixing-and-reliability/bug-fixing/SKILL.md) | Fix an authorized software defect with a scoped correction and regression verification. Use when expected behavior and a reported failure require an implementation change. |
-| [`bug-investigation`](skills/bug-fixing-and-reliability/bug-investigation/SKILL.md) | Investigate reproducible or intermittent software defects using symptoms, logs, tests, and execution traces. Use to isolate failing behavior and identify evidence before proposing a fix. |
+| [`debug`](skills/bug-fixing-and-reliability/debug/SKILL.md) | Diagnose software failures and explain supported causes. Use for reproducible or intermittent defects, runtime diagnostics, environment differences, and analysis of recurring failure mechanisms. |
 | [`incident-analysis`](skills/bug-fixing-and-reliability/incident-analysis/SKILL.md) | Analyze an operational incident and prepare an evidence-based incident report or blameless postmortem. Use for impact, incident timelines, response effectiveness, recovery, and follow-up actions. |
 | [`performance-analysis`](skills/bug-fixing-and-reliability/performance-analysis/SKILL.md) | Analyze software performance using measurements, profiling, workload characteristics, and resource usage. Use for latency, throughput, CPU, memory, I/O, contention, and scalability bottlenecks. |
-| [`root-cause-analysis`](skills/bug-fixing-and-reliability/root-cause-analysis/SKILL.md) | Analyze causal mechanisms behind recurring defects, failures, or operational problems. Use for evidence-backed causal chains, contributing factors, systemic weaknesses, and recurrence prevention. |
 
 ### Testing and Quality Assurance
 
 | Skill | Purpose |
 | --- | --- |
-| [`integration-testing`](skills/testing-and-quality-assurance/integration-testing/SKILL.md) | Write, review, or verify integration and contract tests across software components, databases, APIs, and messaging boundaries. Use for real collaborator behavior, compatibility, test environments, and cross-component failures. |
 | [`security-review`](skills/testing-and-quality-assurance/security-review/SKILL.md) | Review software changes, architecture boundaries, and configuration for security vulnerabilities and exposure risks. Use for authorized defensive assessments, access control, sensitive data handling, and evidence-based remediation advice. |
-| [`test-strategy`](skills/testing-and-quality-assurance/test-strategy/SKILL.md) | Define risk-based software testing strategies, coverage goals, test levels, and quality gates. Use for test planning, coverage gaps, and verification priorities across a system or change. |
-| [`unit-testing`](skills/testing-and-quality-assurance/unit-testing/SKILL.md) | Write, review, or verify focused unit tests for software behavior. Use for boundary cases, deterministic isolation, test doubles, assertions, and regression coverage of individual units. |
+| [`test-code`](skills/testing-and-quality-assurance/test-code/SKILL.md) | Plan risk-based verification or write, review, and run unit, integration, and contract tests. Use for coverage decisions, test isolation, regression checks, and cross-component behavior. |
 
 ### Software Delivery
 
 | Skill | Purpose |
 | --- | --- |
-| [`build-automation-quality`](skills/software-delivery/build-automation-quality/SKILL.md) | Review or repair Maven and Gradle build configuration, Makefiles, and Taskfiles. Use for task dependencies, incremental builds, local and CI parity, reproducibility, or command-runner failures. |
-| [`ci-cd`](skills/software-delivery/ci-cd/SKILL.md) | Design, review, or repair continuous integration and delivery pipelines. Use for workflow triggers, job dependencies, quality gates, caching, permissions, and pipeline reliability. |
-| [`container-quality`](skills/software-delivery/container-quality/SKILL.md) | Review or fix Dockerfiles, build contexts, container runtime settings, and Docker Compose projects. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior. |
-| [`dependency-management`](skills/software-delivery/dependency-management/SKILL.md) | Review or update software dependencies, manifests, lockfiles, and transitive resolution. Use for dependency compatibility, version conflicts, upgrade planning, and reproducible dependency changes. |
-| [`deployment`](skills/software-delivery/deployment/SKILL.md) | Plan, review, or verify software deployment and rollout procedures. Use for environment promotion, rollout strategies, runtime readiness, migrations, rollback, and deployment verification. |
+| [`container-quality`](skills/software-delivery/container-quality/SKILL.md) | Review or fix container image builds, runtime settings, and local service orchestration. Use to diagnose image reproducibility, secret handling, startup, health, shutdown, or local development behavior. |
+| [`deploy`](skills/software-delivery/deploy/SKILL.md) | Plan, review, or verify software deployment and rollout procedures. Use for environment promotion, rollout strategies, runtime readiness, migrations, rollback, and deployment verification. |
 | [`git-workflow`](skills/software-delivery/git-workflow/SKILL.md) | Plan or perform scoped Git workflows, atomic commits, Conventional Commits, task identifiers, branches, pull requests, and conflict resolution. Use for repository history and change organization. |
+| [`maintain-build`](skills/software-delivery/maintain-build/SKILL.md) | Review, repair, or verify build automation and dependency resolution. Use for build graphs, task runners, reproducibility, package manifests, lockfiles, and scoped dependency upgrades. |
+| [`manage-ci-cd`](skills/software-delivery/manage-ci-cd/SKILL.md) | Design, review, or repair continuous integration and delivery pipelines. Use for workflow triggers, job dependencies, quality gates, caching, permissions, and pipeline reliability. |
 | [`release-engineering`](skills/software-delivery/release-engineering/SKILL.md) | Audit release readiness or prepare versions, changelogs, release notes, and artifact and CI validation. Use for compatibility, publishing checks, provenance, or rollback planning before a release. |
 
 ### Engineering Productivity
@@ -184,7 +175,7 @@ The catalog below is generated from `catalog.json` and each skill’s YAML front
 | [`documentation-quality`](skills/engineering-productivity/documentation-quality/SKILL.md) | Write, review, or verify READMEs, quick starts, consumer guides, architecture and contributor docs, API reference, JavaDoc, Python docstrings, and examples. Use to investigate documentation drift or broken instructions. |
 | [`engineering-handoff`](skills/engineering-productivity/engineering-handoff/SKILL.md) | Prepare or review engineering handoffs using verified repository state, completed work, decisions, checks, risks, and next actions. Use for transferring ownership or resuming interrupted technical work. |
 | [`implementation-planning`](skills/engineering-productivity/implementation-planning/SKILL.md) | Plan scoped software changes against established requirements and existing repository contracts. Use for implementation sequencing, affected components, verification, migration, and risk planning. |
-| [`requirements-analysis`](skills/engineering-productivity/requirements-analysis/SKILL.md) | Analyze stakeholder needs, business rules, constraints, and acceptance criteria before implementation. Use for clarifying ambiguous requirements and defining verifiable scope. |
+| [`requirements-analysis`](skills/engineering-productivity/requirements-analysis/SKILL.md) | Clarify requirements and draft, review, or update a software specification. Use for stakeholder needs, business rules, scope, constraints, and verifiable acceptance criteria. |
 | [`task-decomposition`](skills/engineering-productivity/task-decomposition/SKILL.md) | Break an established engineering objective into independently verifiable work items with dependencies, scope, and acceptance criteria. Use for backlog slicing, milestones, and sequencing deliverables. |
 
 ### AI Engineering
@@ -205,15 +196,15 @@ The catalog covers each lifecycle stage through focused, composable skills. A pr
 
 ```mermaid
 flowchart LR
-    R["Requirements<br/>requirements-analysis"] --> A["Architecture<br/>system-design · api-design · architecture-decision"]
+    R["Requirements<br/>requirements-analysis"] --> A["Architecture<br/>design-system"]
     A --> P["Planning<br/>implementation-planning · task-decomposition"]
-    P --> I["Implementation<br/>java-quality · python-quality · shell-quality · refactoring"]
-    I --> T["Testing<br/>unit-testing · integration-testing · test-strategy"]
-    T --> C["Review<br/>code-review · security-review"]
-    C --> CI["CI<br/>ci-cd · build-automation-quality"]
+    P --> I["Implementation<br/>implement"]
+    I --> T["Testing<br/>test-code"]
+    T --> C["Review<br/>review-code · security-review"]
+    C --> CI["CI<br/>manage-ci-cd · maintain-build"]
     CI --> Rel["Release<br/>release-engineering"]
-    Rel --> D["Deployment<br/>deployment"]
-    D --> M["Maintenance<br/>incident-analysis · bug-investigation · dependency-management"]
+    Rel --> D["Deployment<br/>deploy"]
+    D --> M["Maintenance<br/>incident-analysis · debug"]
     M --> R
 ```
 
@@ -239,14 +230,16 @@ flowchart LR
     Asset --> Result
 ```
 
-Project instructions supply repository-specific policy; the skill supplies a reusable workflow; references contain deeper subject expertise; scripts perform deterministic operations; assets provide reusable output structures. Project documentation, code, and tests supply the evidence. These capabilities are model-provider independent as files, but client discovery, invocation, and tool permissions vary.
+Project instructions supply repository-specific policy; the skill supplies a reusable workflow; references contain deeper subject expertise; scripts perform deterministic operations; assets provide reusable output structures. Project documentation, code, and tests supply the evidence. Select references using the requested outcome and the relevant technology, framework, and version. Explicit user requirements take precedence over inferred choices. Use the generic workflow and project conventions when no relevant reference applies. [V2 scope and extension policy](SCOPE.md)
+
+Implementation and code review can use native subagents for independent tasks when available and authorized. The primary agent verifies combined results and follows the same workflow sequentially when delegation does not apply.
 
 ### Skill package anatomy
 
 ```text
 skill-id/
 ├── SKILL.md       # purpose, activation, workflow, constraints, verification
-├── references/    # optional, conditionally loaded technical guidance
+├── references/    # optional, selectively loaded technical guidance by topic or technology
 ├── scripts/       # optional, tested deterministic operations
 └── assets/        # optional, reusable templates and data
 ```

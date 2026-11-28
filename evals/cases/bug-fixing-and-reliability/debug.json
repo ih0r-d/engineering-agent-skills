@@ -1,0 +1,147 @@
+[
+  {
+    "id": "bug-investigation-intermittent",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "An import job sometimes fails after reading a file. No logs or reproduction are available. Investigate without editing.",
+    "expected": [
+      "Identify missing inputs, environment and evidence.",
+      "Propose competing hypotheses and safe discriminating checks.",
+      "Do not assert a cause or edit implementation."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "bug-investigation-reproduction",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "A parser rejects a valid empty record only in one environment. Plan a focused reproduction and isolate the failing boundary.",
+    "expected": [
+      "Compare environment and input contracts.",
+      "Define controlled failing and passing cases.",
+      "Distinguish reproduced results from planned checks."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "bug-fixing-near-miss-investigation",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Investigate why a parser sometimes fails. Gather evidence only; do not change source.",
+    "expected": [
+      "Use diagnostic workflow and preserve files."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "root-cause-analysis-recurring-timeouts",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Analyze recurring timeouts after retry storms. Logs show retries increased queue depth, but the first dependency slowdown is unexplained. Identify causal links and preventive actions.",
+    "expected": [
+      "Separate trigger, mechanism and contributing factors.",
+      "Mark the original slowdown as unknown.",
+      "Tie prevention and verification to supported links."
+    ],
+    "avoid_skills": [
+      "implement"
+    ]
+  },
+  {
+    "id": "root-cause-analysis-correlation",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Errors started after a deployment, but no comparison or trace is available. Establish what causal conclusions can be drawn.",
+    "expected": [
+      "Distinguish chronology from causation.",
+      "Identify alternative explanations and needed evidence."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "incident-analysis-near-miss-causal",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Analyze why a recurring data consistency failure occurs and identify systemic causes. No incident response or postmortem is requested.",
+    "expected": [
+      "Focus on causal mechanisms and evidence rather than incident reporting."
+    ],
+    "avoid_skills": [
+      "incident-analysis"
+    ]
+  },
+  {
+    "id": "java-quality-persistence-n-plus-one",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "A JPA endpoint returns 30 records, then performs one query per record. Find the likely fetch-boundary issue and propose a verification that preserves paging.",
+    "expected": [
+      "Inspect actual SQL and associations at the endpoint boundary.",
+      "Choose a use-case fetch plan and account for row multiplication and paging semantics.",
+      "Keep repository/build configuration changes out of scope unless explicitly requested."
+    ],
+    "avoid_skills": [
+      "performance-analysis"
+    ]
+  },
+  {
+    "id": "java-quality-native-image-metadata",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "A service works on the JVM but fails in GraalVM Native Image when it loads a plugin-selected class and a bundled schema. Diagnose likely reachability gaps and outline verification without changing the build.",
+    "expected": [
+      "Trace runtime-selected classes and resources to their reflection and resource reachability requirements.",
+      "Treat tracing-agent output as evidence from exercised paths rather than proof of complete metadata.",
+      "Verify behavior in the native executable and check class initialization timing for build-environment state.",
+      "Select references/graalvm/native-image.md. Do not infer Spring Boot or Quarkus from GraalVM alone."
+    ],
+    "avoid_skills": [
+      "maintain-build"
+    ]
+  },
+  {
+    "id": "python-quality-async-cancellation",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "An asyncio request times out but child tasks continue writing after the response is gone. Review task ownership and cleanup without changing unrelated APIs.",
+    "expected": [
+      "Trace who creates, retains, and awaits each task.",
+      "Treat cancellation as control flow and verify cleanup after cancellation.",
+      "Use deterministic synchronization in regression coverage rather than timing sleeps.",
+      "Select references/python/runtime-and-concurrency.md for runtime investigation."
+    ],
+    "avoid_skills": [
+      "test-code"
+    ]
+  },
+  {
+    "id": "python-quality-sqlalchemy-session-concurrency",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "Two child asyncio tasks share one SQLAlchemy AsyncSession and intermittently mix transaction state. Diagnose the ownership issue and propose deterministic regression coverage.",
+    "expected": [
+      "Load references/sqlalchemy/sqlalchemy.md and the asyncio diagnostics in references/python/runtime-and-concurrency.md. Confirm the SQLAlchemy version and focus on session ownership.",
+      "Give each concurrent task an independent session/unit of work rather than sharing one session concurrently.",
+      "Use synchronization and controlled database operations to test transaction isolation without sleep-based timing."
+    ],
+    "avoid_skills": []
+  },
+  {
+    "id": "shell-quality-trap-status",
+    "skill": "debug",
+    "fixture": null,
+    "prompt": "A shell command fails, the EXIT trap removes temporary files, and CI reports success. Diagnose status propagation and propose a safe fixture test.",
+    "expected": [
+      "Check whether cleanup overwrites the original exit status.",
+      "Verify only owned temporary paths are removed on success and failure.",
+      "Exercise controlled failure and assert the caller receives a nonzero status."
+    ],
+    "avoid_skills": [
+      "maintain-build"
+    ]
+  }
+]

@@ -18,8 +18,8 @@
       "Produce the new standalone pseudocode directly without a toolkit skill."
     ],
     "avoid_skills": [
-      "code-review",
-      "refactoring"
+      "review-code",
+      "implement"
     ]
   }
 ]

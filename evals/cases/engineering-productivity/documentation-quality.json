@@ -10,7 +10,7 @@
       "Avoid editing the CLI or returning an architecture guide."
     ],
     "avoid_skills": [
-      "python-quality"
+      "review-code"
     ]
   },
   {
@@ -23,7 +23,7 @@
       "Explain the caller's obligation to close the returned stream and preserve the existing method signature and implementation."
     ],
     "avoid_skills": [
-      "java-quality"
+      "review-code"
     ]
   },
   {
