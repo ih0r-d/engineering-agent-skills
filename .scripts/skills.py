@@ -306,9 +306,12 @@ def apply_selection(args: argparse.Namespace) -> None:
 
     for source, destination, mode in plan:
         if installing and mode == "legacy-symlink":
-            destination.unlink()
-            install(source, destination, "symlink", None)
-            print(f"MIGRATED {source.name} symlink: {destination}")
+            if args.dry_run:
+                print(f"DRY RUN migrate {source.name} symlink: {destination}")
+            else:
+                destination.unlink()
+                install(source, destination, "symlink", None)
+                print(f"MIGRATED {source.name} symlink: {destination}")
         elif installing and mode is not None:
             print(f"SKIP (already installed): {destination}")
         elif installing:

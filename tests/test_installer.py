@@ -140,6 +140,18 @@ class InstallerTests(unittest.TestCase):
                                  (result.returncode, result.stdout, result.stderr))
         self.assertFalse((self.project / ".agents").exists())
 
+    def test_legacy_symlink_migration_dry_run_leaves_link_untouched(self) -> None:
+        name = "skill-authoring"
+        link = self.project / ".agents/skills" / name
+        legacy_target = os.path.relpath(skills.SKILLS / name, link.parent)
+        link.parent.mkdir(parents=True)
+        link.symlink_to(legacy_target, target_is_directory=True)
+        args = ("--agent", "codex", "--target", str(self.project), "--skill", name, "--dry-run")
+        result = run_cli("install", *args)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(legacy_target, os.readlink(link))
+        self.assertIn("DRY RUN migrate", result.stdout)
+
     @unittest.skipUnless(shutil.which("bash"), "Bash is required for the shell wrappers")
     def test_wrappers_resolve_their_checkout_with_cdpath_set(self) -> None:
         lookup = self.project.parent / "cdpath"
