@@ -41,7 +41,7 @@ tasks:
       - python3 -B .scripts/eval_harness.py run {{.CLI_ARGS}}
 
   eval:report:
-    desc: Compare local results from a completed or partial pilot batch
+    desc: Report the newest completed local pilot batch or an explicit batch
     cmds:
       - python3 -B .scripts/eval_harness.py report {{.CLI_ARGS}}
 

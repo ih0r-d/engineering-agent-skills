@@ -402,5 +402,64 @@ class HarnessTests(unittest.TestCase):
         self.assertIn(b"refreshed-access-token", eval_auth.chatgpt_secrets(cache))
 
 
+class ReportTests(unittest.TestCase):
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+
+    def batch(self, name: str, day: int, *, execution: str | None = "completed") -> Path:
+        batch = self.root / name
+        result = batch / "001-A-fixture"
+        result.mkdir(parents=True)
+        entry = {"directory": result.name, "configuration": "A", "repetition": 1, "scenario": "fixture"}
+        harness.write_json(batch / "manifest.json", {
+            "schema_version": 1, "started_utc": f"2026-11-{day:02}T12:00:00+00:00",
+            "planned_runs": 1, "schedule": [entry],
+        })
+        if execution is not None:
+            harness.write_json(result / "result.json", {
+                **entry, "execution": execution, "status": "failed" if execution == "completed" else execution,
+            })
+        return batch
+
+    def test_default_report_selects_newest_complete_batch_and_keeps_failed_grades(self) -> None:
+        self.batch("pilot-older", 1)
+        newest = self.batch("pilot-complete", 2)
+        self.batch("pilot-timeout", 3, execution="timeout")
+        self.batch("pilot-incomplete", 4, execution=None)
+        malformed = self.batch("pilot-invalid", 5)
+        (malformed / "manifest.json").write_text("{")
+        forged = self.batch("pilot-traversal", 6)
+        manifest = json.loads((forged / "manifest.json").read_text())
+        manifest["schedule"][0]["directory"] = "../pilot-complete/001-A-fixture"
+        harness.write_json(forged / "manifest.json", manifest)
+        linked = self.batch("external-batch", 7)
+        (self.root / "pilot-link").symlink_to(linked, target_is_directory=True)
+        output = io.StringIO()
+        with patch.object(harness, "LOCAL_RESULTS", self.root), redirect_stdout(output):
+            self.assertEqual(0, harness.main(["report"]))
+        self.assertIn(str(newest), output.getvalue())
+        self.assertIn("failed", output.getvalue())
+        self.assertNotIn("pilot-link", output.getvalue())
+
+    def test_explicit_report_keeps_partial_batch_available(self) -> None:
+        partial = self.batch("external-partial", 3, execution=None)
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(0, harness.main(["report", "--output", str(partial)]))
+        self.assertIn("unstarted", output.getvalue())
+
+    def test_no_results_explains_next_commands_and_creates_nothing(self) -> None:
+        absent = self.root / "absent"
+        errors = io.StringIO()
+        with patch.object(harness, "LOCAL_RESULTS", absent), redirect_stderr(errors):
+            self.assertEqual(2, harness.main(["report"]))
+        self.assertIn("No completed batch", errors.getvalue())
+        self.assertIn("task eval:plan", errors.getvalue())
+        self.assertIn("--output <batch-directory>", errors.getvalue())
+        self.assertFalse(absent.exists())
+
+
 if __name__ == "__main__":
     unittest.main()
