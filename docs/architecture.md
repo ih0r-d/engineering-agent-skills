@@ -9,7 +9,7 @@ The repository holds reusable engineering workflows for coding agents. A skill's
 | `.scripts/` | Offline installer, validators, generated README catalog tooling, repository checks, and locked maintainer dependencies |
 | `scripts/` | Compatibility entrypoints for older checkouts and submodule instructions |
 | `tests/` | Deterministic installer, catalog, resource, and specification regressions |
-| `evals/` | Synthetic evaluation cases, fixtures, and the manual live evaluation protocol |
+| `evals/` | Offline evaluation cases and fixtures, plus manual skill verification guidance |
 | `docs/` | Architecture and compatibility guidance |
 | `templates/` | Reusable authoring templates excluded from skill discovery and installation |
 | `.github/` and `Taskfile.yml` | Hosted and local quality gates |

@@ -25,25 +25,14 @@ tasks:
       - python3 -B -m unittest discover -s tests -v
 
   eval:check:
-    desc: Validate evaluation scenarios and fixtures
+    desc: Validate evaluation cases, fixtures, and pilot graders offline
     cmds:
-      - python3 -B -m unittest discover -s tests -p 'test_evaluations.py' -v
+      - python3 -B -m unittest discover -s tests -p 'test_eval*.py' -v
 
   eval:plan:
-    desc: Preview pilot scenarios and execution budget without starting Codex
+    desc: List pilot scenarios and prompts for manual comparisons
     cmds:
-      - python3 -B .scripts/eval_harness.py plan {{.CLI_ARGS}}
-
-  eval:run:
-    desc: Plan the pilot or run it with explicit --live
-    interactive: true
-    cmds:
-      - python3 -B .scripts/eval_harness.py run {{.CLI_ARGS}}
-
-  eval:report:
-    desc: Report the newest completed local pilot batch or an explicit batch
-    cmds:
-      - python3 -B .scripts/eval_harness.py report {{.CLI_ARGS}}
+      - python3 -B .scripts/eval_pilot.py {{.CLI_ARGS}}
 
   quality:
     desc: Run static analysis and security checks
