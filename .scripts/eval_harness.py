@@ -588,7 +588,7 @@ def display(value) -> str:
 
 def result_status(result: dict, directory: Path) -> str:
     path = directory / "manual.json"
-    if result["status"] != "manual_review_required" or not path.is_file():
+    if result["status"] != "manual_review_required" or path.is_symlink() or not path.is_file():
         return result["status"]
     decision = json.loads(path.read_text(encoding="utf-8"))
     if (not isinstance(decision, dict) or decision.get("status") not in {"passed", "failed", "unavailable"}
@@ -636,8 +636,55 @@ def summarize(rows: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def completed_batch_start(batch: Path) -> datetime | None:
+    manifest_file = batch / "manifest.json"
+    if (batch.is_symlink() or not batch.is_dir()
+            or manifest_file.is_symlink() or not manifest_file.is_file()):
+        return None
+    try:
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+        schedule = manifest["schedule"]
+        if (manifest.get("schema_version") != 1 or not isinstance(schedule, list) or not schedule
+                or manifest.get("planned_runs") != len(schedule)):
+            return None
+        started = datetime.fromisoformat(manifest["started_utc"])
+        if started.utcoffset() is None:
+            return None
+        directories = set()
+        for entry in schedule:
+            name = entry["directory"]
+            if not isinstance(name, str) or name in ("", ".", "..") or Path(name).name != name or name in directories:
+                return None
+            directories.add(name)
+            directory = batch / name
+            path = directory / "result.json"
+            if directory.is_symlink() or path.is_symlink() or not path.is_file():
+                return None
+            result = json.loads(path.read_text(encoding="utf-8"))
+            if (result["execution"] != "completed"
+                    or result["status"] not in ("passed", "failed", "manual_review_required", "unavailable",
+                                                "timeout", "execution_error")
+                    or any(result[key] != entry[key] for key in ("scenario", "configuration", "repetition"))):
+                return None
+        return started
+    except (OSError, ValueError, TypeError, KeyError):
+        return None
+
+
+def latest_completed_batch(root: Path) -> Path:
+    batches = () if root.is_symlink() else root.glob("pilot-*")
+    candidates = [(started, batch) for batch in batches if (started := completed_batch_start(batch)) is not None]
+    if not candidates:
+        raise EvalError("No completed batch in .eval-results/. Preview with task eval:plan, or use "
+                        "task eval:report -- --output <batch-directory> for a partial or external batch.")
+    return max(candidates, key=lambda candidate: (candidate[0], candidate[1].name))[1]
+
+
 def print_report(batch: Path) -> None:
-    manifest = json.loads((batch / "manifest.json").read_text(encoding="utf-8"))
+    path = batch / "manifest.json"
+    if not path.is_file():
+        raise EvalError("No evaluation manifest in the requested directory. Supply a pilot batch directory.")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
     rows = []
     for entry in manifest["schedule"]:
         directory = batch / entry["directory"]
@@ -681,13 +728,15 @@ def main(argv: list[str] | None = None) -> int:
         else:
             command.set_defaults(live=False)
     report = subcommands.add_parser("report", help="Summarize an existing private batch")
-    report.add_argument("--output", required=True, type=Path, help="An existing pilot batch directory")
+    report.add_argument("--output", type=Path, help="An existing batch (default: newest completed local batch)")
     args = parser.parse_args(argv)
     if args.command is None:
         args = parser.parse_args(["plan"])
     try:
         if args.command == "report":
-            print_report(args.output.resolve())
+            batch = args.output.resolve() if args.output is not None else latest_completed_batch(LOCAL_RESULTS)
+            print(f"Local results: {batch}")
+            print_report(batch)
             return 0
         return benchmark(args)
     except (EvalError, eval_auth.AuthenticationError, OSError, ValueError, subprocess.SubprocessError) as error:

@@ -66,8 +66,11 @@ ChatGPT device sign-in creates its credential cache inside a private temporary d
 A batch under `.eval-results/` contains a manifest, per-run JSON records, the JSONL stream, stderr, and final response. Available file deltas include paths, digests, modes, and up to 1 MiB of small changed files. Execution failures retain partial traces. The batch is private, and repository-local output must be ignored and free of tracked files. Model streams are redacted for known credentials before being saved, including tokens refreshed during a run. Native sign-in prompts stay in the terminal. The manifest records the authentication mode. Review any captured output before sharing it.
 
 ```sh
+task eval:report
 task eval:report -- --output .eval-results/pilot-REPLACE-WITH-BATCH-ID
 ```
+
+The first command selects the newest batch by recorded start time among batches in `.eval-results/` whose planned model invocations all completed. Failed grades and pending manual grades still appear. Use `--output` for a batch that stopped early, timed out, or was stored elsewhere.
 
 - **Correctness.** The independent probes use executable assertions and the Java 11 target. Every scenario checks unexpected workspace changes and observed forbidden tool use. Review and diagnosis content requires human assessment. Read-only workspace snapshots detect net changes, and successful structured patch events can show changes later undone. Shell writes that are undone and omitted from events remain unobserved.
 - **Task completion.** Use the case criteria and actual evidence to judge the final response, mode, and technology. After reviewing, optionally add `manual.json` next to a result with `{"status":"passed","notes":"<evidence>"}`, or use `failed` or `unavailable`. Manual grading can resolve a pending qualitative result and cannot replace a deterministic failure or execution error.
