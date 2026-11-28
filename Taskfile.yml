@@ -36,6 +36,7 @@ tasks:
 
   eval:run:
     desc: Plan the pilot or run it with explicit --live
+    interactive: true
     cmds:
       - python3 -B .scripts/eval_harness.py run {{.CLI_ARGS}}
 

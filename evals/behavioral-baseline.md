@@ -2,7 +2,18 @@
 
 Configuration A starts Codex with no toolkit skills. Configuration B installs a copy of the complete catalog using the offline installer. Both arms use the same prompt, fixture, project instructions, configured model, reasoning effort, authentication method, permissions, and wall timeout for a scenario. Every invocation gets a new disposable project and a separate home. Alternate A/B and B/A order across consecutive pairs to reduce order effects. The method can later accommodate Caveman and combined arms as separate experiments.
 
-The harness uses native `codex exec --json` and standard-library Python. The event parser and isolation options target Codex CLI **0.172.0**. Recheck the schema and isolation before supporting another version. The runner accepts a `CODEX_API_KEY` supplied in its environment for an authorized OpenAI API project. It uses a fresh home and disregards stored login state. Supply the key through your environment or secret manager. Commands launched by the agent receive a limited environment and no API key. [Non-interactive Codex](https://learn.chatgpt.com/docs/non-interactive-mode) · [Authentication](https://learn.chatgpt.com/docs/auth) · [Pinned event definitions](https://github.com/openai/codex/blob/rust-v0.172.0/codex-rs/exec/src/exec_events.rs)
+The harness uses native `codex exec --json` and standard-library Python. The event parser and isolation options target Codex CLI **0.172.0**. Recheck the schema and isolation before supporting another version. [Non-interactive Codex](https://learn.chatgpt.com/docs/non-interactive-mode) · [Pinned event definitions](https://github.com/openai/codex/blob/rust-v0.172.0/codex-rs/exec/src/exec_events.rs)
+
+## Authentication and usage
+
+Select the mode explicitly for a live batch. Both A and B use the same mode and login.
+
+| Mode | Setup and usage |
+| --- | --- |
+| `--auth chatgpt` | Run in a private interactive terminal. Enable device code login in ChatGPT security settings, or have the workspace administrator enable it where required. Follow Codex’s native `login --device-auth` instructions once per batch and select the intended account or workspace. The evaluations then run non-interactively. Usage draws from the account’s Codex allowance and any applicable credits or workspace charges. An API key is unnecessary. |
+| `--auth api-key` | Supply `CODEX_API_KEY` through your environment or secret manager. The harness passes it only to the Codex client. Usage is billed through the corresponding OpenAI Platform project at API rates. |
+
+ChatGPT mode requires device sign-in and Codex file-based OAuth storage. If these are unavailable or disallowed, the harness stops. It never switches to API-key mode after an authentication or quota failure. Use this workflow locally on a trusted machine and keep sign-in prompts out of recordings and shared logs. [Codex authentication](https://learn.chatgpt.com/docs/auth) · [Codex plan usage and billing](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)
 
 ## Pilot
 
@@ -26,21 +37,21 @@ task eval:plan
 task eval:run -- --scenario java-feature --max-runs 2
 ```
 
-The first command plans 12 invocations. The second plans a two-invocation pair. Both are non-mutating and start zero Codex processes. Select a subset by repeating `--scenario`, choose an arm with `--configuration A|B|AB`, and set `--repetitions`, `--timeout`, and `--output` as needed. Live execution requires explicit `--max-runs`, `--model`, and `--reasoning-effort`. The following commands use example model and effort settings. Substitute a supported model and effort if your API project requires it.
+The first command plans 12 invocations. The second plans a two-invocation pair. Both start zero Codex processes and do not sign in. Select a subset by repeating `--scenario`, choose an arm with `--configuration A|B|AB`, and set `--repetitions`, `--timeout`, and `--output` as needed. Live execution requires explicit `--auth`, `--max-runs`, `--model`, and `--reasoning-effort`. The examples use GPT-6.2 Sol at medium effort. Use a model and effort available to your account. [Codex models](https://learn.chatgpt.com/docs/models)
 
-First paired smoke test, with `CODEX_API_KEY` already available in the environment:
+First paired smoke test using ChatGPT sign-in:
 
 ```sh
-task eval:run -- --live --scenario java-feature --configuration AB --model gpt-5.4 --reasoning-effort medium --repetitions 1 --max-runs 2 --timeout 180
+task eval:run -- --live --auth chatgpt --scenario java-feature --configuration AB --model gpt-6.2-sol --reasoning-effort medium --repetitions 1 --max-runs 2 --timeout 180
 ```
 
 Complete pilot, one pair per scenario:
 
 ```sh
-task eval:run -- --live --configuration AB --model gpt-5.4 --reasoning-effort medium --repetitions 1 --max-runs 12 --timeout 180
+task eval:run -- --live --auth chatgpt --configuration AB --model gpt-6.2-sol --reasoning-effort medium --repetitions 1 --max-runs 12 --timeout 180
 ```
 
-The budget counts CLI invocations. Codex can issue multiple internal requests in a single invocation. The runner never retries an invocation and stops the batch on execution failure, including authentication and quota failures, or timeout. The report shows unstarted slots. These limits do not predict billing.
+For API-key execution, use `--auth api-key` and provide the environment variable. The budget counts model invocations of the CLI. Codex can issue multiple internal requests in a single invocation. The runner never retries an invocation and stops the batch on execution failure, including authentication and quota failures, or timeout. The report shows unstarted slots. These limits do not predict billing.
 
 ## Isolation
 
@@ -48,9 +59,11 @@ Only the selected fixture and fixed `AGENTS.md` are copied into the disposable p
 
 Native probes verify local prerequisites without an agent turn. They do not prove every property of an effective runtime session or an administrator-managed environment. Use a dedicated unmanaged environment for controlled comparisons. If CLI settings, managed policies, or tool evidence show contamination, treat the comparison as inconclusive. Run graders for edited source in a separate native sandbox after the agent exits. [Permission profiles](https://learn.chatgpt.com/docs/permissions) · [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills)
 
+ChatGPT device sign-in creates its credential cache inside a private temporary directory. Only that file moves between fresh Codex homes, one invocation at a time, to carry forward native token refreshes. Project workspaces, session history, login-home configuration, and installed skills stay separate. Sandbox policy blocks access to the credential directories, and a probe tests a synthetic file in each run home. Normal cleanup removes the temporary homes, including the cache. If the runner is forcibly killed, remove its abandoned private `/tmp/eas-eval-*` directory. The runner leaves the existing user Codex home untouched. [Codex credential storage](https://learn.chatgpt.com/docs/auth#credential-storage)
+
 ## Results and grading
 
-A batch under `.eval-results/` contains a manifest, per-run JSON records, the JSONL stream, stderr, and final response. Available file deltas include paths, digests, modes, and up to 1 MiB of small changed files. Execution failures retain partial traces. The batch is private, and repository-local output must be ignored and free of tracked files. Review any captured output before sharing it. A configured API key is redacted if it appears verbatim in a captured stream.
+A batch under `.eval-results/` contains a manifest, per-run JSON records, the JSONL stream, stderr, and final response. Available file deltas include paths, digests, modes, and up to 1 MiB of small changed files. Execution failures retain partial traces. The batch is private, and repository-local output must be ignored and free of tracked files. Model streams are redacted for known credentials before being saved, including tokens refreshed during a run. Native sign-in prompts stay in the terminal. The manifest records the authentication mode. Review any captured output before sharing it.
 
 ```sh
 task eval:report -- --output .eval-results/pilot-REPLACE-WITH-BATCH-ID
