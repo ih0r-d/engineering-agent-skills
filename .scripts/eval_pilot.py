@@ -1,7 +1,8 @@
-"""Pilot scenarios and acceptance checks kept outside agent-visible workspaces."""
+"""Offline scenario selection and deterministic graders for pilot fixtures."""
 
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
@@ -23,17 +24,16 @@ class Scenario:
     expected: tuple[str, ...]
     avoided_skills: tuple[str, ...] = ()
     editable: str | None = None
-    tools: tuple[str, ...] = ()
 
 
 def scenarios() -> dict[str, Scenario]:
     cases = {case["id"]: case for case in evaluation_cases.load_cases()}
 
-    def existing(identifier, mode, technology, references=(), *, fixture=None, editable=None, tools=()):
+    def existing(identifier, mode, technology, references=(), *, fixture=None, editable=None):
         case = cases[identifier]
         return Scenario(identifier, case["prompt"], fixture or evaluation_cases.FIXTURES / case["fixture"],
                         case["skill"], mode, technology, references, tuple(case["expected"]),
-                        tuple(case["avoid_skills"]), editable, tools)
+                        tuple(case["avoid_skills"]), editable)
 
     selected = [
         Scenario(
@@ -45,16 +45,16 @@ def scenarios() -> dict[str, Scenario]:
             ("java/type-contracts.md",),
             ("Add the overload and handle null, blank, and nonblank names.",
              "Preserve the existing public method and its behavior on Java 11."),
-            editable="Labels.java", tools=("javac", "java"),
+            editable="Labels.java",
         ),
         existing("code-review-near-miss-python-fix", "authorized fix", "Python",
-                 ("python/state-ownership.md",), editable="tags.py", tools=("python3",)),
+                 ("python/state-ownership.md",), editable="tags.py"),
         existing("code-review-selection-regression", "read-only code review", "Python",
                  ("python/quality-rubric.md",)),
         existing("shell-quality-trap-status", "read-only diagnosis", "POSIX sh",
-                 ("shell/process-lifecycle.md",), fixture=PILOT / "shell-status", tools=("sh",)),
+                 ("shell/process-lifecycle.md",), fixture=PILOT / "shell-status"),
         existing("make-recipe-directory", "read-only build review", "GNU Make",
-                 ("make/make.md",), tools=("make",)),
+                 ("make/make.md",)),
         existing("review-code-unsupported-language", "read-only generic review", "Go 1.22",
                  fixture=evaluation_cases.FIXTURES / "java"),
     ]
@@ -105,7 +105,7 @@ print("probe-complete")
 
 
 def grade_behavior(scenario: Scenario, workspace: Path, grading: Path, execute) -> list[dict]:
-    """Copy only the expected source to a distinct sandbox and run trusted probes there."""
+    """Copy the expected source and use the caller's isolated probe executor."""
     if not scenario.editable:
         return []
     artifact = workspace / scenario.editable
@@ -127,3 +127,27 @@ def grade_behavior(scenario: Scenario, workspace: Path, grading: Path, execute) 
     for kind, label in (("feature", "requested behavior"), ("regression", "existing behavior regression")):
         results.append(execute(label, [*command, kind], expected_output="probe-complete"))
     return results
+
+
+def main(argv: list[str] | None = None) -> int:
+    available = scenarios()
+    parser = argparse.ArgumentParser(description="List pilot scenarios for optional manual A/B comparisons.")
+    parser.add_argument("--scenario", action="append", choices=available, help="Select a case (repeat to select several)")
+    parser.add_argument("--details", action="store_true", help="Print the exact prompt for each selected case")
+    args = parser.parse_args(argv)
+    selected = args.scenario or list(available)
+    if len(selected) != len(set(selected)):
+        parser.error("select each scenario at most once")
+
+    label = "comparison" if len(selected) == 1 else "comparisons"
+    print(f"Manual A/B plan: {len(selected)} {label} ({2 * len(selected)} separate sessions)")
+    for identifier in selected:
+        case = available[identifier]
+        print(f"  {case.id} — {case.fixture.relative_to(evaluation_cases.ROOT)}")
+        if args.details:
+            print(f"    Prompt: {case.prompt}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

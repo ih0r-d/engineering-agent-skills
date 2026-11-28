@@ -12,7 +12,7 @@ Start with the toolkit's maintenance instructions. In the change description, na
 
 ## Verify changes
 
-Run `task ci` from the root with Python 3.11+, Task, uv, Bash, ShellCheck, actionlint, zizmor, and Lychee available. Add a focused regression test for changed behavior and exercise installation and removal for installer changes. Verify discovery and activation in the affected clients before making live compatibility claims. [Local validation](README.md#quality-assurance-and-evaluation), [Live evaluations](evals/README.md#run-live-evaluations)
+Run `task ci` from the root with Python 3.11+, Task, uv, Bash, ShellCheck, actionlint, zizmor, and Lychee available. Add a focused regression test for changed behavior and exercise installation and removal for installer changes. Use manual checks in affected clients to verify discovery and activation. [Local validation](README.md#quality-assurance-and-evaluation), [Manual skill verification](evals/README.md#manual-skill-verification)
 
 Use the focused tasks during development.
 

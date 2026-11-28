@@ -1,6 +1,6 @@
 # Agent and installer compatibility
 
-The repository's deterministic tests verify installer behavior against the two supported destination layouts. The agent discovery and invocation details below come from client documentation. Live routing and invocation depend on the client version, settings, and session. Use the live evaluation protocol when verifying a specific client. [Evaluation protocol](../evals/README.md#run-live-evaluations)
+The repository's deterministic tests verify installer behavior against the two supported destination layouts. The agent discovery and invocation details below come from client documentation. Routing and invocation depend on the client version, settings, and session. [Manual skill verification](../evals/README.md#manual-skill-verification)
 
 | Agent | Installer support | Documented locations | Verification boundary |
 | --- | --- | --- | --- |
