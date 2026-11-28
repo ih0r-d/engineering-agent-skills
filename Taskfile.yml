@@ -29,6 +29,21 @@ tasks:
     cmds:
       - python3 -B -m unittest discover -s tests -p 'test_evaluations.py' -v
 
+  eval:plan:
+    desc: Preview pilot scenarios and execution budget without starting Codex
+    cmds:
+      - python3 -B .scripts/eval_harness.py plan {{.CLI_ARGS}}
+
+  eval:run:
+    desc: Plan the pilot or run it with explicit --live
+    cmds:
+      - python3 -B .scripts/eval_harness.py run {{.CLI_ARGS}}
+
+  eval:report:
+    desc: Compare local results from a completed or partial pilot batch
+    cmds:
+      - python3 -B .scripts/eval_harness.py report {{.CLI_ARGS}}
+
   quality:
     desc: Run static analysis and security checks
     cmds:

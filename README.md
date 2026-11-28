@@ -278,6 +278,7 @@ Maintainer checks require Python 3.11+, Task, uv, Bash, ShellCheck, actionlint, 
 task validate       # catalog, resources, and specification gate
 task test           # deterministic unit and regression tests
 task eval:check     # evaluation schema, routing, and fixtures
+task eval:plan      # native Codex pilot scenarios and budget, offline
 task docs:generate  # update generated README catalog
 task docs:check     # catalog freshness and Markdown links
 task ci             # full maintainer quality gates
@@ -289,7 +290,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), the [canonical Skill Authoring Standard]
 
 **Completed foundations:** categorized skill catalog, context architecture, Authoring Standard v2, technical references, modular evaluation cases, standalone package portability, and reusable scripts and assets.
 
-**Possible follow-up work:** establish a live behavioral baseline; measure context and token use; evaluate optional Caveman or Promptfoo integrations; consider independent skill versioning, release automation, marketplace distribution, and opt-in client-specific hooks. These are not current features or commitments. An AI Software Factory or orchestration framework is outside this repository’s scope.
+The [native Codex pilot](evals/behavioral-baseline.md) is ready for explicitly authorized behavioral baseline runs. Offline validation remains separate from live evaluation.
 
 ## License
 
